@@ -52,7 +52,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -70,8 +70,6 @@ extern "C" {
 
 /* USER CODE END EM */
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -80,16 +78,22 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BK_LED_Pin GPIO_PIN_0
-#define BK_LED_GPIO_Port GPIOA
-#define DB7_Pin GPIO_PIN_1
-#define DB7_GPIO_Port GPIOA
+#define KS2_Pin GPIO_PIN_1
+#define KS2_GPIO_Port GPIOC
+#define KS3_Pin GPIO_PIN_2
+#define KS3_GPIO_Port GPIOC
+#define KS5_Pin GPIO_PIN_0
+#define KS5_GPIO_Port GPIOA
+#define KS4_Pin GPIO_PIN_1
+#define KS4_GPIO_Port GPIOA
 #define DB6_Pin GPIO_PIN_2
 #define DB6_GPIO_Port GPIOA
 #define DB5_Pin GPIO_PIN_3
 #define DB5_GPIO_Port GPIOA
 #define DB4_Pin GPIO_PIN_4
 #define DB4_GPIO_Port GPIOA
+#define LED_1_Pin GPIO_PIN_4
+#define LED_1_GPIO_Port GPIOC
 #define D3_CS_Pin GPIO_PIN_0
 #define D3_CS_GPIO_Port GPIOB
 #define D3BUSY_READ_Pin GPIO_PIN_1
@@ -98,40 +102,49 @@ void Error_Handler(void);
 #define EN_GPIO_Port GPIOB
 #define RS_Pin GPIO_PIN_11
 #define RS_GPIO_Port GPIOB
-#define SH1B_Pin GPIO_PIN_12
-#define SH1B_GPIO_Port GPIOB
-#define SH1A_Pin GPIO_PIN_13
-#define SH1A_GPIO_Port GPIOB
-#define SH1A_EXTI_IRQn EXTI15_10_IRQn
-#define KS0_Pin GPIO_PIN_14
-#define KS0_GPIO_Port GPIOB
-#define SH2A_Pin GPIO_PIN_15
-#define SH2A_GPIO_Port GPIOB
-#define SH2A_EXTI_IRQn EXTI15_10_IRQn
-#define SH2B_Pin GPIO_PIN_8
-#define SH2B_GPIO_Port GPIOA
-#define KS1_Pin GPIO_PIN_11
-#define KS1_GPIO_Port GPIOA
+#define OLED_SCLK_Pin GPIO_PIN_13
+#define OLED_SCLK_GPIO_Port GPIOB
+#define OLED_SDOUT_Pin GPIO_PIN_14
+#define OLED_SDOUT_GPIO_Port GPIOB
+#define OLED_SDIN_Pin GPIO_PIN_15
+#define OLED_SDIN_GPIO_Port GPIOB
+#define OLED_RES_Pin GPIO_PIN_6
+#define OLED_RES_GPIO_Port GPIOC
+#define OLED_DC_Pin GPIO_PIN_7
+#define OLED_DC_GPIO_Port GPIOC
+#define OLED_CS_Pin GPIO_PIN_8
+#define OLED_CS_GPIO_Port GPIOC
+#define SH1B_Pin GPIO_PIN_9
+#define SH1B_GPIO_Port GPIOC
+#define RST_Pin GPIO_PIN_11
+#define RST_GPIO_Port GPIOA
 #define IFR_Pin GPIO_PIN_12
 #define IFR_GPIO_Port GPIOA
-#define KS2_Pin GPIO_PIN_15
-#define KS2_GPIO_Port GPIOA
-#define KS3_Pin GPIO_PIN_3
-#define KS3_GPIO_Port GPIOB
-#define KS4_Pin GPIO_PIN_4
-#define KS4_GPIO_Port GPIOB
-#define KS5_Pin GPIO_PIN_5
-#define KS5_GPIO_Port GPIOB
-#define SCL_Pin GPIO_PIN_6
+#define KS0_Pin GPIO_PIN_10
+#define KS0_GPIO_Port GPIOC
+#define SH1A_Pin GPIO_PIN_11
+#define SH1A_GPIO_Port GPIOC
+#define SH1A_EXTI_IRQn EXTI15_10_IRQn
+#define BK_LED_Pin GPIO_PIN_4
+#define BK_LED_GPIO_Port GPIOB
+#define SH2B_Pin GPIO_PIN_5
+#define SH2B_GPIO_Port GPIOB
+#define KS1_Pin GPIO_PIN_6
+#define KS1_GPIO_Port GPIOB
+#define SH2A_Pin GPIO_PIN_7
+#define SH2A_GPIO_Port GPIOB
+#define SH2A_EXTI_IRQn EXTI9_5_IRQn
+#define SCL_Pin GPIO_PIN_8
 #define SCL_GPIO_Port GPIOB
-#define SDA_Pin GPIO_PIN_7
+#define SDA_Pin GPIO_PIN_9
 #define SDA_GPIO_Port GPIOB
-#define RST_Pin GPIO_PIN_8
-#define RST_GPIO_Port GPIOB
-#define RDS_Pin GPIO_PIN_9
-#define RDS_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-
+//#define KS0_Pin GPIO_PIN_14
+//#define KS0_GPIO_Port GPIOB
+//#define SH1A_Pin GPIO_PIN_13
+//#define SH1A_GPIO_Port GPIOB
+//#define SH2A_Pin GPIO_PIN_15
+//#define SH2A_GPIO_Port GPIOB
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
@@ -139,5 +152,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

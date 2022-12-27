@@ -23,7 +23,7 @@
 
 
 // Tune types
-#define NUM_TYPES       5
+#define NUM_TYPES       6
 
 #define TYPE_FREQ       0
 #define TYPE_SEEK       1
