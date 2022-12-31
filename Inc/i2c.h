@@ -5,9 +5,9 @@
 #include "main.h"
 #include <stdbool.h>
 
-#define I2C_SCL_LOW               (SCL_GPIO_Port->BRR  = SCL_Pin)
+#define I2C_SCL_LOW               (SCL_GPIO_Port->BSRR  = SCL_Pin << 16)
 #define I2C_SCL_HIGH              (SCL_GPIO_Port->BSRR = SCL_Pin)
-#define I2C_SDA_LOW               (SDA_GPIO_Port->BRR  = SDA_Pin)
+#define I2C_SDA_LOW               (SDA_GPIO_Port->BSRR  = SDA_Pin << 16)
 #define I2C_SDA_HIGH              (SDA_GPIO_Port->BSRR = SDA_Pin)
 
 #define I2C_SCL_READ              (SDA_GPIO_Port->IDR & SCL_Pin)
