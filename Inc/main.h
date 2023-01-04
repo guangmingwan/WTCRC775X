@@ -104,10 +104,10 @@ void Error_Handler(void);
 #define RS_GPIO_Port GPIOB
 #define OLED_SCLK_Pin GPIO_PIN_13
 #define OLED_SCLK_GPIO_Port GPIOB
-#define OLED_SDOUT_Pin GPIO_PIN_14
-#define OLED_SDOUT_GPIO_Port GPIOB
-#define OLED_SDIN_Pin GPIO_PIN_15
+#define OLED_SDIN_Pin GPIO_PIN_14
 #define OLED_SDIN_GPIO_Port GPIOB
+#define OLED_SDOUT_Pin GPIO_PIN_15
+#define OLED_SDOUT_GPIO_Port GPIOB
 #define OLED_RES_Pin GPIO_PIN_6
 #define OLED_RES_GPIO_Port GPIOC
 #define OLED_DC_Pin GPIO_PIN_7

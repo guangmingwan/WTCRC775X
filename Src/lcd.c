@@ -2,7 +2,7 @@
 #include "global.h"
 #include "tuner.h"
 #include <string.h>
-#include "i2c.h"
+#include "soft_i2c.h"
 #include "nv_memory.h"
 #include <math.h>
 extern TIM_HandleTypeDef htim3;

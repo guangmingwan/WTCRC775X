@@ -3,7 +3,7 @@
 #include "global.h"
 #include "tuner.h"
 #include <string.h>
-#include "i2c.h"
+#include "soft_i2c.h"
 #include "nv_memory.h"
 #include <math.h>
 
@@ -13,6 +13,8 @@ uint8_t nDelayedSmooth;
 
 volatile int8_t nLRot;
 volatile int8_t nRRot;
+volatile int8_t nIntSeqs[] = {0,0};
+volatile int8_t nFlags[] ={0, 0};
 
 const char *pszTuneTypes[] = { "FS", "SK", "CH", "SC", "AN", "SS" };
 const char *pszBands[] = { "LW", "MW", "SW", "FL", "FM" };  // Band name to display
@@ -405,17 +407,44 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (GPIO_Pin == SH1A_Pin)
 	{
-		if (HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin))
-			--nLRot;
-		else
-			++nLRot;
+		if(nIntSeqs[0] ==0 && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_RESET) { //下降
+			nFlags[0] = 0;
+			if( HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_SET ) {
+				nFlags[0] = 1;
+			}
+			nIntSeqs[0] = 1;
+			
+		}
+		if(nIntSeqs[0] && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_SET){ //第二次中断，并且A相是上升沿
+			if( HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_RESET && nFlags[0] == 1 ) {
+				++nLRot;
+			}
+			if( HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_SET && nFlags[0] == 0 ) {
+				--nLRot;
+			}
+			nIntSeqs[0] = 0;
+		}			
+		
 	}
 	else if (GPIO_Pin == SH2A_Pin)
 	{
-		if (HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin))
-			--nRRot;
-		else
-			++nRRot;
+		if(nIntSeqs[1] ==0 && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_RESET) { //下降
+			nFlags[1] = 0;
+			if( HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_SET ) {
+				nFlags[1] = 1;//正转
+			}
+			nIntSeqs[1] = 1;
+			
+		}
+		if(nIntSeqs[1] && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_SET){ //第二次中断，并且A相是上升沿
+			if( HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_RESET && nFlags[1] == 1 ) {
+				++nRRot;
+			}
+			if( HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_SET && nFlags[1] == 0 ) {
+				--nRRot;
+			}
+			nIntSeqs[1] = 0;
+		}	
 	}
 }
 

@@ -1,5 +1,5 @@
 #include "eeprom.h"
-#include "i2c.h"
+#include "soft_i2c.h"
 
 uint8_t eeprom_read_byte(uint16_t p)
 {

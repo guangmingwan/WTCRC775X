@@ -2,7 +2,7 @@
 #include "global.h"
 #include "ui.h"
 #include "oled.h"
-#include "i2c.h"
+#include "soft_i2c.h"
 #include "nv_memory.h"
 
 extern volatile int8_t nLRot;

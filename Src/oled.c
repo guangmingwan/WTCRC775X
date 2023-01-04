@@ -6,7 +6,29 @@
 //向SSD1106写入一个字节。
 //dat:要写入的数据/命令
 //cmd:数据/命令标志 0,表示命令;1,表示数据;
-void OLED_WR_Byte(u8 dat,u8 cmd)
+#define OLED_WR_Byte OLED_HAL_WR_Byte
+static char SPI2_ReadWriteByte(uint8_t txdata)
+{
+	uint8_t rxdata=00;
+	HAL_SPI_TransmitReceive(&hspi2,&txdata,&rxdata,1,3);
+	return rxdata;
+}
+
+void OLED_HAL_WR_Byte(u8 dat,u8 cmd)
+{	
+	u8 i;			  
+	if(cmd)
+	  OLED_DC_Set();
+	else 
+	  OLED_DC_Clr();		  
+	OLED_CS_Clr();
+	
+	SPI2_ReadWriteByte(dat);
+	
+	OLED_CS_Set();
+	OLED_DC_Set();   	  
+}
+void OLED_SOFT_WR_Byte(u8 dat,u8 cmd)
 {	
 	u8 i;			  
 	if(cmd)
