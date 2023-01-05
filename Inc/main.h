@@ -138,6 +138,7 @@ void Error_Handler(void);
 #define SCL_GPIO_Port GPIOB
 #define SDA_Pin GPIO_PIN_9
 #define SDA_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 //#define KS0_Pin GPIO_PIN_14
 //#define KS0_GPIO_Port GPIOB
