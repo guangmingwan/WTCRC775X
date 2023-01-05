@@ -3,58 +3,121 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: ¦ÌVision V5.34.0.0
-Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: wan guangming, adouming studio, LIC=ATTQ1-CVBQQ-SBPEJ-U5ZX4-ZXPRH-DIU83
+IDE-Version: ¦ÌVision V5.38.0.0
+Copyright (C) 2022 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: wan abc, ty, LIC=----
  
 Tool Versions:
-Toolchain:       MDK-ARM Plus  Version: 5.34.0.0
-Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
-C Compiler:      Armcc.exe V5.06 update 7 (build 960)
-Assembler:       Armasm.exe V5.06 update 7 (build 960)
-Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
-Library Manager: ArmAr.exe V5.06 update 7 (build 960)
-Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
-CPU DLL:         SARMCM3.DLL V5.34.0.0
-Dialog DLL:      DCM.DLL V1.17.3.0
-Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.8.0
-Dialog DLL:      TCM.DLL V1.48.0.0
+Toolchain:       MDK-ARM Plus  Version: 5.38.0.0
+Toolchain Path:  D:\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.19
+Assembler:       Armasm.exe V6.19
+Linker/Locator:  ArmLink.exe V6.19
+Library Manager: ArmAr.exe V6.19
+Hex Converter:   FromElf.exe V6.19
+CPU DLL:         SARMCM3.DLL V5.38.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.1.0.0
+Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
-D:\myprojects\WTCRC775X-f1\MDK-ARM\wtcrc103rgt6.uvprojx
-Project File Date:  01/05/2023
+D:\myprojects\WTCRC775X\MDK-ARM\wtcrc103rgt6.uvprojx
+Project File Date:  01/06/2023
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+*** Using Compiler 'V6.19', folder: 'D:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'wtcrc103rgt6'
+compiling font8.c...
+compiling eeprom.c...
+compiling lcd.c...
+compiling nv_memory.c...
+compiling font16.c...
+../Src/oled.c(42): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                OLED_SCLK_Clr();
+                ^~~~~~~~~~~~~~~
+../Inc\oled.h(39): note: expanded from macro 'OLED_SCLK_Clr'
+#define OLED_SCLK_Clr() HAL_GPIO_WritePin(OLED_SCLK_GPIO_Port, OLED_SCLK_Pin, RESET)//CLK 
+                        ~~~~~~~~~~~~~~~~~                                     ^~~~~
+../Src/oled.c(44): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                   OLED_SDIN_Set();
+                   ^~~~~~~~~~~~~~~
+../Inc\oled.h(43): note: expanded from macro 'OLED_SDIN_Set'
+#define OLED_SDIN_Set() HAL_GPIO_WritePin(OLED_SDIN_GPIO_Port, OLED_SDIN_Pin, SET)
+                        ~~~~~~~~~~~~~~~~~                                     ^~~
+../Src/oled.c(46): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                   OLED_SDIN_Clr();
+                   ^~~~~~~~~~~~~~~
+../Inc\oled.h(42): note: expanded from macro 'OLED_SDIN_Clr'
+#define OLED_SDIN_Clr() HAL_GPIO_WritePin(OLED_SDIN_GPIO_Port, OLED_SDIN_Pin, RESET)//DIN
+                        ~~~~~~~~~~~~~~~~~                                     ^~~~~
+../Src/oled.c(47): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                OLED_SCLK_Set();
+                ^~~~~~~~~~~~~~~
+../Inc\oled.h(40): note: expanded from macro 'OLED_SCLK_Set'
+#define OLED_SCLK_Set() HAL_GPIO_WritePin(OLED_SCLK_GPIO_Port, OLED_SCLK_Pin, SET)
+                        ~~~~~~~~~~~~~~~~~                                     ^~~
+4 warnings generated.
+compiling oled.c...
+compiling gpio.c...
+compiling main.c...
+compiling spi.c...
+compiling tim.c...
+compiling tuner.c...
+compiling usart.c...
+compiling stm32f1xx_hal_msp.c...
+compiling stm32f1xx_it.c...
 compiling soft_i2c.c...
+compiling stm32f1xx_hal_gpio_ex.c...
+compiling stm32f1xx_hal_spi.c...
+../Src/ui.c(1272): warning: 'strcpy' will always overflow; destination buffer has size 1, but the source string has length 3 (including NUL byte) [-Wfortify-source]
+                                strcpy(s + 9, "Eg");
+                                ^
+../Src/ui.c(1274): warning: 'strcpy' will always overflow; destination buffer has size 1, but the source string has length 3 (including NUL byte) [-Wfortify-source]
+                                strcpy(s + 9, "Pr");
+                                ^
+2 warnings generated.
+compiling ui.c...
+compiling stm32f1xx_hal.c...
+compiling stm32f1xx_hal_rcc_ex.c...
+compiling stm32f1xx_hal_gpio.c...
+compiling stm32f1xx_hal_cortex.c...
+compiling stm32f1xx_hal_pwr.c...
+compiling stm32f1xx_hal_rcc.c...
+compiling stm32f1xx_hal_exti.c...
+compiling stm32f1xx_hal_flash_ex.c...
+compiling stm32f1xx_hal_flash.c...
+compiling stm32f1xx_hal_dma.c...
+compiling system_stm32f1xx.c...
+compiling stm32f1xx_hal_tim_ex.c...
+compiling stm32f1xx_hal_uart.c...
+compiling stm32f1xx_hal_tim.c...
 linking...
-Program Size: Code=31992 RO-data=5988 RW-data=1240 ZI-data=1376  
+Program Size: Code=40136 RO-data=6356 RW-data=1148 ZI-data=1476  
 FromELF: creating hex file...
-"wtcrc103rgt6\wtcrc103rgt6.axf" - 0 Error(s), 0 Warning(s).
+"wtcrc103rgt6\wtcrc103rgt6.axf" - 0 Error(s), 6 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.5.7.0.pack
-                ARM.CMSIS.5.7.0
-                CMSIS (Cortex Microcontroller Software Interface Standard)
-   * Component: CORE Version: 5.4.0
+                http://www.keil.com/pack/ARM.CMSIS.5.9.0.pack
+                ARM.CMSIS.5.9.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.6.0
 
 Package Vendor: Keil
-                http://www.keil.com/pack/Keil.STM32F1xx_DFP.2.1.0.pack
-                Keil.STM32F1xx_DFP.2.1.0
+                http://www.keil.com/pack/Keil.STM32F1xx_DFP.2.3.0.pack
+                Keil.STM32F1xx_DFP.2.3.0
                 STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
 
 <h2>Collection of Component include folders:</h2>
-  .\RTE\_wtcrc103rgt6
-  C:\Users\adouming\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include
-  C:\Users\adouming\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.1.0\Device\Include
+  ./RTE/_wtcrc103rgt6
+  D:/Keil_v5/ARM/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include
+  D:/Keil_v5/ARM/Packs/Keil/STM32F1xx_DFP/2.3.0/Device/Include
 
 <h2>Collection of Component Files used:</h2>
 
-   * Component: ARM::CMSIS:CORE:5.4.0
-Build Time Elapsed:  00:00:04
+   * Component: ARM::CMSIS:CORE:5.6.0
+Build Time Elapsed:  00:00:05
 </pre>
 </body>
 </html>

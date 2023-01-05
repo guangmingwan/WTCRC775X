@@ -1,12 +1,12 @@
 #include "ui.h"
-
+#include "stdint.h"
 #include "global.h"
 #include "tuner.h"
 #include <string.h>
 #include "soft_i2c.h"
 #include "nv_memory.h"
 #include <math.h>
-
+#include "oled.h"
 
 
 uint8_t nDelayedSmooth;
@@ -1100,7 +1100,7 @@ void Menu_AnyHoldTime(void)
 void Menu_Time(void)
 {
 	int32_t nSeconds;
-	uint8_t u8, lp;
+	uint8_t u8_data, lp;
 
 	// 0123456789012345
 	OLED_XYStr(0, 1, ("TIME    :  :    "));
@@ -1119,20 +1119,20 @@ void Menu_Time(void)
 		OLED_XYUIntLenZP(9, 1, (nSeconds / 60) % 60, 2);  // Minutes
 		OLED_XYUIntLenZP(12, 1, nSeconds % 60, 2);  // Seconds
 
-		if ((u8 = GetKey()) != false)
+		if ((u8_data = GetKey()) != false)
 		{
 			nSeconds = HAL_GetTick() / 1000 + nSecondsOffset;
-			if (u8 == (KEY_FILTER | KEY_LONGPRESS))
+			if (u8_data == (KEY_FILTER | KEY_LONGPRESS))
 			{  // Adjust to on the minute, i.e. hh:mm:00
-				u8 = nSeconds % 60;
-				if (u8 < 30)
-					nSeconds -= u8;
+				u8_data = nSeconds % 60;
+				if (u8_data < 30)
+					nSeconds -= u8_data;
 				else
-					nSeconds += 60 - u8;
+					nSeconds += 60 - u8_data;
 			}
 			nSecondsOffset = nSeconds - HAL_GetTick() / 1000;
 			OLED_Clear1();
-			if (!(u8 & (KEY_LROT | KEY_RROT)))
+			if (!(u8_data & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			return;
 		}
@@ -1157,7 +1157,7 @@ void sprhex2(char *str, uint8_t v)
 
 void Menu_Stat(void)
 {
-	uint8_t nKey, u8, lp = 0;
+	uint8_t nKey, u8_data, lp = 0;
 	int8_t i8, nItem = 0, nItemOld = -1, nItems;
 	const char *p;
 	char s[10];
@@ -1191,11 +1191,11 @@ void Menu_Stat(void)
 		if (nItem != nItemOld)
 		{
 			if (nItem == 0 && nRFMode == RFMODE_AM)
-				u8 = nItems;
+				u8_data = nItems;
 			else
-				u8 = nItem;
+				u8_data = nItem;
 			OLED_Clear1();
-			OLED_XYStr(0, 1, str[u8]);
+			OLED_XYStr(0, 1, str[u8_data]);
 			nItemOld = nItem;
 			lp = 0;
 		}
@@ -1224,11 +1224,11 @@ void Menu_Stat(void)
 			break;
 
 		case 2:
-			u8 = dsp_query1(0x04);  // Frequency offset
-			if (u8 & 0x80)
-				i8 = u8 & 0x7f;
+			u8_data = dsp_query1(0x04);  // Frequency offset
+			if (u8_data & 0x80)
+				i8 = u8_data & 0x7f;
 			else
-				i8 = -u8;
+				i8 = -u8_data;
 			if (nRFMode == RFMODE_FM)
 				OLED_XYIntLen(11, 1, i8, 4);
 			else
@@ -1240,16 +1240,16 @@ void Menu_Stat(void)
 			break;
 
 		case 3:
-			u8 = dsp_query1(0x05) >> 4;  // IF filter bandwidth
+			u8_data = dsp_query1(0x05) >> 4;  // IF filter bandwidth
 			if (nRFMode == RFMODE_FM)
 			{
-				if (!u8)
+				if (!u8_data)
 					p = ("55K ");
 				else
-					p = M_FMFilter[u8].pszMTxt;
+					p = M_FMFilter[u8_data].pszMTxt;
 			}
 			else
-				p = M_AMFilter[u8].pszMTxt;
+				p = M_AMFilter[u8_data].pszMTxt;
 
 			OLED_XYStrLen(12, 1, p, 4, false);
 			break;
@@ -1267,21 +1267,21 @@ void Menu_Stat(void)
 			*s = (I2C_ReadByte(false) & 0x0F) + '0';
 			*(s + 2) = (I2C_ReadByte(true) & 0x0F) + '0';
 			I2C_Stop();
-			u8 = dsp_query1(0x14);
-			if (u8 & 0x01)
+			u8_data = dsp_query1(0x14);
+			if (u8_data & 0x01)
 				strcpy(s + 9, "Eg");
 			else
 				strcpy(s + 9, "Pr");
-			u8 = (u8 & 0xF0) >> 4;
-			if (u8 == 0x08)
+			u8_data = (u8_data & 0xF0) >> 4;
+			if (u8_data == 0x08)
 				strcpy(s + 4, "7758");
-			else if (u8 == 0x09)
+			else if (u8_data == 0x09)
 				strcpy(s + 4, "7753");
-			else if (u8 == 0x0A)
+			else if (u8_data == 0x0A)
 				strcpy(s + 4, "7755");
-			else if (u8 == 0x0B)
+			else if (u8_data == 0x0B)
 				strcpy(s + 4, "7751");
-			else if (u8 == 0x0E)
+			else if (u8_data == 0x0E)
 				strcpy(s + 4, "7754");
 			*(s + 8) = ' ';
 			OLED_XYStr(5, 1, s);
@@ -1458,18 +1458,18 @@ void Menu_BalFader(void)
 
 bool YesNo(bool bChkSig)
 {
-	uint8_t u8, lp;
+	uint8_t u8_data, lp;
 
 	OLED_XYStr(13, 1, ("Y/N"));
 	GetKey();  // Clear key
 
 	for (lp = 0; ; lp++)
 	{
-		if ((u8 = GetKey()) != false)
+		if ((u8_data = GetKey()) != false)
 		{
-			if (u8 == KEY_LROT)
+			if (u8_data == KEY_LROT)
 				return true;
-			else if (u8 == KEY_RROT)
+			else if (u8_data == KEY_RROT)
 				return false;
 		}
 
@@ -1551,7 +1551,7 @@ void Menu_SCSV(void)
 
 void AddDelCh(void)
 {
-	uint8_t u8, lp;
+	uint8_t u8_data, lp;
 	int8_t i8;
 	bool bReDISP = true;
 	bool bReturn;
@@ -1588,9 +1588,9 @@ void AddDelCh(void)
 			bReDISP = false;
 		}
 
-		if ((u8 = GetKey()) != false)
+		if ((u8_data = GetKey()) != false)
 		{
-			switch (u8)
+			switch (u8_data)
 			{
 			case KEY_LROT:  // Add ch
 				if (YesNo(true))
@@ -1734,7 +1734,7 @@ void SetSineFreq(int16_t Freq)
 {
 	double t;
 	int32_t i32;
-	uint8_t u8[6] =
+	uint8_t u8_data[6] =
 	{ 0, 0, 0, 0, 0x00, 0x01 };
 	int8_t i;
 
@@ -1752,14 +1752,14 @@ void SetSineFreq(int16_t Freq)
 		i32 = (int32_t)t;
 	}
 
-	u8[0] = (i32 >> 20) & 0x0F;
-	u8[1] = (i32 >> 12) & 0xFF;
-	u8[2] = (i32 >> 9) & 0x07;
-	u8[3] = (i32 >> 1) & 0xFF;
+	u8_data[0] = (i32 >> 20) & 0x0F;
+	u8_data[1] = (i32 >> 12) & 0xFF;
+	u8_data[2] = (i32 >> 9) & 0x07;
+	u8_data[3] = (i32 >> 1) & 0xFF;
 
 	dsp_start_subaddr3(0xf44614);
 	for (i = 0; i < 6; i++)
-		I2C_WriteByte(u8[i]);
+		I2C_WriteByte(u8_data[i]);
 	I2C_Stop();
 }
 
@@ -1917,8 +1917,8 @@ bool IsMenuVisible(uint8_t nMenuID)
 {
 	if (nMenuID == MID_INCA)
 	{
-		uint8_t u8 = dsp_query1(0x14);
-		uint8_t uHWTYP = u8 >> 4;
+		uint8_t u8_data = dsp_query1(0x14);
+		uint8_t uHWTYP = u8_data >> 4;
 		if(uHWTYP == 0x08 || uHWTYP == 0x0A || uHWTYP == 0x0E)
 			return true;
 		else
@@ -1928,8 +1928,8 @@ bool IsMenuVisible(uint8_t nMenuID)
 	{
 		if (nRFMode == RFMODE_AM)
 			return false;
-		uint8_t u8 = dsp_query1(0x14);
-		uint8_t uHWTYP = u8 >> 4;
+		uint8_t u8_data = dsp_query1(0x14);
+		uint8_t uHWTYP = u8_data >> 4;
 		if (uHWTYP == 0x0E)
 			return false;
 		else
@@ -1939,9 +1939,9 @@ bool IsMenuVisible(uint8_t nMenuID)
 	{
 		if (nRFMode == RFMODE_AM)
 			return false;
-		uint8_t u8 = dsp_query1(0xE2);
-		u8 = u8 & 0x0F;
-		if (u8 < 6)
+		uint8_t u8_data = dsp_query1(0xE2);
+		u8_data = u8_data & 0x0F;
+		if (u8_data < 6)
 			return false;
 		else
 			return true;
@@ -1957,8 +1957,9 @@ bool IsMenuVisible(uint8_t nMenuID)
 void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 {
 	int8_t i8;
-	uint8_t u8, lp, nHit;
+	uint8_t u8_data, lp, nHit;
 	int8_t nFirst = 0;
+	uint8_t textlen = 0;
 
 	while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
 		nFirst++;
@@ -1968,7 +1969,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 		OLED_Clear1();
 		if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
 		{
-			uint8_t textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
+			textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
 			OLED_Clear1();
 			OLED_XYStrLen(8 - textlen / 2, 1, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
 		}
@@ -2057,13 +2058,13 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 				if (i8 & (KEY_LROT | KEY_RROT))
 				{  // Item selected
 					if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
-						u8 = (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID;
+						u8_data = (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID;
 					else
-						u8 = (pSubMenu->pMItem + ((nFirst + 1) % pSubMenu->nItemCount))->nMID;
-					if (u8 == MID_RET)
+						u8_data = (pSubMenu->pMItem + ((nFirst + 1) % pSubMenu->nItemCount))->nMID;
+					if (u8_data == MID_RET)
 						return;
 
-					ProcMenuItem(u8);
+					ProcMenuItem(u8_data);
 
 					if ((pSubMenu->nMID >= MID_MIN_AUTORET) || bExitMenu)
 						return;  // Auto return sub menu, or none left/right key pressed in sub menu

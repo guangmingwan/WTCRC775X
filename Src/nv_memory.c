@@ -1,7 +1,7 @@
 #include "nv_memory.h"
 #include "global.h"
 #include "ui.h"
-
+#include "stdio.h"
 extern uint8_t nMode;           // RF/AUX
 extern uint8_t nRFMode;         // FM/AM
 
