@@ -874,14 +874,14 @@ void TuneFreqDisp(void)
 
 	if (nBand >= BAND_FL)
 	{
-		OLED_XYIntLen(FREQ_X, FREQ_Y, f / 1000, 3);
-		OLED_XYChar(FREQ_X + 3, FREQ_Y, '.');
-		OLED_XYUIntLenZP(FREQ_X + 4, FREQ_Y, f % 1000, 3);
+		LCD_XYIntLen(FREQ_X, FREQ_Y, f / 1000, 3);
+		LCD_XYChar(FREQ_X + 3, FREQ_Y, '.');
+		LCD_XYUIntLenZP(FREQ_X + 4, FREQ_Y, f % 1000, 3);
 	}
 	else
 	{
-		OLED_XYIntLen(FREQ_X, FREQ_Y, f, 6);
-		OLED_XYChar(FREQ_X + 6, FREQ_Y, 'K');
+		LCD_XYIntLen(FREQ_X, FREQ_Y, f, 6);
+		LCD_XYChar(FREQ_X + 6, FREQ_Y, 'K');
 	}
 }
 
@@ -1185,7 +1185,7 @@ uint8_t ScanAny()
 			{
 				if ((HAL_GetTick() - nBacklightTimer) >= (uint32_t)nBacklightKeep * 1000)
 				{
-					OLED_SetBackLight(0);
+					LCD_SetBackLight(0);
 					bLCDOff = true;
 				}
 			}
@@ -1251,11 +1251,12 @@ void TunerInit(void)
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_Delay(35);
-	//OLED_Init();
-	OLED_Clear0();
-	OLED_XYStr(3, 0, "WTCRC7751");
-	OLED_XYStr(3, 1, "V3 Build 3");
-	HAL_Delay(800);
+	//LCD_Init();
+	LCD_Clear2();
+	LCD_ShowString(2,0,(u8 *)"SAF7751HV/20X");//ÏÔÊ¾×Ö·û
+	LCD_XYStr(3, 1, "WTCRC7751");
+	LCD_XYStr(3, 2, "V3 Build 3");
+	HAL_Delay(2800);
 	NVMGetArgs();
 	if (!IsMenuVisible(MID_INCA)) //��INCA֧�ֵ��ͺ��Ͻ���INCA������R7.1�̼�������������
 		nINCA = 0;
@@ -1263,8 +1264,8 @@ void TunerInit(void)
 	//HAL_Delay(1000);	
 	//HAL_Delay(1000);	
 	BootDirana3();
-	OLED_Clear0();
-	OLED_Clear1();
+	LCD_Clear1();
+	LCD_Clear2();
 	nLRot = 0;
 	nRRot = 0;
 	nBootMode = nMode;
@@ -1282,7 +1283,7 @@ void TunerInit(void)
 	SetBalFader();          // Set balance & fader
 	HAL_Delay(50);
 	//memset(cRadioText, 0, sizeof(cRadioText));
-	OLED_SetBackLight(nBacklightAdj);
+	LCD_SetBackLight(nBacklightAdj);
 	nBacklightTimer = HAL_GetTick();
 	LCDUpdate();
 
@@ -1380,7 +1381,7 @@ void TunerLoop(void)
 		{
 			if ((timer - nBacklightTimer) >= (uint32_t)nBacklightKeep * 1000)
 			{
-				OLED_SetBackLight(0);
+				LCD_SetBackLight(0);
 				bLCDOff = true;
 			}
 		}

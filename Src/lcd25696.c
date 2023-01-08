@@ -15,6 +15,7 @@
 #include "ui.h"
 #include "oledfont.h"
 #include "lcd25696.h"
+#include "font.h"
 #include "stdint.h"
 #include "string.h"
 #ifdef STM32F405xx
@@ -29,7 +30,28 @@
 //向SSD1106写入一个字节。
 //dat:要写入的数据/命令
 //cmd:数据/命令标志 0,表示命令;1,表示数据;
-void LCD_WR_Byte(u8 dat,u8 cmd)
+#define LCD_WR_Byte LCD_HAL_WR_Byte
+static char SPI2_ReadWriteByte(uint8_t txdata)
+{
+	uint8_t rxdata=00;
+	HAL_SPI_TransmitReceive(&hspi2,&txdata,&rxdata,1,3);
+	return rxdata;
+}
+void LCD_HAL_WR_Byte(u8 dat,u8 cmd)
+{	
+	u8 i;			  
+	if(cmd)
+	  OLED_DC_Set();
+	else 
+	  OLED_DC_Clr();		  
+	OLED_CS_Clr();
+
+	SPI2_ReadWriteByte(dat); 
+	 
+	OLED_CS_Set();
+	OLED_DC_Set();   	  
+} 
+void LCD_SOFT_WR_Byte(u8 dat,u8 cmd)
 {	
 	u8 i;			  
 	if(cmd)
@@ -51,54 +73,44 @@ void LCD_WR_Byte(u8 dat,u8 cmd)
 	OLED_DC_Set();   	  
 } 
 
-void LCD_Set_Pos(unsigned char x, unsigned char y) 
-{ 
-	LCD_WR_Byte(0xb0+y,LCD_CMD);
-	LCD_WR_Byte(((x&0xf0)>>4)|0x10,LCD_CMD);
-	LCD_WR_Byte((x&0x0f)|0x01,LCD_CMD); 
-}  
+
+
+void LCD_XYChar(uint8_t x, uint8_t y, const char c)  // Display char at x:0-15, y:0-2
+{
+	
+	LCD_ShowChar(x,y,c);
+}
 //在指定位置显示一个字符,包括部分字符
-//x:0~127
-//y:0~63
+//x:0~255
+//y:0~95
 //mode:0,反白显示;1,正常显示				 
 //size:选择字体 16/12 
 void LCD_ShowChar(u8 x,u8 y,u8 chr)
-{      	
-	unsigned char c=0,i=0;	
-		c=chr-' ';//得到偏移后的值			
-		if(x>Max_Column-1){x=0;y=y+2;}
-		if(SIZE ==16)
-			{
-			LCD_Set_Pos(x,y);	
-			for(i=0;i<8;i++)
-			LCD_WR_Byte(F8X16[c*16+i],LCD_DATA);
-			LCD_Set_Pos(x,y+1);
-			for(i=0;i<8;i++)
-			LCD_WR_Byte(F8X16[c*16+i+8],LCD_DATA);
-			}
-			else {	
-				LCD_Set_Pos(x,y+1);
-				for(i=0;i<6;i++)
-				LCD_WR_Byte(F6x8[c][i],LCD_DATA);
-				
-			}
+{ 
+	int ry = (Font32.Height)*y;
+	int rx = x * Font32.Width;
+  uint8_t page = (ry / 8)+1;	
+	DispChar(page,rx,chr,&Font32);
+}
+void LCD_XYStr(uint8_t x, uint8_t y, const char *str)  // Display string at x:0-15, y:0-1
+{
+
+	LCD_ShowString(x,y,(u8*)str);
 }
 //显示一个字符号串
 void LCD_ShowString(u8 x,u8 y,u8 *chr)
 {
 	unsigned char j=0;
 	while (chr[j]!='\0')
-	{		LCD_ShowChar(x,y,chr[j]);
-			x+=8;
-		if(x>120){x=0;y+=2;}
-			j++;
+	{		
+		LCD_ShowChar(x,y,chr[j]);
+		x++;
+		if(x>15){
+			x=0;
+			y++;
+		}
+		j++;
 	}
-}
-void LCD_XYStr(uint8_t x, uint8_t y, const char *str)  // Display string at x:0-15, y:0-1
-{
-	int ry = 3+ 3*y;
-	int rx = x * 8;
-	LCD_ShowString(rx,ry,(u8*)str);
 }
 void LCD_FullStr(const char *str)  // Display string to full(2x16 chars) LCD, fill with blank if string is less than 32 chars
 {
@@ -109,7 +121,7 @@ void LCD_FullStr(const char *str)  // Display string to full(2x16 chars) LCD, fi
 
 	p = str;
 	bInStr = 1;
-	for (y = 0; y <= 1; y++)
+	for (y = 0; y <= 2; y++)
 	{
 		for (x = 0; x <= 15; x++)
 		{
@@ -206,25 +218,22 @@ void LCD_XYUIntLenZP(uint8_t x, uint8_t y, uint32_t n, uint8_t nLen)
 	while (i >= 0)
 		LCD_XYChar(x + i--, y, '0');
 }
-void LCD_XYChar(uint8_t x, uint8_t y, const char c)  // Display char at x:0-15, y:0-1
-{
-	int ry = 3+ 3*y;
-	int rx = x * 8;
-	
-	//LCD_XY(rx, ry);
-	LCD_ShowChar(rx,ry,c);
+void LCD_Clear(void) {
+	LCD_Clear0();
+	LCD_Clear1();
+	LCD_Clear2();
 }
 
-void LCD_ClearT(void) {
-	LCD_ShowString(0,0, (u8*)"                ");
-}
-void LCD_Clear0(void)
-{
-	LCD_XYStr(0, 0, "                ");  // Clear LCD's 1nd row
+void LCD_Clear0(void) {
+	LCD_XYStr(0, 0, "                ");
 }
 void LCD_Clear1(void)
 {
-	LCD_XYStr(0, 1, "                ");  // Clear LCD's 2nd row
+	LCD_XYStr(0, 1, "                ");  // Clear LCD's 1nd row
+}
+void LCD_Clear2(void)
+{
+	LCD_XYStr(0, 2, "                ");  // Clear LCD's 2nd row
 }
 
 /****************************************************************/
@@ -242,133 +251,47 @@ void lcd_delay(uint16_t time)
 /****************************************************************/
 
 
-/**
- * @brief  дָ��
- * @param  cmd ָ��
- */
+
 void transfer_command(uint8_t cmd)
-{
-	char i;
-	CS_PIN_LOW();
-	DC_PIN_LOW();
-	for(i=0;i<8;i++)
-	{
-		SCK_PIN_LOW();
-		if(cmd&0x80) { 
-			SDA_PIN_HIGH();
-		}
-		else {
-			SDA_PIN_LOW();
-		}
-		SCK_PIN_HIGH();
-//    delay_us(1);
-		cmd=cmd<<=1;
-	}
-	CS_PIN_HIGH();
-}
-void transfer_command1(uint8_t cmd)
 {
 	CS_PIN_LOW();
 	DC_PIN_LOW();
 	//while(RESET == spi_i2s_flag_get(SPI1, SPI_FLAG_TBE));
 	//spi_i2s_data_transmit(SPI1, cmd);
-	HAL_SPI_Transmit(&hspi1,&cmd, 1, 1000);
+	HAL_SPI_Transmit(&hspi2,&cmd, 1, 1000);
 	lcd_delay(1);
 	CS_PIN_HIGH();
 }
 
 
-/**
- * @brief  д����
- * @param  data ����
- */
 void transfer_data(uint8_t data)
-{
-	char i;
-	CS_PIN_LOW();
-	DC_PIN_HIGH();
-	for(i=0;i<8;i++)
-	{
-		SCK_PIN_LOW();
-		if(data&0x80) SDA_PIN_HIGH();
-		else SDA_PIN_LOW();
-		SCK_PIN_HIGH();
-//        delay_us(1);
-		data=data<<=1;
-	}
-	CS_PIN_HIGH();
-}
-
-void transfer_data1(uint8_t data)
 {
 	CS_PIN_LOW();
 	DC_PIN_HIGH();
 	//while(RESET == spi_i2s_flag_get(SPI1, SPI_FLAG_TBE));
 	//spi_i2s_data_transmit(SPI1, data);
-	HAL_SPI_Transmit(&hspi1,&data, 1, 1000);
+	HAL_SPI_Transmit(&hspi2,&data, 1, 1000);
 	lcd_delay(1);
 	CS_PIN_HIGH();
 }
 
 
-/**
- * @brief  д�������
- * @param  data ����ָ��
- * @param  length ���ݳ���
- */
+
+
 void transfer_muilt_data(uint8_t * data, uint16_t length)
 {
 	uint16_t i = 0;
-	uint16_t v = 0;
 	CS_PIN_LOW();
 	DC_PIN_HIGH();
 	for(i = 0;i<length;i++)
 	{
 		//while(RESET == spi_i2s_flag_get(SPI1, SPI_FLAG_TBE));
 		//spi_i2s_data_transmit(SPI1, data[i]);
-		HAL_SPI_Transmit(&hspi1,&data[i], 1, 1000);
-			for(v=0;v<8;v++)
-		{
-			SCK_PIN_LOW();
-			if(data[v]&0x80) SDA_PIN_HIGH();
-			else SDA_PIN_LOW();
-			SCK_PIN_HIGH();
-	//        delay_us(1);
-			data[v]=data[v]<<=1;
-		}
+		HAL_SPI_Transmit(&hspi2,&data[i], 1, 1000);
 	}
 	lcd_delay(2);
 	CS_PIN_HIGH();
 	
-}
-
-void transfer_muilt_data1(uint8_t * data, uint16_t length)
-{
-	uint16_t i = 0;
-	CS_PIN_LOW();
-	DC_PIN_HIGH();
-	for(i = 0;i<length;i++)
-	{
-		//while(RESET == spi_i2s_flag_get(SPI1, SPI_FLAG_TBE));
-		//spi_i2s_data_transmit(SPI1, data[i]);
-		HAL_SPI_Transmit(&hspi1,&data[i], 1, 1000);
-	}
-	lcd_delay(2);
-	CS_PIN_HIGH();
-	
-}
-/**
- * @brief  ����LCD�Դ�ָ��
- * @param  page ҳ��[1-8]
- * @param  column ����[1-192]
- */
-void lcd_address_old(uint8_t page,uint8_t column)
-{
-	column=column-1; //��1�У���LCD����IC���ǵ�0�У������������ȥ1
-	page=page-1;		 //��1ҳ����LCD����IC���ǵ�0ҳ�������������ȥ1
-	transfer_command(0xB0+page); //����ҳ��ַ��ÿҳ��8�С�һ�������64�б��ֳ�8��ҳ
-	transfer_command(((column>>4)&0x0f)+0x10); //�����е�ַ�ĸ�4λ
-	transfer_command(column&0x0f); 						 //�����е�ַ�ĵ�4λ
 }
 
 
@@ -400,115 +323,9 @@ void clear_screen()
 	{
 		for(j=0;j<256;j++)
 		{
-			transfer_data(0xff);
+			transfer_data(0x00);
 		}
 	}
-}
-
-
-
-/****��ָ�����Ѷ�ֿ�IC***/
-void send_command_to_ROM( uchar datu )
-{
-	 
-}
-
-/****�Ӿ���Ѷ�ֿ�IC��ȡ���ֻ��ַ����ݣ�1���ֽڣ�***/
-static uchar get_data_from_ROM( )
-{
-	 
-}
-
-//��ָ����ַ��������д��Һ����ָ����page,column)������
-void get_and_write_16x16(ulong fontaddr,uchar column,uchar page,uchar reverse)
-{
-	 
-}
-
-//��ָ����ַ��������д��Һ����ָ����page,column)������
-void get_and_write_8x16(ulong fontaddr,uchar column,uchar page,uchar reverse)
-{
- 
-}
-
-//��ָ����ַ��������д��Һ����ָ����page,column)������
-void get_and_write_5x7(ulong fontaddr,uchar column,uchar page,uchar reverse)
-{
-	 
-}
-
-//****************************************************************
-
-ulong  fontaddr=0;
-void display_GB2312_string(uchar column,uchar page,uchar reverse,uchar *text)
-{
-	uchar i= 0;			
-	while((text[i]>0x00))
-	{
-		if(((text[i]>=0xb0) &&(text[i]<=0xf7))&&(text[i+1]>=0xa1))
-		{						
-			//������壨GB2312�������ھ���Ѷ�ֿ�IC�еĵ�ַ�����¹�ʽ�����㣺
-			//Address = ((MSB - 0xB0) * 94 + (LSB - 0xA1)+ 846)*32+ BaseAdd;BaseAdd=0
-			//���ڵ���8λ��Ƭ���г˷�������⣬���Է�����ȡ��ַ
-			fontaddr = (text[i]- 0xb0)*94; 
-			fontaddr += (text[i+1]-0xa1)+846;
-			fontaddr = (ulong)(fontaddr*32);
-
-			get_and_write_16x16(fontaddr,column,page,reverse);	 //��ָ����ַ��������д��Һ����ָ����page,column)������
-			i+=2;
-			column+=16;			
-		}
-
-		else if(((text[i]>=0xa1) &&(text[i]<=0xa3))&&(text[i+1]>=0xa1))
-		{						
-			//������壨GB2312��15x16����ַ��ھ���Ѷ�ֿ�IC�еĵ�ַ�����¹�ʽ�����㣺
-			//Address = ((MSB - 0xa1) * 94 + (LSB - 0xA1))*32+ BaseAdd;BaseAdd=0
-			//���ڵ���8λ��Ƭ���г˷�������⣬���Է�����ȡ��ַ
-			fontaddr = (text[i]- 0xa1)*94; 
-			fontaddr += (text[i+1]-0xa1);
-			fontaddr = (ulong)(fontaddr*32);
-	
-			get_and_write_16x16(fontaddr,column,page,reverse);	 //��ָ����ַ��������д��Һ����ָ����page,column)������
-			i+=2;
-			column+=16;
-			if(column>256)
-			{
-			  page=page+2;
-			}
-		}			
-		else if((text[i]>=0x20) &&(text[i]<=0x7e))	
-		{									
-			fontaddr = (text[i]- 0x20);
-			fontaddr = (unsigned long)(fontaddr*16);
-			fontaddr = (unsigned long)(fontaddr+0x3cf80);			
-
-			get_and_write_8x16(fontaddr,column,page,reverse);	 //��ָ����ַ��������д��Һ����ָ����page,column)������
-			i+=1;
-			column+=8;
-		}
-		else
-			i++;
-	}		
-}
-
-void display_string_5x7(uchar column,uchar page,uchar reverse,uchar *text)
-{
-	unsigned char i= 0;
-	while((text[i]>0x00))
-	{	
-		if((text[i]>=0x20) &&(text[i]<=0x7e))	
-		{						
-			fontaddr = (text[i]- 0x20);
-			fontaddr = (unsigned long)(fontaddr*8);
-			fontaddr = (unsigned long)(fontaddr+0x3bfc0);			
-			
-			get_and_write_5x7(fontaddr,column,page,reverse);/*��ʾ5x7��ASCII�ֵ�LCD�ϣ�yΪҳ��ַ��xΪ�е�ַ��fontbuf[]Ϊ����*/
-			i+=1;
-			column+=6;
-		}
-		else
-		i++;	
-	}	
 }
 
 
@@ -530,97 +347,21 @@ void DispChar(uint8_t page, uint8_t column, char ascii, sFONT* font)
 	const unsigned char* ptr;
 	if(stdch < 32 || stdch > 126)
 		stdch = '?';
-	char_offset = (stdch - ' ') * font->Height * font->Width / 8;
-	ptr = &font->table[char_offset];
+	char_offset = (stdch - 32) * ((font->Height * font->Width) / 8);
+	ptr = &(font->table[char_offset]);
 
 	for(i=0;i<(font->Height/8);i++)
 	{
 		lcd_address(column,page+i,font->Width,1);
 		for(j=0; j<font->Width; j++) {
-			transfer_data(reverse_bit(*(ptr+j)));
+			transfer_data(font->revert ? reverse_bit(*(ptr+j)) : *(ptr+j) );
 		}
 		//transfer_muilt_data((uint8_t *)ptr, font->Width);
 		ptr = ptr + font->Width;
 	}
 }
+ 
 
-
-/**
- * @brief  ��ʾASCII�ַ���
- * @param  page ҳ
- * @param  column ��
- * @param  text �ַ���
- * @param  font ����
- */
-void DispString(uint8_t page, uint8_t column, const char* text, sFONT* font)
-{
-	const char* p_text = text;
-	uint8_t x = column;
-	
-	while(*p_text != 0)
-	{
-		if(*p_text < 32 || *p_text > 126)
-			DispFill(page, x, font->Width, font->Height, 0x5A);
-		else
-			DispChar(page,x,*p_text,font);
-		x = x + font->Width;
-		if(x+font->Width > 193)  // Wrap
-		{
-			x=column;
-			page += font->Height/8;
-			if(page > 8)
-				break;
-		}
-		p_text++;
-	}
-}
-
-
-/**
- * @brief  ��ʾASCII�ַ�����һ����
- * @param  page ҳ
- * @param  column ��
- * @param  text �ַ���
- * @param  font ����
- * @param  start ��ʼ�ַ�λ��
- * @param  length ��ʾ����
- */
-void DispStringPart(uint8_t page, uint8_t column, const char* text, sFONT* font, uint16_t start, uint16_t length)
-{
-	const char* p_text = text;
-	uint8_t x = column;
-	uint16_t count = length;
-	p_text += start;
-	
-	while(*p_text != 0)
-	{
-		if(*p_text < 32 || *p_text > 126)
-			DispFill(page, x, font->Width, font->Height, 0x5A);
-		else
-			DispChar(page,x,*p_text,font);
-		
-		count--;
-		if(count == 0)
-			break;
-		
-		x = x + font->Width;
-		if(x+font->Width > 193)  // Wrap
-		{
-			x=column;
-			page += font->Height/8;
-			if(page > 8)
-				break;
-		}
-		p_text++;
-	}
-}
-
-
-void DispNumber(uint8_t page, uint8_t column, int32_t number, sFONT* font, uint8_t length)
-{
-	int32_t num = number;
-	uint8_t x = column;
-}
 
 /****************************************************************/
 
@@ -761,7 +502,7 @@ void DispPic(uint8_t page, uint8_t x, uint8_t w ,uint8_t h ,const unsigned char 
 		//dp = dp + w;
 	}
 }
-/*��ʾ256*96�����ͼ��*/
+/*��ʾ256*96�����ͼ��*/
 void disp_256x96(int x,int y,char *dp)
 {
 	int i,j;
@@ -792,6 +533,112 @@ void LCD_On(void)
 		bLCDOff = false;
 	}
 	nBacklightTimer = HAL_GetTick();
+}
+
+
+
+/****��ָ�����Ѷ�ֿ�IC***/
+void send_command_to_ROM( uchar datu )
+{
+	 
+}
+
+/****�Ӿ���Ѷ�ֿ�IC��ȡ���ֻ��ַ����ݣ�1���ֽڣ�***/
+static uchar get_data_from_ROM( )
+{
+	 
+}
+
+//��ָ����ַ��������д��Һ����ָ����page,column)������
+void get_and_write_16x16(ulong fontaddr,uchar column,uchar page,uchar reverse)
+{
+	 
+}
+
+//��ָ����ַ��������д��Һ����ָ����page,column)������
+void get_and_write_8x16(ulong fontaddr,uchar column,uchar page,uchar reverse)
+{
+ 
+}
+
+//��ָ����ַ��������д��Һ����ָ����page,column)������
+void get_and_write_5x7(ulong fontaddr,uchar column,uchar page,uchar reverse)
+{
+	 
+}
+
+//****************************************************************
+
+ulong  fontaddr=0;
+void display_GB2312_string(uchar column,uchar page,uchar reverse,uchar *text)
+{
+	uchar i= 0;			
+	while((text[i]>0x00))
+	{
+		if(((text[i]>=0xb0) &&(text[i]<=0xf7))&&(text[i+1]>=0xa1))
+		{						
+			//������壨GB2312�������ھ���Ѷ�ֿ�IC�еĵ�ַ�����¹�ʽ�����㣺
+			//Address = ((MSB - 0xB0) * 94 + (LSB - 0xA1)+ 846)*32+ BaseAdd;BaseAdd=0
+			//���ڵ���8λ��Ƭ���г˷�������⣬���Է�����ȡ��ַ
+			fontaddr = (text[i]- 0xb0)*94; 
+			fontaddr += (text[i+1]-0xa1)+846;
+			fontaddr = (ulong)(fontaddr*32);
+
+			get_and_write_16x16(fontaddr,column,page,reverse);	 //��ָ����ַ��������д��Һ����ָ����page,column)������
+			i+=2;
+			column+=16;			
+		}
+
+		else if(((text[i]>=0xa1) &&(text[i]<=0xa3))&&(text[i+1]>=0xa1))
+		{						
+			//������壨GB2312��15x16����ַ��ھ���Ѷ�ֿ�IC�еĵ�ַ�����¹�ʽ�����㣺
+			//Address = ((MSB - 0xa1) * 94 + (LSB - 0xA1))*32+ BaseAdd;BaseAdd=0
+			//���ڵ���8λ��Ƭ���г˷�������⣬���Է�����ȡ��ַ
+			fontaddr = (text[i]- 0xa1)*94; 
+			fontaddr += (text[i+1]-0xa1);
+			fontaddr = (ulong)(fontaddr*32);
+	
+			get_and_write_16x16(fontaddr,column,page,reverse);	 //��ָ����ַ��������д��Һ����ָ����page,column)������
+			i+=2;
+			column+=16;
+			if(column>256)
+			{
+			  page=page+2;
+			}
+		}			
+		else if((text[i]>=0x20) &&(text[i]<=0x7e))	
+		{									
+			fontaddr = (text[i]- 0x20);
+			fontaddr = (unsigned long)(fontaddr*16);
+			fontaddr = (unsigned long)(fontaddr+0x3cf80);			
+
+			get_and_write_8x16(fontaddr,column,page,reverse);	 //��ָ����ַ��������д��Һ����ָ����page,column)������
+			i+=1;
+			column+=8;
+		}
+		else
+			i++;
+	}		
+}
+
+void display_string_5x7(uchar column,uchar page,uchar reverse,uchar *text)
+{
+	unsigned char i= 0;
+	while((text[i]>0x00))
+	{	
+		if((text[i]>=0x20) &&(text[i]<=0x7e))	
+		{						
+			fontaddr = (text[i]- 0x20);
+			fontaddr = (unsigned long)(fontaddr*8);
+			fontaddr = (unsigned long)(fontaddr+0x3bfc0);			
+			
+			get_and_write_5x7(fontaddr,column,page,reverse);/*��ʾ5x7��ASCII�ֵ�LCD�ϣ�yΪҳ��ַ��xΪ�е�ַ��fontbuf[]Ϊ����*/
+			i+=1;
+			column+=6;
+		}
+		else
+		i++;	
+	}	
 }
 
 /**

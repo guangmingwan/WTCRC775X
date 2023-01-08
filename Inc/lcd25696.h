@@ -21,21 +21,9 @@
 #define Max_Column	128
 #define Max_Row		64
 #define	Brightness	0xFF 
-#define X_WIDTH 	128
-#define Y_WIDTH 	64	 
-
-#define OLED_Init LCD_Init
-#define OLED_Clear0 LCD_Clear0
-#define OLED_Clear1 LCD_Clear1
-#define OLED_SetBackLight LCD_SetBackLight
-#define OLED_XYChar LCD_XYChar
-#define OLED_XYIntLen LCD_XYIntLen
-#define OLED_XYStr LCD_XYStr
-#define OLED_XYUIntLenZP LCD_XYUIntLenZP
-#define OLED_FullStr LCD_FullStr
-#define OLED_XYStrLen LCD_XYStrLen
-#define OLED_Clear clear_screen
-#define OLED_ShowString LCD_ShowString
+#define X_WIDTH 	256
+#define Y_WIDTH 	96	 
+ 
 
 #define CS_PIN_LOW() 	HAL_GPIO_WritePin(OLED_CS_GPIO_Port,OLED_CS_Pin, GPIO_PIN_RESET)
 #define CS_PIN_HIGH() 	HAL_GPIO_WritePin(OLED_CS_GPIO_Port,OLED_CS_Pin, GPIO_PIN_SET)
@@ -86,15 +74,15 @@ void LCD_XYIntLen(uint8_t x, uint8_t y, int32_t n, uint8_t nLen);
 void LCD_XYUIntLenZP(uint8_t x, uint8_t y, uint32_t n, uint8_t nLen);
 
 void LCD_Clear(void);
-void LCD_ClearT(void);
 void LCD_Clear0(void);
 void LCD_Clear1(void);
+void LCD_Clear2(void);
 void LCD_DrawPoint(u8 x,u8 y,u8 t);
 void LCD_Fill(u8 x1,u8 y1,u8 x2,u8 y2,u8 dot);
 void LCD_ShowChar(u8 x,u8 y,u8 chr);
 void LCD_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size);
 void LCD_ShowString(u8 x,u8 y, u8 *p);	 
-void LCD_Set_Pos(unsigned char x, unsigned char y);
+
 void LCD_ShowCHinese(u8 x,u8 y,u8 no);
 void LCD_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned char y1,unsigned char BMP[]);
 void LCD_SetBackLight(uint8_t Data);
@@ -106,8 +94,7 @@ void LCD_Init(void);
 void DispFill(uint8_t page ,uint8_t column ,uint8_t x ,uint8_t y ,uint8_t color);
 void DispPic(uint8_t page, uint8_t column, uint8_t x ,uint8_t y ,const unsigned char *dp);
 void DispChar(uint8_t page, uint8_t column, char ascii, sFONT* font);
-void DispString(uint8_t page, uint8_t column, const char* text, sFONT* font);
-void DispStringPart(uint8_t page, uint8_t column, const char* text, sFONT* font, uint16_t start, uint16_t length);
+ 
 
 void DispBacklight(uint8_t lumi);
 void DispContrast(uint8_t contrast);
@@ -115,6 +102,9 @@ void DispBias(uint8_t bias);
 void DispFrame(uint8_t fps);
 void DispInverse(bool inv);
 void DispPower(uint8_t mode);
+unsigned int reverse_bit(unsigned char n);
+void disp_256x96(int x,int y,char *dp);
+void lcd_address_old(uint8_t page,uint8_t column);
 unsigned int reverse_bit(unsigned char n);
 /****************************************************************/
 

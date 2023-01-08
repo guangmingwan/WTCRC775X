@@ -49,6 +49,7 @@
 #include "font.h"
 #ifdef LCD25696
 #include "lcd25696.h"
+#include "chinese_code.h"
 #else
 #include "oled.h"
 #endif
@@ -136,26 +137,26 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	
 		
-	OLED_Init();
-  OLED_Clear();//OLED清屏
+	LCD_Init();
+  clear_screen();//OLED清屏
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 		
-	//OLED_Clear();//OLED清屏 
-	/*
-	OLED_ShowCHinese(8,0,0);//显示中文(网)
+	//clear_screen();//OLED清屏 
+	
+	/*OLED_ShowCHinese(8,0,0);//显示中文(网)
 	OLED_ShowCHinese(26,0,1);//显示中文(光)
 	OLED_ShowCHinese(44,0,2);//显示中文(子)
 	OLED_ShowCHinese(62,0,3);//显示中文(物)
 	OLED_ShowCHinese(80,0,4);//显示中文(联)
 	OLED_ShowCHinese(98,0,5);//显示中文(网)
 	*/
-	OLED_ShowString(6,0,(u8 *)"SAF7751HV/20X");//显示字符
-	OLED_ShowString(6,3,(u8 *)"Initializing");
-	//OLED_ShowString(0,6,(u8 *)"FM");//显示字符  
-	//OLED_ShowString(83,6,(u8 *)"101.7");//显示字符 
+
+	LCD_ShowString(2,2,(u8 *)"Initializing");
+	//LCD_ShowString(0,6,(u8 *)"FM");//显示字符  
+	//LCD_ShowString(83,6,(u8 *)"101.7");//显示字符 
 	HAL_Delay(500);
 	TunerInit();
 	//TuneFreq(101700);//fm 101.7
@@ -163,6 +164,7 @@ int main(void)
 		
   while (1)
   {
+		//disp_256x96(1,1,bmp1);
 		TunerLoop();
     /* USER CODE END WHILE */
 
