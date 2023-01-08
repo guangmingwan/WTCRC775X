@@ -1,7 +1,10 @@
 #ifndef _I2C_H
 #define _I2C_H
-
+#ifdef STM32F405xx
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 #include "main.h"
 #include <stdbool.h>
 

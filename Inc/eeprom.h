@@ -1,7 +1,11 @@
 #ifndef _EEPROM_H
 #define _EEPROM_H
 
+#ifdef STM32F405xx
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 
 #define EEPROM_ADDR 0xA0
 #define EEPROM_PAGESIZE 16

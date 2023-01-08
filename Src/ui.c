@@ -6,8 +6,11 @@
 #include "soft_i2c.h"
 #include "nv_memory.h"
 #include <math.h>
+#ifdef LCD25696
+#include "lcd25696.h"
+#else
 #include "oled.h"
-
+#endif
 
 uint8_t nDelayedSmooth;
 

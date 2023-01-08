@@ -48,7 +48,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f1xx_hal.h"
+#include "stm32f4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -96,8 +96,8 @@ void Error_Handler(void);
 #define LED_1_GPIO_Port GPIOC
 #define D3_CS_Pin GPIO_PIN_0
 #define D3_CS_GPIO_Port GPIOB
-#define D3BUSY_READ_Pin GPIO_PIN_1
-#define D3BUSY_READ_GPIO_Port GPIOB
+#define OLED_BL_Pin GPIO_PIN_1
+#define OLED_BL_GPIO_Port GPIOB
 #define EN_Pin GPIO_PIN_10
 #define EN_GPIO_Port GPIOB
 #define RS_Pin GPIO_PIN_11

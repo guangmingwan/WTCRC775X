@@ -1,7 +1,11 @@
 #include "tuner.h"
 #include "global.h"
 #include "ui.h"
+#ifdef LCD25696
+#include "lcd25696.h"
+#else
 #include "oled.h"
+#endif
 #include "soft_i2c.h"
 #include "nv_memory.h"
 

@@ -63,7 +63,7 @@ const uint8_t NVM_INIT[] =
 void NVMInitStation(void)
 {
 	printf("NVMInitStations: %4X",eeprom_read_word(NVMADDR_SIGSTATION));
-	LCDXYStr(0, 1, "Init Station ...");
+	LCD_XYStr(0, 1, "Init Station ...");
 	eeprom_erase_full_chip();
 	NV_write_word(NVMADDR_SIGSTATION, NVMSIGSTATION);
 }
@@ -71,7 +71,7 @@ void NVMInitStation(void)
 void NVMInitSetting(void)
 {
 	printf("NVMInitSettings: %4X",eeprom_read_word(NVMADDR_SIG));
-	LCDXYStr(0, 1, "Init Setting ...");
+	LCD_XYStr(0, 1, "Init Setting ...");
 	NVMUnpkWrData(NVM_INIT);  // Initialize NV memory
 }
 
@@ -80,7 +80,7 @@ void NVMGetArgs(void)
 	uint8_t u8, i;
 	uint16_t u16;
 
-	if (eeprom_read_word(NVMADDR_SIGSTATION) != NVMSIGSTATION)
+	if (eeprom_read_word(NVMADDR_SIGSTATION) != NVMSIGSTATION )
 		NVMInitStation();
 
 	if (eeprom_read_word(NVMADDR_SIG) != NVMSIG)

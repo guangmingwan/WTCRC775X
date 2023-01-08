@@ -1,4 +1,8 @@
+#ifdef STM32F405xx
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 #include "global.h"
 #include <stdbool.h>
 
@@ -208,7 +212,7 @@ void LCDOn(void);
 void LCDInit(void);
 void LCDXY(uint8_t x, uint8_t y);
 void LCDXYChar(uint8_t x, uint8_t y, const char c);
-void LCDXYStr(uint8_t x, uint8_t y, const char *str);
+void LCD_XYStr(uint8_t x, uint8_t y, const char *str);
 void LCDFullStr(const char *str);
 void LCDXYStrLen(uint8_t x, uint8_t y, const char *str, uint8_t nLen, uint8_t bLeftAlign);
 void LCDXYIntLen(uint8_t x, uint8_t y, int32_t n, uint8_t nLen);
