@@ -1969,17 +1969,17 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 
 	for (;;)
 	{
-		LCD_Clear1();
+		LCD_Clear2();
 		if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
 		{
 			textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
-			LCD_Clear1();
-			LCD_XYStrLen(8 - textlen / 2, 1, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
+			LCD_Clear2();
+			LCD_XYStrLen(8 - textlen / 2, 2, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
 		}
 		else
 		{
 			for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
-				LCD_XYStrLen(1 + i8 * 5, 1, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
+				LCD_XYStrLen(1 + i8 * 5, 2, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
 		}
 
 		// Display special indicator char for selected item
@@ -2049,7 +2049,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 		{
 			nHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
 			if (nHit <= 2)
-				LCD_XYChar(nHit * 5, 1, CHAR_SEL);
+				LCD_XYChar(nHit * 5, 2, CHAR_SEL);
 		}
 
 
@@ -2320,6 +2320,6 @@ void Menu(uint8_t nMenuID)
 {
 	bExitMenu = 0;
 	ProcMenuItem(nMenuID);
-	LCD_Clear1();
+	LCD_Clear2();
 	LCDUpdate();
 }
