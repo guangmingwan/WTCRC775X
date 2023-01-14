@@ -3,58 +3,432 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: ¦ÌVision V5.38.0.0
-Copyright (C) 2022 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: wan abc, ty, LIC=WHYH9-4YRD9-AR4XW-QVWZG-YHSE0-QL8NU
+IDE-Version: ¦ÌVision V5.33.0.0
+Copyright (C) 2020 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: wan Administrator, x10, LIC=----
  
 Tool Versions:
-Toolchain:       MDK-ARM Plus  Version: 5.38.0.0
+Toolchain:       MDK-Lite  Version: 5.33.0.0
 Toolchain Path:  D:\Keil_v5\ARM\ARMCLANG\Bin
-C Compiler:      ArmClang.exe V6.19
-Assembler:       Armasm.exe V6.19
-Linker/Locator:  ArmLink.exe V6.19
-Library Manager: ArmAr.exe V6.19
-Hex Converter:   FromElf.exe V6.19
-CPU DLL:         SARMCM3.DLL V5.38.0.0
-Dialog DLL:      DCM.DLL V1.17.5.0
-Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.1.0.0
-Dialog DLL:      TCM.DLL V1.56.4.0
+C Compiler:      ArmClang.exe V6.15
+Assembler:       Armasm.exe V6.15
+Linker/Locator:  ArmLink.exe V6.15
+Library Manager: ArmAr.exe V6.15
+Hex Converter:   FromElf.exe V6.15
+CPU DLL:         SARMCM3.DLL V5.33.0.0
+Dialog DLL:      DCM.DLL V1.17.3.0
+Target DLL:      UL2CM3.DLL V1.163.9.0
+Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
-D:\myprojects\WTCRC775X\MDK-ARM\wtcrc103rgt6.uvprojx
-Project File Date:  01/07/2023
+E:\myprojects\WTCRC775X\MDK-ARM\wtcrc405rgt6.uvprojx
+Project File Date:  01/14/2023
 
 <h2>Output:</h2>
-*** Using Compiler 'V6.19', folder: 'D:\Keil_v5\ARM\ARMCLANG\Bin'
-Build target 'wtcrc103rgt6'
+*** Using Compiler 'V6.15', folder: 'D:\Keil_v5\ARM\ARMCLANG\Bin'
+Build target 'wtcrc405rgt6'
+compiling font8.c...
+compiling eeprom.c...
+../Src/lcd.c(40): warning: implicit declaration of function 'LCDXYStr' is invalid in C99 [-Wimplicit-function-declaration]
+        LCDXYStr(0, 1, "                ");  // Clear LCD's 2nd row
+        ^
+../Src/lcd.c(84): error: conflicting types for 'LCDXYStr'
+void LCDXYStr(uint8_t x, uint8_t y, const char *str)  // Display string at x:0-15, y:0-1
+     ^
+../Src/lcd.c(40): note: previous implicit declaration is here
+        LCDXYStr(0, 1, "                ");  // Clear LCD's 2nd row
+        ^
+1 warning and 1 error generated.
+compiling lcd.c...
+compiling nv_memory.c...
+../Src/oled.c(42): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                OLED_SCLK_Clr();
+                ^~~~~~~~~~~~~~~
+../Inc\oled.h(39): note: expanded from macro 'OLED_SCLK_Clr'
+#define OLED_SCLK_Clr() HAL_GPIO_WritePin(OLED_SCLK_GPIO_Port, OLED_SCLK_Pin, RESET)//CLK 
+                        ~~~~~~~~~~~~~~~~~                                     ^~~~~
+../Src/oled.c(44): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                   OLED_SDIN_Set();
+                   ^~~~~~~~~~~~~~~
+../Inc\oled.h(43): note: expanded from macro 'OLED_SDIN_Set'
+#define OLED_SDIN_Set() HAL_GPIO_WritePin(OLED_SDIN_GPIO_Port, OLED_SDIN_Pin, SET)
+                        ~~~~~~~~~~~~~~~~~                                     ^~~
+../Src/oled.c(46): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                   OLED_SDIN_Clr();
+                   ^~~~~~~~~~~~~~~
+../Inc\oled.h(42): note: expanded from macro 'OLED_SDIN_Clr'
+#define OLED_SDIN_Clr() HAL_GPIO_WritePin(OLED_SDIN_GPIO_Port, OLED_SDIN_Pin, RESET)//DIN
+                        ~~~~~~~~~~~~~~~~~                                     ^~~~~
+../Src/oled.c(47): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                OLED_SCLK_Set();
+                ^~~~~~~~~~~~~~~
+../Inc\oled.h(40): note: expanded from macro 'OLED_SCLK_Set'
+#define OLED_SCLK_Set() HAL_GPIO_WritePin(OLED_SCLK_GPIO_Port, OLED_SCLK_Pin, SET)
+                        ~~~~~~~~~~~~~~~~~                                     ^~~
+4 warnings generated.
+compiling oled.c...
+../Src/tuner.c(877): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYIntLen(FREQ_X, FREQ_Y, f / 1000, 3);
+                ^
+../Src/tuner.c(878): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYChar(FREQ_X + 3, FREQ_Y, '.');
+                ^
+../Src/tuner.c(879): warning: implicit declaration of function 'LCD_XYUIntLenZP' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYUIntLenZP(FREQ_X + 4, FREQ_Y, f % 1000, 3);
+                ^
+../Src/tuner.c(883): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYIntLen(FREQ_X, FREQ_Y, f, 6);
+                ^
+../Src/tuner.c(884): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYChar(FREQ_X + 6, FREQ_Y, 'K');
+                ^
+../Src/tuner.c(1188): warning: implicit declaration of function 'LCD_SetBackLight' is invalid in C99 [-Wimplicit-function-declaration]
+                                        LCD_SetBackLight(0);
+                                        ^
+../Src/tuner.c(1255): warning: implicit declaration of function 'LCD_Clear2' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear2();
+        ^
+../Src/tuner.c(1256): warning: implicit declaration of function 'LCD_ShowString' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_ShowString(2,0,(u8 *)"SAF7751HV/20X");//ÃÃ”ÃŠÂ¾Ã—Ã–Â·Ã»
+        ^
+../Src/tuner.c(1267): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear1();
+        ^
+../Src/tuner.c(1286): warning: implicit declaration of function 'LCD_SetBackLight' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_SetBackLight(nBacklightAdj);
+        ^
+../Src/tuner.c(1384): warning: implicit declaration of function 'LCD_SetBackLight' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_SetBackLight(0);
+                                ^
+11 warnings generated.
+compiling tuner.c...
+compiling font16.c...
+ArmClang: error: no such file or directory: '../Src/stm32f1xx_it.c'
+ArmClang: error: no input files
+compiling stm32f1xx_it.c...
+ArmClang: error: no such file or directory: '../Src/stm32f1xx_hal_msp.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_msp.c...
 compiling soft_i2c.c...
-linking...
-Program Size: Code=40696 RO-data=6356 RW-data=1148 ZI-data=1476  
-FromELF: creating hex file...
-"wtcrc103rgt6\wtcrc103rgt6.axf" - 0 Error(s), 0 Warning(s).
+../Src/ui.c(564): warning: implicit declaration of function 'LCD_Clear0' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear0();
+        ^
+../Src/ui.c(565): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear1();
+        ^
+../Src/ui.c(596): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYIntLen(0, 0, uLRot, 4);
+                ^
+../Src/ui.c(619): warning: implicit declaration of function 'LCD_XYUIntLenZP' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYUIntLenZP(STEP_X, STEP_Y, nBandCh[nBand], 3);
+                ^
+../Src/ui.c(627): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYIntLen(STEP_X, STEP_Y, nBandStep[nBand][nStepIdx], 3 - i8);
+                ^
+../Src/ui.c(629): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_XYChar(STEP_X + 2, STEP_Y, 'K');
+                        ^
+../Src/ui.c(637): warning: implicit declaration of function 'LCD_XYStrLen' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYStrLen(FILTER_X, FILTER_Y, p, 4, false);
+        ^
+../Src/ui.c(709): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYIntLen(RSSI_X, RSSI_Y, constrain(nRSSI_Disp, -9, 99), 2);  // Update RF signal level in dBuv
+        ^
+../Src/ui.c(710): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYChar(STEREO_X, STEREO_Y, c);                               // Update FM stereo indicator
+        ^
+../Src/ui.c(749): warning: implicit declaration of function 'LCD_XYUIntLenZP' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYUIntLenZP(ALT_X, ALT_Y, (nMinutes / 60) % 24, 2);  // Hour
+        ^
+../Src/ui.c(750): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYChar(ALT_X + 2, ALT_Y, ':');
+        ^
+../Src/ui.c(758): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYIntLen(ALT_X + 3, ALT_Y, nVolume, 2);  // Volume
+        ^
+../Src/ui.c(815): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYChar(7, 1, '2');
+                ^
+../Src/ui.c(821): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYIntLen(10, 1, i16, 3);
+                ^
+../Src/ui.c(826): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(847): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYIntLen(15, 1, nFMDynamicBW, 1);
+        ^
+../Src/ui.c(862): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(883): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYIntLen(15, 1, nAGC, 1);
+        ^
+../Src/ui.c(897): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(918): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYIntLen(15, 1, nStereo, 1);
+        ^
+../Src/ui.c(932): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(953): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYIntLen(15, 2, nNBSens, 1);
+        ^
+../Src/ui.c(967): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(992): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYIntLen(12, 1, i16, 3);
+                ^
+../Src/ui.c(993): warning: implicit declaration of function 'LCD_SetBackLight' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_SetBackLight(i16);
+                ^
+../Src/ui.c(997): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(1022): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYIntLen(13, 1, i16, 3);
+                ^
+../Src/ui.c(1027): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(1053): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYIntLen(12, 1, i16, 3);
+                ^
+../Src/ui.c(1058): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(1084): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYIntLen(11, 1, i16, 3);
+                ^
+../Src/ui.c(1089): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(1121): warning: implicit declaration of function 'LCD_XYUIntLenZP' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_XYUIntLenZP(6, 1, (nSeconds / 3600) % 24, 2);  // Hours
+                ^
+../Src/ui.c(1137): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(1187): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(1200): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_Clear1();
+                        ^
+../Src/ui.c(1217): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_XYIntLen(13, 1, dsp_query1(0x02), 3);    // FM ultrasonic noise detector
+                                ^
+../Src/ui.c(1240): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_XYChar(13, 1, '.');
+                                ^
+../Src/ui.c(1257): warning: implicit declaration of function 'LCD_XYStrLen' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_XYStrLen(12, 1, p, 4, false);
+                        ^
+../Src/ui.c(1315): warning: implicit declaration of function 'LCD_FullStr' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_FullStr("BASS:    MID    TREBLE");
+        ^
+../Src/ui.c(1316): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYIntLen(5, 0, nBass, 2);
+        ^
+../Src/ui.c(1329): warning: implicit declaration of function 'LCD_Clear0' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_Clear0();
+                                ^
+../Src/ui.c(1330): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_Clear1();
+                                ^
+../Src/ui.c(1340): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_XYChar(4, 0, ' ');
+                                ^
+../Src/ui.c(1348): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_XYChar(12, 0, ' ');
+                                ^
+../Src/ui.c(1356): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_XYChar(6, 1, ' ');
+                                ^
+../Src/ui.c(1399): warning: implicit declaration of function 'LCD_FullStr' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_FullStr("BALANCE:        FADER");
+        ^
+../Src/ui.c(1400): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_XYIntLen(9, 0, nBalance, 3);
+        ^
+../Src/ui.c(1412): warning: implicit declaration of function 'LCD_Clear0' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_Clear0();
+                                ^
+../Src/ui.c(1413): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_Clear1();
+                                ^
+../Src/ui.c(1423): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_XYChar(7, 0, ' ');
+                                ^
+../Src/ui.c(1431): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_XYChar(5, 1, ' ');
+                                ^
+../Src/ui.c(1512): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear1();
+        ^
+../Src/ui.c(1584): warning: implicit declaration of function 'LCD_XYUIntLenZP' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_XYUIntLenZP(2, 1, nBandCh[nBand], 3);
+                        ^
+../Src/ui.c(1585): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_XYIntLen(6, 1, u32, 6);
+                        ^
+../Src/ui.c(1638): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear1();
+        ^
+../Src/ui.c(1690): warning: implicit declaration of function 'LCD_FullStr' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_FullStr(("TURN ENCODERS TOSHOW HELP INFO"));
+        ^
+../Src/ui.c(1730): warning: implicit declaration of function 'LCD_Clear0' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear0();
+        ^
+../Src/ui.c(1731): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear1();
+        ^
+../Src/ui.c(1792): warning: implicit declaration of function 'LCD_FullStr' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_FullStr(("SINE-           STEP       VOL"));
+        ^
+../Src/ui.c(1800): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_XYChar(5, 0, '1' + nSine);
+                        ^
+../Src/ui.c(1801): warning: implicit declaration of function 'LCD_XYIntLen' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_XYIntLen(7, 0, nFreq[nSine], 5);
+                        ^
+../Src/ui.c(1900): warning: implicit declaration of function 'LCD_Clear0' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear0();
+        ^
+../Src/ui.c(1901): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear1();
+        ^
+../Src/ui.c(1972): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+                LCD_Clear1();
+                ^
+../Src/ui.c(1977): warning: implicit declaration of function 'LCD_XYStrLen' is invalid in C99 [-Wimplicit-function-declaration]
+                        LCD_XYStrLen(8 - textlen / 2, 1, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
+                        ^
+../Src/ui.c(1982): warning: implicit declaration of function 'LCD_XYStrLen' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_XYStrLen(1 + i8 * 5, 1, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
+                                ^
+../Src/ui.c(2052): warning: implicit declaration of function 'LCD_XYChar' is invalid in C99 [-Wimplicit-function-declaration]
+                                LCD_XYChar(nHit * 5, 1, CHAR_SEL);
+                                ^
+../Src/ui.c(2323): warning: implicit declaration of function 'LCD_Clear1' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Clear1();
+        ^
+69 warnings generated.
+compiling ui.c...
+../Src/main.c(140): warning: implicit declaration of function 'LCD_Init' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_Init();
+        ^
+../Src/main.c(141): warning: implicit declaration of function 'clear_screen' is invalid in C99 [-Wimplicit-function-declaration]
+  clear_screen();//OLED<C7><E5><C6><C1>
+  ^
+../Src/main.c(157): warning: implicit declaration of function 'LCD_ShowString' is invalid in C99 [-Wimplicit-function-declaration]
+        LCD_ShowString(2,2,(u8 *)"Initializing");
+        ^
+3 warnings generated.
+compiling main.c...
+compiling gpio.c...
+compiling usart.c...
+compiling stm32f4xx_it.c...
+compiling spi.c...
+compiling tim.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_spi.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_gpio_ex.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_rcc_ex.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_gpio.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_rcc.c...
+compiling stm32f4xx_hal_msp.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_dma.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_cortex.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_flash.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_pwr.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_flash_ex.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_exti.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_tim.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_tim_ex.c...
+ArmClang: error: no such file or directory: '../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c'
+ArmClang: error: no input files
+compiling stm32f1xx_hal_uart.c...
+../Src/system_stm32f1xx.c(59): error: 'stm32f1xx.h' file not found
+#include "stm32f1xx.h"
+         ^~~~~~~~~~~~~
+1 error generated.
+compiling system_stm32f1xx.c...
+compiling system_stm32f4xx.c...
+compiling stm32f4xx_hal_rcc_ex.c...
+compiling stm32f4xx_hal_rcc.c...
+compiling stm32f4xx_hal_flash.c...
+compiling stm32f4xx_hal_flash_ex.c...
+compiling stm32f4xx_hal_flash_ramfunc.c...
+compiling stm32f4xx_hal_spi.c...
+compiling stm32f4xx_hal_gpio.c...
+compiling stm32f4xx_hal_dma_ex.c...
+compiling stm32f4xx_hal_pwr_ex.c...
+compiling stm32f4xx_hal_pwr.c...
+compiling stm32f4xx_hal_dma.c...
+compiling stm32f4xx_hal_cortex.c...
+compiling stm32f4xx_hal_exti.c...
+compiling stm32f4xx_hal.c...
+compiling stm32f4xx_hal_tim_ex.c...
+compiling stm32f4xx_hal_uart.c...
+compiling stm32f4xx_hal_tim.c...
+"wtcrc103rgt6\wtcrc103rgt6.axf" - 36 Error(s), 88 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.5.9.0.pack
-                ARM.CMSIS.5.9.0
-                CMSIS (Common Microcontroller Software Interface Standard)
-   * Component: CORE Version: 5.6.0
+                http://www.keil.com/pack/ARM.CMSIS.5.7.0.pack
+                ARM.CMSIS.5.7.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.4.0
 
 Package Vendor: Keil
-                http://www.keil.com/pack/Keil.STM32F1xx_DFP.2.4.0.pack
-                Keil.STM32F1xx_DFP.2.4.0
-                STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
+                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.15.0.pack
+                Keil.STM32F4xx_DFP.2.15.0
+                STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
 
 <h2>Collection of Component include folders:</h2>
-  ./RTE/_wtcrc103rgt6
-  D:/Keil_v5/ARM/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include
-  D:/Keil_v5/ARM/Packs/Keil/STM32F1xx_DFP/2.4.0/Device/Include
+  .\RTE\_wtcrc405rgt6
+  D:\Keil_v5\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include
+  D:\Keil_v5\Arm\Packs\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
-   * Component: ARM::CMSIS:CORE:5.6.0
-Build Time Elapsed:  00:00:01
+   * Component: ARM::CMSIS:CORE:5.4.0
+Target not created.
+Build Time Elapsed:  00:00:10
 </pre>
 </body>
 </html>
