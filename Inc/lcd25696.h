@@ -106,6 +106,7 @@ unsigned int reverse_bit(unsigned char n);
 void disp_256x96(int x,int y,char *dp);
 void lcd_address_old(uint8_t page,uint8_t column);
 unsigned int reverse_bit(unsigned char n);
+void LCDOn(void);
 /****************************************************************/
 
 #endif

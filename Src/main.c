@@ -137,26 +137,24 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	
 		
-	LCD_Init();
-  clear_screen();//OLEDгЕфа
+	OLED_Init();
+  clear_screen();//OLEDО©╫О©╫О©╫О©╫
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 		
-	//clear_screen();//OLEDгЕфа 
+	//clear_screen();//OLEDО©╫О©╫О©╫О©╫ 
 	
-	/*OLED_ShowCHinese(8,0,0);//отй╬жпнд(мЬ)
-	OLED_ShowCHinese(26,0,1);//отй╬жпнд(╧Б)
-	OLED_ShowCHinese(44,0,2);//отй╬жпнд(вс)
-	OLED_ShowCHinese(62,0,3);//отй╬жпнд(нО)
-	OLED_ShowCHinese(80,0,4);//отй╬жпнд(а╙)
-	OLED_ShowCHinese(98,0,5);//отй╬жпнд(мЬ)
+	/*OLED_ShowCHinese(8,0,0);//О©╫О©╫й╬О©╫О©╫О©╫О©╫(О©╫О©╫)
+	OLED_ShowCHinese(26,0,1);//О©╫О©╫й╬О©╫О©╫О©╫О©╫(О©╫О©╫)
+	OLED_ShowCHinese(44,0,2);//О©╫О©╫й╬О©╫О©╫О©╫О©╫(О©╫О©╫)
+	OLED_ShowCHinese(62,0,3);//О©╫О©╫й╬О©╫О©╫О©╫О©╫(О©╫О©╫)
+	OLED_ShowCHinese(80,0,4);//О©╫О©╫й╬О©╫О©╫О©╫О©╫(О©╫О©╫)
+	OLED_ShowCHinese(98,0,5);//О©╫О©╫й╬О©╫О©╫О©╫О©╫(О©╫О©╫)
 	*/
 
-	LCD_ShowString(2,2,(u8 *)"Initializing");
-	//LCD_ShowString(0,6,(u8 *)"FM");//отй╬вж╥Ш  
-	//LCD_ShowString(83,6,(u8 *)"101.7");//отй╬вж╥Ш 
+	OLED_XYStr(2,2,(u8 *)"Initializing");
 	HAL_Delay(500);
 	TunerInit();
 	//TuneFreq(101700);//fm 101.7

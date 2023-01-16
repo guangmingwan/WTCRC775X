@@ -874,14 +874,14 @@ void TuneFreqDisp(void)
 
 	if (nBand >= BAND_FL)
 	{
-		LCD_XYIntLen(FREQ_X, FREQ_Y, f / 1000, 3);
-		LCD_XYChar(FREQ_X + 3, FREQ_Y, '.');
-		LCD_XYUIntLenZP(FREQ_X + 4, FREQ_Y, f % 1000, 3);
+		OLED_XYIntLen(FREQ_X, FREQ_Y, f / 1000, 3);
+		OLED_XYChar(FREQ_X + 3, FREQ_Y, '.');
+		OLED_XYUIntLenZP(FREQ_X + 4, FREQ_Y, f % 1000, 3);
 	}
 	else
 	{
-		LCD_XYIntLen(FREQ_X, FREQ_Y, f, 6);
-		LCD_XYChar(FREQ_X + 6, FREQ_Y, 'K');
+		OLED_XYIntLen(FREQ_X, FREQ_Y, f, 6);
+		OLED_XYChar(FREQ_X + 6, FREQ_Y, 'K');
 	}
 }
 
@@ -1150,7 +1150,7 @@ uint8_t ScanAny()
 
 	for (;;)
 	{
-		LCDOn();
+		OLED_Display_On();
 
 		if ((nKey = Seek(+1)) != false)  // Key(Other than STEP & FILTER) pressed, user abort
 			return nKey;
@@ -1185,7 +1185,7 @@ uint8_t ScanAny()
 			{
 				if ((HAL_GetTick() - nBacklightTimer) >= (uint32_t)nBacklightKeep * 1000)
 				{
-					LCD_SetBackLight(0);
+					OLED_SetBackLight(0);
 					bLCDOff = true;
 				}
 			}
@@ -1251,11 +1251,11 @@ void TunerInit(void)
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_Delay(35);
-	//LCD_Init();
-	LCD_Clear2();
-	LCD_ShowString(2,0,(u8 *)"SAF7751HV/20X");//ÏÔÊ¾×Ö·û
-	LCD_XYStr(3, 1, "WTCRC7751");
-	LCD_XYStr(3, 2, "V3 Build 3");
+	
+	OLED_Clear2();
+	OLED_XYStr(2, 0,"SAF7751HV/20X");//ÏÔÊ¾×Ö·û
+	OLED_XYStr(3, 1, "WTCRC7751");
+	OLED_XYStr(3, 2, "V3 Build 3");
 	HAL_Delay(2800);
 	NVMGetArgs();
 	if (!IsMenuVisible(MID_INCA)) //��INCA֧�ֵ��ͺ��Ͻ���INCA������R7.1�̼�������������
@@ -1264,8 +1264,8 @@ void TunerInit(void)
 	//HAL_Delay(1000);	
 	//HAL_Delay(1000);	
 	BootDirana3();
-	LCD_Clear1();
-	LCD_Clear2();
+	OLED_Clear1();
+	OLED_Clear2();
 	nLRot = 0;
 	nRRot = 0;
 	nBootMode = nMode;
@@ -1283,7 +1283,7 @@ void TunerInit(void)
 	SetBalFader();          // Set balance & fader
 	HAL_Delay(50);
 	//memset(cRadioText, 0, sizeof(cRadioText));
-	LCD_SetBackLight(nBacklightAdj);
+	OLED_SetBackLight(nBacklightAdj);
 	nBacklightTimer = HAL_GetTick();
 	LCDUpdate();
 
@@ -1381,7 +1381,7 @@ void TunerLoop(void)
 		{
 			if ((timer - nBacklightTimer) >= (uint32_t)nBacklightKeep * 1000)
 			{
-				LCD_SetBackLight(0);
+				OLED_SetBackLight(0);
 				bLCDOff = true;
 			}
 		}

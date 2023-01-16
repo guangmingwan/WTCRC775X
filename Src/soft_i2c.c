@@ -14,7 +14,7 @@ static void I2C_Delay(void)
 	uint8_t i;
 	uint8_t delay_type = 0;
 	if(delay_type ==0) {
-		HAL_Delay_us(2);
+		HAL_Delay_us(1);
 	}
 	else if(delay_type == 1) {
 		uint16_t cnt = 40;

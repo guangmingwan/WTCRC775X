@@ -4,9 +4,9 @@
 #include "oledfont.h"  	 
 //#include "delay.h"
 #include "spi.h"
-//ÏòSSD1106Ð´ÈëÒ»¸ö×Ö½Ú¡£
-//dat:ÒªÐ´ÈëµÄÊý¾Ý/ÃüÁî
-//cmd:Êý¾Ý/ÃüÁî±êÖ¾ 0,±íÊ¾ÃüÁî;1,±íÊ¾Êý¾Ý;
+//??SSD1106???h??????
+//dat:?????????/????
+//cmd:????/?????? 0,???????;1,???????;
 #define OLED_WR_Byte OLED_HAL_WR_Byte
 static char SPI2_ReadWriteByte(uint8_t txdata)
 {
@@ -83,7 +83,9 @@ void OLED_Clear(void)
 		for(n=0;n<128;n++)OLED_WR_Byte(0,OLED_DATA); 
 	} //¸üÐÂÏÔÊ¾
 }
-
+void clear_screen(void) {
+	OLED_Clear();
+}
 
 //ÔÚÖ¸¶¨Î»ÖÃÏÔÊ¾Ò»¸ö×Ö·û,°üÀ¨²¿·Ö×Ö·û
 //x:0~127
@@ -93,7 +95,7 @@ void OLED_Clear(void)
 void OLED_ShowChar(u8 x,u8 y,u8 chr)
 {      	
 	unsigned char c=0,i=0;	
-		c=chr-' ';//µÃµ½Æ«ÒÆºóµÄÖµ			
+		c=chr-' ';//?õ?t?????			
 		if(x>Max_Column-1){x=0;y=y+2;}
 		if(SIZE ==16)
 			{
@@ -111,19 +113,19 @@ void OLED_ShowChar(u8 x,u8 y,u8 chr)
 				
 			}
 }
-//m^nº¯Êý
+//m^n????
 u32 oled_pow(u8 m,u8 n)
 {
 	u32 result=1;	 
 	while(n--)result*=m;    
 	return result;
 }				  
-//ÏÔÊ¾2¸öÊý×Ö
-//x,y :Æðµã×ø±ê	 
-//len :Êý×ÖµÄÎ»Êý
-//size:×ÖÌå´óÐ¡
-//mode:Ä£Ê½	0,Ìî³äÄ£Ê½;1,µþ¼ÓÄ£Ê½
-//num:ÊýÖµ(0~4294967295);	 		  
+//???2??????
+//x,y :???????	 
+//len :????????
+//size:??????
+//mode:g?	0,???g?;1,????g?
+//num:???(0~4294967295);	 		  
 void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size)
 {         	
 	u8 t,temp;
@@ -143,7 +145,7 @@ void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size)
 	 	OLED_ShowChar(x+(size/2)*t,y,temp+'0'); 
 	}
 } 
-//ÏÔÊ¾Ò»¸ö×Ö·ûºÅ´®
+//???h??????W?
 void OLED_ShowString(u8 x,u8 y,u8 *chr)
 {
 	unsigned char j=0;
@@ -154,7 +156,7 @@ void OLED_ShowString(u8 x,u8 y,u8 *chr)
 			j++;
 	}
 }
-//ÏÔÊ¾ºº×Ö
+//???????
 void OLED_ShowCHinese(u8 x,u8 y,u8 no)
 {      			    
 	u8 t,adder=0;
@@ -171,7 +173,7 @@ void OLED_ShowCHinese(u8 x,u8 y,u8 no)
 				adder+=1;
       }					
 }
-/***********¹¦ÄÜÃèÊö£ºÏÔÊ¾ÏÔÊ¾BMPÍ¼Æ¬128¡Á64ÆðÊ¼µã×ø±ê(x,y),xµÄ·¶Î§0¡«127£¬yÎªÒ³µÄ·¶Î§0¡«7*****************/
+/***********????????????????BMP??128??64??'??????(x,y),x?k??0??127??y???k??0??7*****************/
 void OLED_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned char y1,unsigned char BMP[])
 { 	
  unsigned int j=0;
@@ -190,7 +192,7 @@ void OLED_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned 
 } 
 
 
-//³õÊ¼»¯				    
+//??'??				    
 void OLED_Init(void)
 { 	
 
@@ -211,8 +213,8 @@ void OLED_Init(void)
 	OLED_WR_Byte(0x40,OLED_CMD);//--set start line address  Set Mapping RAM Display Start Line (0x00~0x3F)
 	OLED_WR_Byte(0x81,OLED_CMD);//--set contrast control register
 	OLED_WR_Byte(0xCF,OLED_CMD); // Set SEG Output Current Brightness
-	OLED_WR_Byte(0xA1,OLED_CMD);//--Set SEG/Column Mapping     0xa0×óÓÒ·´ÖÃ 0xa1Õý³£
-	OLED_WR_Byte(0xC8,OLED_CMD);//Set COM/Row Scan Direction   0xc0ÉÏÏÂ·´ÖÃ 0xc8Õý³£
+	OLED_WR_Byte(0xA1,OLED_CMD);//--Set SEG/Column Mapping     0xa0??????? 0xa1????
+	OLED_WR_Byte(0xC8,OLED_CMD);//Set COM/Row Scan Direction   0xc0???·??? 0xc8????
 	OLED_WR_Byte(0xA6,OLED_CMD);//--set normal display
 	OLED_WR_Byte(0xA8,OLED_CMD);//--set multiplex ratio(1 to 64)
 	OLED_WR_Byte(0x3f,OLED_CMD);//--1/64 duty
@@ -242,10 +244,7 @@ void OLED_SetBackLight(uint8_t Data)
 {
 	
 }
-void OLED_XY(uint8_t x, uint8_t y)  // x:0-15, y:0-1
-{
-	 OLED_Set_Pos(x,y);
-}
+
 void OLED_Data(uint8_t Data)  // Write LCD data
 {
 	OLED_WR_Byte(Data,OLED_DATA);
@@ -261,19 +260,25 @@ void OLED_Clear1(void)
 {
 	OLED_XYStr(0, 1, "                ");  // Clear LCD's 2nd row
 }
+void OLED_Clear2(void)
+{
+	OLED_XYStr(0, 2, "                ");  // Clear LCD's 2nd row
+}
 void OLED_XYChar(uint8_t x, uint8_t y, const char c)  // Display char at x:0-15, y:0-1
 {
-	int ry = 3+ 3*y;
-	int rx = x * 8;
 	
-	//OLED_XY(rx, ry);
-	OLED_ShowChar(rx,ry,c);
+	uint8_t rx = x * 8;
+	uint8_t page = (y*16) / 8; 
+	OLED_ShowChar(rx,page,c);
 }
+
+
 void OLED_XYStr(uint8_t x, uint8_t y, const char *str)  // Display string at x:0-15, y:0-1
 {
-	int ry = 3+ 3*y;
-	int rx = x * 8;
-	OLED_ShowString(rx,ry,(u8*)str);
+	uint8_t rx = x * 8;
+	uint8_t page = (y*16) / 8; 
+	
+	OLED_ShowString(rx,page,(u8*)str);
 }
 void OLED_FullStr(const char *str)  // Display string to full(2x16 chars) LCD, fill with blank if string is less than 32 chars
 {
@@ -284,12 +289,10 @@ void OLED_FullStr(const char *str)  // Display string to full(2x16 chars) LCD, f
 
 	p = str;
 	bInStr = 1;
-	for (y = 0; y <= 1; y++)
+	for (y = 1; y <= 3; y++)
 	{
 		for (x = 0; x <= 15; x++)
 		{
-			//if (!x)
-			//	OLED_XY(0, y);
 
 			if (bInStr)
 			{
@@ -314,7 +317,6 @@ void OLED_XYStrLen(uint8_t x, uint8_t y, const char *str, uint8_t nLen, uint8_t 
 	char *p, c;
 	uint8_t i, n, pc;
 
-	//OLED_XY(x, y);
 	p = (char *)str;
 	n = nLen - strlen(str);
 	if (!bLeftAlign)
