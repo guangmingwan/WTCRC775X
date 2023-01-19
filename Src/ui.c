@@ -62,7 +62,7 @@ const char MT_FMSI[] = "FM StereoImprov";  // FM stereo improvement
 const char MT_FMCE[] = "FM ChannelEqu";  // FM channel equalizer
 const char MT_FMMP[] = "FM MultpathImprv";  // FM enhanced multipath suppression
 const char MT_FMNS[] = "FM ClickSuppresn";  // FM click noise suppression
-const char MT_INCA[] = "Imprved NoiseCalcel";  // FM AM improvec noise canceller
+const char MT_INCA[] = "Imprved NoiseCal";  // FM AM improvec noise canceller
 const char MT_FMBW[] = "FM Bandwidth";  // FM dynamic bandwidth
 const char MT_DEEM[] = "Deemphasize";  // FM de-emphasis
 const char MT_AGC[] = "AGC Threshold";   // RFAGC wideband threshold
@@ -1233,12 +1233,12 @@ void Menu_Stat(void)
 			else
 				i8 = -u8_data;
 			if (nRFMode == RFMODE_FM)
-				OLED_XYIntLen(11, 1, i8, 4);
+				OLED_XYIntLen(11, 2, i8, 4);
 			else
 			{
-				OLED_XYIntLen(10, 1, i8 / 10, 3);
-				OLED_XYChar(13, 1, '.');
-				OLED_XYIntLen(14, 1, (int32_t)fabs((float)i8) % 10, 1);
+				OLED_XYIntLen(10, 2, i8 / 10, 3);
+				OLED_XYChar(13, 2, '.');
+				OLED_XYIntLen(14, 2, (int32_t)fabs((float)i8) % 10, 1);
 			}
 			break;
 
@@ -1254,15 +1254,15 @@ void Menu_Stat(void)
 			else
 				p = M_AMFilter[u8_data].pszMTxt;
 
-			OLED_XYStrLen(12, 1, p, 4, false);
+			OLED_XYStrLen(12, 2, p, 4, false);
 			break;
 
 		case 4:
-			OLED_XYIntLen(12, 1, dsp_query1(0x06), 3);  // Modulation index
+			OLED_XYIntLen(12, 2, dsp_query1(0x06), 3);  // Modulation index
 			break;
 
 		case 5:
-			memset(s, 0, sizeof(s));
+			memset(s, 0x20, sizeof(s));
 			*(s + 1) = '.';
 			*(s + 3) = ' ';
 			dsp_start_subaddr(0xE2);
@@ -1298,8 +1298,8 @@ void Menu_Stat(void)
 			iIFFreq2 = I2C_ReadByte(false);
 			iIFFreq2 = (iIFFreq2 << 8) | I2C_ReadByte(true);
 			I2C_Stop();
-			OLED_XYIntLen(4, 1, iIFFreq1, 5);
-			OLED_XYIntLen(11, 1, iIFFreq2, 5);
+			OLED_XYIntLen(4, 2, iIFFreq1, 5);
+			OLED_XYIntLen(11, 2, iIFFreq2, 5);
 			break;
 		}
 	}

@@ -1253,9 +1253,10 @@ void TunerInit(void)
 	HAL_Delay(35);
 	
 	OLED_Clear2();
-	OLED_XYStr(2, 0,"SAF7751HV/20X");//ÏÔÊ¾×Ö·û
+	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");//ÏÔÊ¾×Ö·û
 	OLED_XYStr(3, 1, "WTCRC7751");
 	OLED_XYStr(3, 2, "V3 Build 3");
+	OLED_XYStr(0, 3,"*Powered by ADM*");
 	HAL_Delay(2800);
 	NVMGetArgs();
 	if (!IsMenuVisible(MID_INCA)) //��INCA֧�ֵ��ͺ��Ͻ���INCA������R7.1�̼�������������

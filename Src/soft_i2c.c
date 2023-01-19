@@ -12,7 +12,7 @@ void HAL_Delay_us(uint32_t nus)
 static void I2C_Delay(void)
 {
 	uint8_t i;
-	uint8_t delay_type = 0;
+	uint8_t delay_type = 1;
 	if(delay_type ==0) {
 		HAL_Delay_us(1);
 	}
