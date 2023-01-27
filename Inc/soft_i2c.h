@@ -21,7 +21,7 @@
 
 #define I2C_ACK                   0                        //Ó¦´ð
 #define I2C_NOACK                 1                        //·ÇÓ¦´ð
-
+static void I2C_Delay(void);
 bool I2C_Start(uint8_t addr);
 bool I2C_Restart(uint8_t addr);
 void I2C_Stop(void);
