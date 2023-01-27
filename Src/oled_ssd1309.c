@@ -6,7 +6,7 @@
 //#include "delay.h"
 #include "spi.h"
 #include "stm32f4xx_hal.h"
-#define OLED_WR_Byte OLED_SOFT_WR_Byte
+#define OLED_WR_Byte OLED_HAL_WR_Byte
 static char SPI2_ReadWriteByte(uint8_t txdata)
 {
 	uint8_t rxdata=00;
