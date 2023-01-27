@@ -133,7 +133,6 @@ int main(void)
   MX_SPI1_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
 	
 		
@@ -153,9 +152,13 @@ int main(void)
 	OLED_ShowCHinese(80,0,4);//��ʾ����(��)
 	OLED_ShowCHinese(98,0,5);//��ʾ����(��)
 	*/
-
-	OLED_XYStr(2,2,(u8 *)"Initializing");
+	//OLED_ShowPicture(0,0,128,64,BMP1,1);
+	//OLED_Refresh();
 	HAL_Delay(500);
+		
+	OLED_XYStr(2,2,"Initializing");
+	HAL_Delay(500);
+	OLED_Refresh();
 	TunerInit();
 	//TuneFreq(101700);//fm 101.7
 	//TuneFreq(88000);//fm 88.0
@@ -164,6 +167,7 @@ int main(void)
   {
 		//disp_256x96(1,1,bmp1);
 		TunerLoop();
+		OLED_Refresh();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
