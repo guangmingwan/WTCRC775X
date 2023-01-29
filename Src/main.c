@@ -153,8 +153,8 @@ int main(void)
 	OLED_ShowCHinese(80,0,4);//��ʾ����(��)
 	OLED_ShowCHinese(98,0,5);//��ʾ����(��)
 	*/
-	OLED_ShowPicture(0,0,128,64,BMP1,1);
-	OLED_Refresh();
+	//OLED_ShowPicture(0,0,128,64,BMP1,1);
+	//OLED_Refresh();
 	HAL_Delay(3500);
 		
 	OLED_XYStr(2,2,(u8 *)"Initializing");

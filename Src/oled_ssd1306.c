@@ -387,4 +387,8 @@ void OLED_XYUIntLenZP(uint8_t x, uint8_t y, uint32_t n, uint8_t nLen)
 	while (i >= 0)
 		OLED_XYChar(x + i--, y, '0');
 }
+//¸üĞÂÏÔ´æµ½OLED	
+void OLED_Refresh(void)
+{
+}
 #endif
