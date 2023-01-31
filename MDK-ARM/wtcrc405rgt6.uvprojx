@@ -337,7 +337,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F405xx,SSD_1306</Define>
+              <Define>USE_HAL_DRIVER,STM32F405xx,SSD_1106</Define>
               <Undefine></Undefine>
               <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
@@ -434,16 +434,6 @@
               <FilePath>..\Src\ui.c</FilePath>
             </File>
             <File>
-              <FileName>oled_ssd1306.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\oled_ssd1306.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_ssd1309.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\oled_ssd1309.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
@@ -477,6 +467,26 @@
               <FileName>stm32f4xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f4xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_ssd1106.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\oled_ssd1106.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_ssd1306.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\oled_ssd1306.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_ssd1309.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\oled_ssd1309.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_ssd1309_directwrite.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\oled_ssd1309_directwrite.c</FilePath>
             </File>
           </Files>
         </Group>

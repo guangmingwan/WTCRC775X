@@ -66,6 +66,7 @@ void NVMInitStation(void)
 	OLED_XYStr(0, 1, "Init Station ...");
 	eeprom_erase_full_chip();
 	NV_write_word(NVMADDR_SIGSTATION, NVMSIGSTATION);
+	OLED_Refresh();
 }
 
 void NVMInitSetting(void)
@@ -73,6 +74,7 @@ void NVMInitSetting(void)
 	printf("NVMInitSettings: %4X",eeprom_read_word(NVMADDR_SIG));
 	OLED_XYStr(0, 1, "Init Setting ...");
 	NVMUnpkWrData(NVM_INIT);  // Initialize NV memory
+	OLED_Refresh();
 }
 
 void NVMGetArgs(void)

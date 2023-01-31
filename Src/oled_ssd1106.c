@@ -1,119 +1,57 @@
-#ifdef SSD_1306
+#ifdef SSD_1106
+//////////////////////////////////////////////////////////////////////////////////	 
+//本程序只供学习使用，未经作者许可，不得用于其它任何用途
+//中景园电子
+//店铺地址：http://shop73023976.taobao.com/?spm=2013.1.0.0.M4PqC2
+//
+//  文 件 名   : main.c
+//  版 本 号   : v2.0
+//  作    者   : HuangKai
+//  生成日期   : 2014-0101
+//  最近修改   : 
+//  功能描述   : OLED 4接口演示例程(51系列)
+//              说明: 
+//              ----------------------------------------------------------------
+//              GND    电源地
+//              VCC  接5V或3.3v电源
+//              D0   接PA5（SCL）
+//              D1   接PA7（SDA）
+//              RES  接PB0
+//              DC   接PB1
+//              CS   接PA4               
+//              ----------------------------------------------------------------
+// 修改历史   :
+// 日    期   : 
+// 作    者   : HuangKai
+// 修改内容   : 创建文件
+//版权所有，盗版必究。
+//Copyright(C) 中景园电子2014/3/16
+//All rights reserved
+//******************************************************************************/
+
 #include "oled.h"
 #include "stdlib.h"
-#include "string.h"
-#include "oledfont.h"  	 
-//#include "delay.h"
+#include "oledfont.h"
 #include "spi.h"
-//??SSD1106???h??????
-//dat:?????????/????
-//cmd:????/?????? 0,???????;1,???????;
-void OLED_Refresh(void)
-{
-}
-#define OLED_WR_Byte OLED_SOFT_WR_Byte
+//OLED的显存
+//存放格式如下.
+//[0]0 1 2 3 ... 127	
+//[1]0 1 2 3 ... 127	
+//[2]0 1 2 3 ... 127	
+//[3]0 1 2 3 ... 127	
+//[4]0 1 2 3 ... 127	
+//[5]0 1 2 3 ... 127	
+//[6]0 1 2 3 ... 127	
+//[7]0 1 2 3 ... 127 			   
+
+#define OLED_WR_Byte OLED_HAL_WR_Byte
 static char SPI2_ReadWriteByte(uint8_t txdata)
 {
 	uint8_t rxdata=00;
-	//HAL_SPI_TransmitReceive(&hspi2,&txdata,&rxdata,1,3);
+	HAL_SPI_TransmitReceive(&hspi2,&txdata,&rxdata,1,3);
 	return rxdata;
 }
-void IIC_Start()
-{
 
-	OLED_SCLK_Set() ;
-	OLED_SDA_Set();
-	OLED_SDA_Clr();
-	OLED_SCLK_Clr();
-}
-
-/**********************************************
-//IIC Stop
-**********************************************/
-void IIC_Stop()
-{
-OLED_SCLK_Set() ;
-//	OLED_SCLK_Clr();
-	OLED_SDA_Clr();
-	OLED_SDA_Set();
-	
-}
-
-void IIC_Wait_Ack()
-{
-
-	//GPIOB->CRH &= 0XFFF0FFFF;	//����PB12Ϊ��������ģʽ
-	//GPIOB->CRH |= 0x00080000;
-//	OLED_SDA = 1;
-//	delay_us(1);
-	//OLED_SCL = 1;
-	//delay_us(50000);
-/*	while(1)
-	{
-		if(!OLED_SDA)				//�ж��Ƿ���յ�OLED Ӧ���ź�
-		{
-			//GPIOB->CRH &= 0XFFF0FFFF;	//����PB12Ϊͨ���������ģʽ
-			//GPIOB->CRH |= 0x00030000;
-			return;
-		}
-	}
-*/
-	OLED_SCLK_Set() ;
-	OLED_SCLK_Clr();
-}
-/**********************************************
-// IIC Write byte
-**********************************************/
-
-void Write_IIC_Byte(unsigned char IIC_Byte)
-{
-	unsigned char i;
-	unsigned char m,da;
-	da=IIC_Byte;
-	OLED_SCLK_Clr();
-	for(i=0;i<8;i++)		
-	{
-			m=da;
-		//	OLED_SCLK_Clr();
-		m=m&0x80;
-		if(m==0x80)
-		{OLED_SDA_Set();}
-		else OLED_SDA_Clr();
-			da=da<<1;
-		OLED_SCLK_Set();
-		OLED_SCLK_Clr();
-		}
-
-
-}
-/**********************************************
-// IIC Write Command
-**********************************************/
-void Write_IIC_Command(unsigned char IIC_Command)
-{
-   IIC_Start();
-   Write_IIC_Byte(0x78);            //Slave address,SA0=0
-	IIC_Wait_Ack();	
-   Write_IIC_Byte(0x00);			//write command
-	IIC_Wait_Ack();	
-   Write_IIC_Byte(IIC_Command); 
-	IIC_Wait_Ack();	
-   IIC_Stop();
-}
-/**********************************************
-// IIC Write Data
-**********************************************/
-void Write_IIC_Data(unsigned char IIC_Data)
-{
-   IIC_Start();
-   Write_IIC_Byte(0x78);			//D/C#=0; R/W#=0
-	IIC_Wait_Ack();	
-   Write_IIC_Byte(0x40);			//write data
-	IIC_Wait_Ack();	
-   Write_IIC_Byte(IIC_Data);
-	IIC_Wait_Ack();	
-   IIC_Stop();
-}
 void OLED_HAL_WR_Byte(u8 dat,u8 cmd)
 {	
 	u8 i;			  
@@ -130,21 +68,6 @@ void OLED_HAL_WR_Byte(u8 dat,u8 cmd)
 }
 void OLED_SOFT_WR_Byte(u8 dat,u8 cmd)
 {	
-	#ifdef DISPLAY_USE_I2C
-	
-	if(cmd)
-			{
-
-   Write_IIC_Data(dat);
-   
-		}
-	else {
-   Write_IIC_Command(dat);
-		
-	}
-	
-	#else
-	
 	u8 i;			  
 	if(cmd)
 	  OLED_DC_Set();
@@ -155,62 +78,58 @@ void OLED_SOFT_WR_Byte(u8 dat,u8 cmd)
 	{			  
 		OLED_SCLK_Clr();
 		if(dat&0x80)
-		   OLED_SDA_Set();
+		   OLED_SDIN_Set();
 		else 
-		   OLED_SDA_Clr();
+		   OLED_SDIN_Clr();
 		OLED_SCLK_Set();
 		dat<<=1;   
 	}				 		  
 	OLED_CS_Set();
-	OLED_DC_Set();   	
-  #endif  
+	OLED_DC_Set();   	  
 } 
-
 void OLED_Set_Pos(unsigned char x, unsigned char y) 
 { 
 	OLED_WR_Byte(0xb0+y,OLED_CMD);
-	OLED_WR_Byte(((x&0xf0)>>4)|0x10,OLED_CMD);
-	OLED_WR_Byte((x&0x0f)|0x01,OLED_CMD); 
-}   	  
-//����OLED��ʾ    
+	OLED_WR_Byte((((x+2)&0xf0)>>4)|0x10,OLED_CMD);
+	OLED_WR_Byte(((x+2)&0x0f),OLED_CMD); 
+}    	  
+//开启OLED显示    
 void OLED_Display_On(void)
 {
-	OLED_WR_Byte(0X8D,OLED_CMD);  //SET DCDC����
+	OLED_WR_Byte(0X8D,OLED_CMD);  //SET DCDC命令
 	OLED_WR_Byte(0X14,OLED_CMD);  //DCDC ON
 	OLED_WR_Byte(0XAF,OLED_CMD);  //DISPLAY ON
 }
-//�ر�OLED��ʾ     
+//关闭OLED显示     
 void OLED_Display_Off(void)
 {
-	OLED_WR_Byte(0X8D,OLED_CMD);  //SET DCDC����
+	OLED_WR_Byte(0X8D,OLED_CMD);  //SET DCDC命令
 	OLED_WR_Byte(0X10,OLED_CMD);  //DCDC OFF
 	OLED_WR_Byte(0XAE,OLED_CMD);  //DISPLAY OFF
 }		   			 
-//��������,������,������Ļ�Ǻ�ɫ��!��û����һ��!!!	  
+//清屏函数,清完屏,整个屏幕是黑色的!和没点亮一样!!!	  
 void OLED_Clear(void)  
 {  
 	u8 i,n;		    
 	for(i=0;i<8;i++)  
 	{  
-		OLED_WR_Byte (0xb0+i,OLED_CMD);    //����ҳ��ַ��0~7��
-		OLED_WR_Byte (0x00,OLED_CMD);      //������ʾλ�á��е͵�ַ
-		OLED_WR_Byte (0x10,OLED_CMD);      //������ʾλ�á��иߵ�ַ   
+		OLED_WR_Byte (0xb0+i,OLED_CMD);    //设置页地址（0~7）
+		OLED_WR_Byte (0x02,OLED_CMD);      //设置显示位置—列低地址
+		OLED_WR_Byte (0x10,OLED_CMD);      //设置显示位置—列高地址   
 		for(n=0;n<128;n++)OLED_WR_Byte(0,OLED_DATA); 
-	} //������ʾ
-}
-void clear_screen(void) {
-	OLED_Clear();
+	} //更新显示
 }
 
-//��ָ��λ����ʾһ���ַ�,���������ַ�
+
+//在指定位置显示一个字符,包括部分字符
 //x:0~127
 //y:0~63
-//mode:0,������ʾ;1,������ʾ				 
-//size:ѡ������ 16/12 
+//mode:0,反白显示;1,正常显示				 
+//size:选择字体 16/12 
 void OLED_ShowChar(u8 x,u8 y,u8 chr)
 {      	
 	unsigned char c=0,i=0;	
-		c=chr-' ';//???t?????			
+		c=chr-' ';//得到偏移后的值			
 		if(x>Max_Column-1){x=0;y=y+2;}
 		if(SIZE ==16)
 			{
@@ -228,19 +147,19 @@ void OLED_ShowChar(u8 x,u8 y,u8 chr)
 				
 			}
 }
-//m^n????
+//m^n函数
 u32 oled_pow(u8 m,u8 n)
 {
 	u32 result=1;	 
 	while(n--)result*=m;    
 	return result;
 }				  
-//???2??????
-//x,y :???????	 
-//len :????????
-//size:??????
-//mode:g?	0,???g?;1,????g?
-//num:???(0~4294967295);	 		  
+//显示2个数字
+//x,y :起点坐标	 
+//len :数字的位数
+//size:字体大小
+//mode:模式	0,填充模式;1,叠加模式
+//num:数值(0~4294967295);	 		  
 void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size)
 {         	
 	u8 t,temp;
@@ -260,7 +179,7 @@ void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size)
 	 	OLED_ShowChar(x+(size/2)*t,y,temp+'0'); 
 	}
 } 
-//???h??????W?
+//显示一个字符号串
 void OLED_ShowString(u8 x,u8 y,u8 *chr)
 {
 	unsigned char j=0;
@@ -271,7 +190,7 @@ void OLED_ShowString(u8 x,u8 y,u8 *chr)
 			j++;
 	}
 }
-//???????
+//显示汉字
 void OLED_ShowCHinese(u8 x,u8 y,u8 no)
 {      			    
 	u8 t,adder=0;
@@ -288,7 +207,7 @@ void OLED_ShowCHinese(u8 x,u8 y,u8 no)
 				adder+=1;
       }					
 }
-/***********????????????????BMP??128??64??'??????(x,y),x?k??0??127??y???k??0??7*****************/
+/***********功能描述：显示显示BMP图片128×64起始点坐标(x,y),x的范围0～127，y为页的范围0～7*****************/
 void OLED_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned char y1,unsigned char BMP[])
 { 	
  unsigned int j=0;
@@ -307,11 +226,12 @@ void OLED_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned 
 } 
 
 
-//??'??				    
+//初始化SSD1106					    
 void OLED_Init(void)
 { 	
-
-	OLED_RES_Clr();
+ 
+ 	 
+ 	OLED_RES_Clr();
 	HAL_Delay(200);
 	OLED_RES_Set();
 
@@ -320,17 +240,16 @@ void OLED_Init(void)
 	//gpio_bit_write(GPIOB, GPIO_PIN_7, RESET);
 	OLED_DC_Clr();
 	//gpio_bit_write(GPIOC, GPIO_PIN_8, RESET);
-	OLED_CS_Clr();
-	
-
+	OLED_CS_Clr(); 
+					  
 	OLED_WR_Byte(0xAE,OLED_CMD);//--turn off oled panel
-	OLED_WR_Byte(0x00,OLED_CMD);//---set low column address
+	OLED_WR_Byte(0x02,OLED_CMD);//---set low column address
 	OLED_WR_Byte(0x10,OLED_CMD);//---set high column address
 	OLED_WR_Byte(0x40,OLED_CMD);//--set start line address  Set Mapping RAM Display Start Line (0x00~0x3F)
 	OLED_WR_Byte(0x81,OLED_CMD);//--set contrast control register
 	OLED_WR_Byte(0xCF,OLED_CMD); // Set SEG Output Current Brightness
-	OLED_WR_Byte(0xA1,OLED_CMD);//--Set SEG/Column Mapping     0xa0??????? 0xa1????
-	OLED_WR_Byte(0xC8,OLED_CMD);//Set COM/Row Scan Direction   0xc0??????? 0xc8????
+	OLED_WR_Byte(0xA1,OLED_CMD);//--Set SEG/Column Mapping     0xa0左右反置 0xa1正常
+	OLED_WR_Byte(0xC8,OLED_CMD);//Set COM/Row Scan Direction   0xc0上下反置 0xc8正常
 	OLED_WR_Byte(0xA6,OLED_CMD);//--set normal display
 	OLED_WR_Byte(0xA8,OLED_CMD);//--set multiplex ratio(1 to 64)
 	OLED_WR_Byte(0x3f,OLED_CMD);//--1/64 duty
@@ -353,19 +272,9 @@ void OLED_Init(void)
 	OLED_WR_Byte(0xAF,OLED_CMD);//--turn on oled panel
 	
 	OLED_WR_Byte(0xAF,OLED_CMD); /*display ON*/ 
-
 	OLED_Clear();
 	OLED_Set_Pos(0,0); 	
 }  
-void OLED_SetBackLight(uint8_t Data)
-{
-	
-}
-
-void OLED_Data(uint8_t Data)  // Write LCD data
-{
-	OLED_WR_Byte(Data,OLED_DATA);
-}
 void OLED_ClearT(void) {
 	OLED_ShowString(0,0, (u8*)"                ");
 }
@@ -499,5 +408,16 @@ void OLED_XYUIntLenZP(uint8_t x, uint8_t y, uint32_t n, uint8_t nLen)
 
 	while (i >= 0)
 		OLED_XYChar(x + i--, y, '0');
+}
+//¸üÐÂÏÔ´æµ½OLED	
+void OLED_Refresh(void)
+{
+}
+void OLED_SetBackLight(uint8_t Data)
+{
+	
+}
+void clear_screen(void) {
+	OLED_Clear();
 }
 #endif

@@ -6,12 +6,15 @@
 //#include "delay.h"
 #include "spi.h"
 #include "stm32f4xx_hal.h"
-#define OLED_WR_Byte OLED_HAL_WR_Byte
+#define OLED_WR_Byte OLED_SOFT_WR_Byte
 static char SPI2_ReadWriteByte(uint8_t txdata)
 {
+	/*
 	uint8_t rxdata=00;
 	HAL_SPI_TransmitReceive(&hspi2,&txdata,&rxdata,1,3);
 	return rxdata;
+	*/
+	return 0;
 }
 u8 OLED_GRAM[144][8];
 
@@ -226,6 +229,7 @@ void OLED_DrawCircle(u8 x,u8 y,u8 r)
 }
 void OLED_ShowChar(u8 x,u8 y,u8 chr)
 {
+	OLED_ShowChar2(x,y,chr,16,1);
 }
 
 
@@ -269,7 +273,8 @@ void OLED_ShowString(u8 x,u8 y,u8 *chr)
 {
 	unsigned char j=0;
 	while (chr[j]!='\0')
-	{		OLED_ShowChar(x,y,chr[j]);
+	{		
+		OLED_ShowChar(x,y,chr[j]);
 			x+=8;
 		if(x>120){x=0;y+=2;}
 			j++;
@@ -494,8 +499,8 @@ void OLED_XYStr(uint8_t x, uint8_t y, const char *str)  // Display string at x:0
 {
 	uint8_t rx = x * 8;
 	uint8_t page = (y*16) / 8; 
-	
-	OLED_ShowString(rx,page,(u8*)str);
+	uint8_t ry = y*16;
+	OLED_ShowString(rx,ry,(u8*)str);
 }
 void OLED_Clear0(void)
 {
@@ -524,8 +529,9 @@ void OLED_XYChar(uint8_t x, uint8_t y, const char c)  // Display char at x:0-15,
 {
 	
 	uint8_t rx = x * 8;
-	uint8_t page = (y*16) / 8; 
-	OLED_ShowChar(rx,page,c);
+	uint8_t page = (y*16) / 8;
+	uint8_t ry = y*16;
+	OLED_ShowChar(rx,ry,c);
 }
 void OLED_FullStr(const char *str)  // Display string to full(2x16 chars) LCD, fill with blank if string is less than 32 chars
 {

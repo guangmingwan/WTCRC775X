@@ -1,16 +1,14 @@
-#ifdef SSD_1306
+#ifdef SSD_1309_DW
 #include "oled.h"
 #include "stdlib.h"
 #include "string.h"
 #include "oledfont.h"  	 
 //#include "delay.h"
-#include "spi.h"
+//#include "spi.h"
 //??SSD1106???h??????
 //dat:?????????/????
 //cmd:????/?????? 0,???????;1,???????;
-void OLED_Refresh(void)
-{
-}
+
 #define OLED_WR_Byte OLED_SOFT_WR_Byte
 static char SPI2_ReadWriteByte(uint8_t txdata)
 {
@@ -18,101 +16,9 @@ static char SPI2_ReadWriteByte(uint8_t txdata)
 	//HAL_SPI_TransmitReceive(&hspi2,&txdata,&rxdata,1,3);
 	return rxdata;
 }
-void IIC_Start()
+//更新显存到OLED	
+void OLED_Refresh(void)
 {
-
-	OLED_SCLK_Set() ;
-	OLED_SDA_Set();
-	OLED_SDA_Clr();
-	OLED_SCLK_Clr();
-}
-
-/**********************************************
-//IIC Stop
-**********************************************/
-void IIC_Stop()
-{
-OLED_SCLK_Set() ;
-//	OLED_SCLK_Clr();
-	OLED_SDA_Clr();
-	OLED_SDA_Set();
-	
-}
-
-void IIC_Wait_Ack()
-{
-
-	//GPIOB->CRH &= 0XFFF0FFFF;	//设置PB12为上拉输入模式
-	//GPIOB->CRH |= 0x00080000;
-//	OLED_SDA = 1;
-//	delay_us(1);
-	//OLED_SCL = 1;
-	//delay_us(50000);
-/*	while(1)
-	{
-		if(!OLED_SDA)				//判断是否接收到OLED 应答信号
-		{
-			//GPIOB->CRH &= 0XFFF0FFFF;	//设置PB12为通用推免输出模式
-			//GPIOB->CRH |= 0x00030000;
-			return;
-		}
-	}
-*/
-	OLED_SCLK_Set() ;
-	OLED_SCLK_Clr();
-}
-/**********************************************
-// IIC Write byte
-**********************************************/
-
-void Write_IIC_Byte(unsigned char IIC_Byte)
-{
-	unsigned char i;
-	unsigned char m,da;
-	da=IIC_Byte;
-	OLED_SCLK_Clr();
-	for(i=0;i<8;i++)		
-	{
-			m=da;
-		//	OLED_SCLK_Clr();
-		m=m&0x80;
-		if(m==0x80)
-		{OLED_SDA_Set();}
-		else OLED_SDA_Clr();
-			da=da<<1;
-		OLED_SCLK_Set();
-		OLED_SCLK_Clr();
-		}
-
-
-}
-/**********************************************
-// IIC Write Command
-**********************************************/
-void Write_IIC_Command(unsigned char IIC_Command)
-{
-   IIC_Start();
-   Write_IIC_Byte(0x78);            //Slave address,SA0=0
-	IIC_Wait_Ack();	
-   Write_IIC_Byte(0x00);			//write command
-	IIC_Wait_Ack();	
-   Write_IIC_Byte(IIC_Command); 
-	IIC_Wait_Ack();	
-   IIC_Stop();
-}
-/**********************************************
-// IIC Write Data
-**********************************************/
-void Write_IIC_Data(unsigned char IIC_Data)
-{
-   IIC_Start();
-   Write_IIC_Byte(0x78);			//D/C#=0; R/W#=0
-	IIC_Wait_Ack();	
-   Write_IIC_Byte(0x40);			//write data
-	IIC_Wait_Ack();	
-   Write_IIC_Byte(IIC_Data);
-	IIC_Wait_Ack();	
-   IIC_Stop();
 }
 void OLED_HAL_WR_Byte(u8 dat,u8 cmd)
 {	
@@ -130,40 +36,24 @@ void OLED_HAL_WR_Byte(u8 dat,u8 cmd)
 }
 void OLED_SOFT_WR_Byte(u8 dat,u8 cmd)
 {	
-	#ifdef DISPLAY_USE_I2C
-	
-	if(cmd)
-			{
-
-   Write_IIC_Data(dat);
-   
-		}
-	else {
-   Write_IIC_Command(dat);
-		
-	}
-	
-	#else
-	
 	u8 i;			  
 	if(cmd)
 	  OLED_DC_Set();
-	else 
-	  OLED_DC_Clr();		  
+	else
+	  OLED_DC_Clr();
 	OLED_CS_Clr();
 	for(i=0;i<8;i++)
-	{			  
-		OLED_SCLK_Clr();
+	{
+		OLED_SCL_Clr();
 		if(dat&0x80)
 		   OLED_SDA_Set();
 		else 
 		   OLED_SDA_Clr();
-		OLED_SCLK_Set();
+		OLED_SCL_Set();
 		dat<<=1;   
 	}				 		  
 	OLED_CS_Set();
-	OLED_DC_Set();   	
-  #endif  
+	OLED_DC_Set();   	  
 } 
 
 void OLED_Set_Pos(unsigned char x, unsigned char y) 
@@ -193,8 +83,8 @@ void OLED_Clear(void)
 	for(i=0;i<8;i++)  
 	{  
 		OLED_WR_Byte (0xb0+i,OLED_CMD);    //设置页地址（0~7）
-		OLED_WR_Byte (0x00,OLED_CMD);      //设置显示位置—列低地址
-		OLED_WR_Byte (0x10,OLED_CMD);      //设置显示位置—列高地址   
+		OLED_WR_Byte (0x01,OLED_CMD);      //设置显示位置—列低地址
+		OLED_WR_Byte (0x16,OLED_CMD);      //设置显示位置—列高地址   
 		for(n=0;n<128;n++)OLED_WR_Byte(0,OLED_DATA); 
 	} //更新显示
 }

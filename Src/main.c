@@ -155,7 +155,7 @@ int main(void)
 	*/
 	//OLED_ShowPicture(0,0,128,64,BMP1,1);
 	//OLED_Refresh();
-	HAL_Delay(3500);
+	//HAL_Delay(3500);
 		
 	OLED_XYStr(2,2,(u8 *)"Initializing");
 	HAL_Delay(500);
