@@ -157,7 +157,7 @@ int main(void)
 	//OLED_Refresh();
 	//HAL_Delay(3500);
 		
-	OLED_XYStr(2,2,(u8 *)"Initializing");
+	OLED_XYStr(1,3,(u8 *)"Initializing...");
 	HAL_Delay(500);
 	TunerInit();
 	//TuneFreq(101700);//fm 101.7
