@@ -66,6 +66,7 @@
 
 
 //OLED�����ú���
+void OLED_Refresh();	   
 void OLED_WR_Byte(u8 dat,u8 cmd);	    
 void OLED_Display_On(void);
 void OLED_Display_Off(void);	   							   		    

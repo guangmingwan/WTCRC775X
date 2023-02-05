@@ -44,7 +44,7 @@ extern uint8_t nStepIdx;   // Step index for current band
 
 extern uint8_t nFMFilter;  // Current FIR filter index for FM
 extern uint8_t nAMFilter;  // Current FIR filter index for AM
-
+extern void OLED_Refresh();
 
 // NV memory initialization data
 const uint8_t NVM_INIT[] =
