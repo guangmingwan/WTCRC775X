@@ -14,9 +14,9 @@ void LCDSetBackLight(uint8_t Data)
 
 void LCDEN(void)  // Generate LCD EN pulse
 {
-	HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_SET);
-	Delay(2);
-	HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_SET);
+	//Delay(2);
+	//HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_RESET);
 }
 
 void LCDCmd(uint8_t Cmd)  // Write LCD command

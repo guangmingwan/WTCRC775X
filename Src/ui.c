@@ -6,10 +6,13 @@
 #include "soft_i2c.h"
 #include "nv_memory.h"
 #include <math.h>
+#ifdef LCD25696
+#include "lcd25696.h"
+#else
 #include "oled.h"
+#endif
 
-
-uint8_t nDelayedSmooth;
+uint8_t nDelayedSmooth = 0;
 
 volatile int8_t nLRot;
 volatile int8_t nRRot;
@@ -59,7 +62,7 @@ const char MT_FMSI[] = "FM StereoImprov";  // FM stereo improvement
 const char MT_FMCE[] = "FM ChannelEqu";  // FM channel equalizer
 const char MT_FMMP[] = "FM MultpathImprv";  // FM enhanced multipath suppression
 const char MT_FMNS[] = "FM ClickSuppresn";  // FM click noise suppression
-const char MT_INCA[] = "Imprved NoiseCalcel";  // FM AM improvec noise canceller
+const char MT_INCA[] = "Imprved NoiseCal";  // FM AM improvec noise canceller
 const char MT_FMBW[] = "FM Bandwidth";  // FM dynamic bandwidth
 const char MT_DEEM[] = "Deemphasize";  // FM de-emphasis
 const char MT_AGC[] = "AGC Threshold";   // RFAGC wideband threshold
@@ -249,7 +252,8 @@ const char MT_MODEAUX[] = "AUX";
 struct M_ITEM M_Mode[] =
 {
 	{MID_MODERF, MT_MODERF},
-	{MID_MODEAUX, MT_MODEAUX}
+	{MID_MODEAUX, MT_MODEAUX},
+	{MID_RET, MT_RET}
 };
 
 
@@ -268,7 +272,8 @@ struct M_ITEM M_Tune[] =
 	{MID_CH, MT_CH},
 	{MID_SCAN, MT_SCAN},
 	{MID_ANY, MT_ANY},
-	{MID_SCSV, MT_SCSV}
+	{MID_SCSV, MT_SCSV},
+	{MID_RET, MT_RET}
 };
 
 
@@ -285,7 +290,8 @@ struct M_ITEM M_Band[] =
 	{MID_MW, MT_MW},
 	{MID_SW, MT_SW},
 	{MID_FL, MT_FL},
-	{MID_FM, MT_FM}
+	{MID_FM, MT_FM},
+	{MID_RET, MT_RET}
 };
 
 
@@ -400,6 +406,23 @@ void Delay(uint16_t time)
 }
 
 
+void HAL_GPIO_EXTI_Callback_ori(uint16_t GPIO_Pin)
+{
+	if (GPIO_Pin == SH1A_Pin)
+	{
+		if (HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin))
+			--nLRot;
+		else
+			++nLRot;
+	}
+	else if (GPIO_Pin == SH2A_Pin)
+	{
+		if (HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin))
+			--nRRot;
+		else
+			++nRRot;
+	}
+}
 ////////////////////////////////////////////////////////////
 // Rotary encoder & key utility
 
@@ -407,7 +430,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (GPIO_Pin == SH1A_Pin)
 	{
-		if(nIntSeqs[0] ==0 && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_RESET) { //ÏÂ½µ
+		if(nIntSeqs[0] ==0 && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_RESET) { //ï¿½Â½ï¿½
 			nFlags[0] = 0;
 			if( HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_SET ) {
 				nFlags[0] = 1;
@@ -415,7 +438,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			nIntSeqs[0] = 1;
 			
 		}
-		if(nIntSeqs[0] && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_SET){ //µÚ¶þ´ÎÖÐ¶Ï£¬²¢ÇÒAÏàÊÇÉÏÉýÑØ
+		if(nIntSeqs[0] && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_SET){ //ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½Ð¶Ï£ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if( HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_RESET && nFlags[0] == 1 ) {
 				++nLRot;
 			}
@@ -428,15 +451,15 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 	else if (GPIO_Pin == SH2A_Pin)
 	{
-		if(nIntSeqs[1] ==0 && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_RESET) { //ÏÂ½µ
+		if(nIntSeqs[1] ==0 && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_RESET) { //ï¿½Â½ï¿½
 			nFlags[1] = 0;
 			if( HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_SET ) {
-				nFlags[1] = 1;//Õý×ª
+				nFlags[1] = 1;//ï¿½ï¿½×ª
 			}
 			nIntSeqs[1] = 1;
 			
 		}
-		if(nIntSeqs[1] && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_SET){ //µÚ¶þ´ÎÖÐ¶Ï£¬²¢ÇÒAÏàÊÇÉÏÉýÑØ
+		if(nIntSeqs[1] && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_SET){ //ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½Ð¶Ï£ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if( HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_RESET && nFlags[1] == 1 ) {
 				++nRRot;
 			}
@@ -458,7 +481,7 @@ int8_t GetLRot(void)
 		n = nLRot;
 		nLRot = 0;
 		HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-		LCDOn();
+		OLED_Display_On();
 		return n;
 	}
 	return 0;
@@ -474,7 +497,7 @@ int8_t GetRRot(void)
 		n = nRRot;
 		nRRot = 0;
 		HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-		LCDOn();
+		OLED_Display_On();
 		return n;
 	}
 	return 0;
@@ -535,7 +558,7 @@ uint8_t GetKey(void)
 	{
 		if ((nKey = PeekKey()) == 0)
 		{
-			LCDOn();
+			OLED_Display_On();
 			return nKey0;  // Key up
 		}
 
@@ -549,7 +572,7 @@ uint8_t GetKey(void)
 
 	tKeyWaitUp = HAL_GetTick();
 	nKeyWaitUp = nKey0;
-	LCDOn();
+	OLED_Display_On();
 	return nKey0 | KEY_LONGPRESS;
 }  // uint8_t GetKey(void)
 
@@ -558,8 +581,8 @@ void TestRotKey(void)  // Show Rotary encoder and key data on LCD
 	uint8_t uLRot = 0;
 	int8_t iRRot = 0, i, iTmp;
 
-	OLED_Clear0();
 	OLED_Clear1();
+	OLED_Clear2();
 	OLED_XYStr(6, 0, "TEST");
 	nLRot = 0;
 	nRRot = 0;
@@ -581,7 +604,7 @@ void TestRotKey(void)  // Show Rotary encoder and key data on LCD
 					if (iRRot == 35 || iRRot == 38)
 					{
 						bDisp_USN = 1;    // Display FM USN reg instead of SNR
-						OLED_XYStr(0, 1, "DISPLAY USN REG ");
+						OLED_XYStr(0, 2, "DISPLAY USN REG ");
 						HAL_Delay(1000);
 						GetKey();
 					}
@@ -590,10 +613,10 @@ void TestRotKey(void)  // Show Rotary encoder and key data on LCD
 			return;
 		}
 		uLRot += iTmp;
-		OLED_XYIntLen(0, 0, uLRot, 4);
+		OLED_XYIntLen(0, 1, uLRot, 4);
 
 		iRRot += GetRRot();
-		OLED_XYIntLen(12, 0, iRRot, 4);
+		OLED_XYIntLen(12, 1, iRRot, 4);
 	}
 }
 
@@ -632,6 +655,7 @@ void LCDUpdate(void)
 	else
 		p = M_AMFilter[nAMFilter].pszMTxt;
 	OLED_XYStrLen(FILTER_X, FILTER_Y, p, 4, false);
+	OLED_Refresh();
 }
 
 
@@ -687,9 +711,11 @@ void CheckUpdateSig(void)
 	{
 		nRSSI_Disp = nRSSI;
 		nSNR_Disp = nSNR;
+		
 	}
 	else
 	{
+		nDelayedSmooth = 0;
 		fv = (float)nRSSI_Last * 0.7 + (float)nRSSI * 0.3;
 		if (fv > 0.0)
 			nRSSI_Disp = (int)(fv + 0.5);
@@ -807,20 +833,20 @@ void Menu_Squelch(uint8_t nIdx)
 	uint8_t nKey, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, "SQUELCH1:       ");
+	OLED_XYStr(0, 2, "SQUELCH1:       ");
 	if (nIdx)
-		OLED_XYChar(7, 1, '2');
+		OLED_XYChar(7, 2, '2');
 
 	for (lp = 0; ; lp++)
 	{
 		i16 += GetLRot() + GetRRot();
 		i16 = constrain(i16, -99, 99);
-		OLED_XYIntLen(10, 1, i16, 3);
+		OLED_XYIntLen(10, 2, i16, 3);
 
 		if ((nKey = GetKey()) != false)
 		{
 			nSquelch[nIdx] = (int8_t)i16;
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			NV_write_byte(NVMADDR_SQU1 + nIdx, nSquelch[nIdx]);
@@ -830,6 +856,7 @@ void Menu_Squelch(uint8_t nIdx)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_Squelch(uint8_t nIdx)
 
@@ -840,8 +867,8 @@ void Menu_FMDynamicBW(void)
 	uint8_t nKey, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("FM DYNAMIC BW:  "));
-	OLED_XYIntLen(15, 1, nFMDynamicBW, 1);
+	OLED_XYStr(0, 2, ("FM DYNAMIC BW:  "));
+	OLED_XYIntLen(15, 2, nFMDynamicBW, 1);
 
 	for (lp = 0; ; lp++)
 	{
@@ -850,13 +877,13 @@ void Menu_FMDynamicBW(void)
 			;
 			i8 += nFMDynamicBW;
 			nFMDynamicBW = constrain(i8, 0, 3);
-			OLED_XYIntLen(15, 1, nFMDynamicBW, 1);
+			OLED_XYIntLen(15, 2, nFMDynamicBW, 1);
 			SetRFCtrlReg();
 		}
 
 		if ((nKey = GetKey()) != false)
 		{
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			AddSyncBits(NEEDSYNC_MISC1);
@@ -866,6 +893,7 @@ void Menu_FMDynamicBW(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_FMDynamicBW(void)
 
@@ -876,8 +904,8 @@ void Menu_AGC(void)
 	uint8_t nKey, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("AGC THRESHOLD:  "));
-	OLED_XYIntLen(15, 1, nAGC, 1);
+	OLED_XYStr(0, 2, ("AGC THRESHOLD:  "));
+	OLED_XYIntLen(15, 2, nAGC, 1);
 
 	for (lp = 0; ; lp++)
 	{
@@ -885,13 +913,13 @@ void Menu_AGC(void)
 		{
 			i8 += nAGC;
 			nAGC = constrain(i8, 0, 3);
-			OLED_XYIntLen(15, 1, nAGC, 1);
+			OLED_XYIntLen(15, 2, nAGC, 1);
 			SetRFCtrlReg();
 		}
 
 		if ((nKey = GetKey()) != false)
 		{
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			AddSyncBits(NEEDSYNC_MISC1);
@@ -901,6 +929,7 @@ void Menu_AGC(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_AGC(void)
 
@@ -911,8 +940,8 @@ void Menu_Stereo(void)
 	uint8_t nKey, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("FM STEREO:     "));
-	OLED_XYIntLen(15, 1, nStereo, 1);
+	OLED_XYStr(0, 2, ("FM STEREO:     "));
+	OLED_XYIntLen(15, 2, nStereo, 1);
 
 	for (lp = 0; ; lp++)
 	{
@@ -920,13 +949,13 @@ void Menu_Stereo(void)
 		{
 			i8 += nStereo;
 			nStereo = constrain(i8, 0, 9);
-			OLED_XYIntLen(15, 1, nStereo, 1);
+			OLED_XYIntLen(15, 2, nStereo, 1);
 			SetRFCtrlReg();
 		}
 
 		if ((nKey = GetKey()) != false)
 		{
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			AddSyncBits(NEEDSYNC_MISC3);
@@ -936,6 +965,7 @@ void Menu_Stereo(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_Stereo(void)
 
@@ -946,8 +976,8 @@ void Menu_NoiseBlanker(void)
 	uint8_t nKey, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("NOISE BLANKER:  "));
-	OLED_XYIntLen(15, 1, nNBSens, 1);
+	OLED_XYStr(0, 2, ("NOISE BLANKER:  "));
+	OLED_XYIntLen(15, 2, nNBSens, 1);
 
 	for (lp = 0; ; lp++)
 	{
@@ -955,13 +985,13 @@ void Menu_NoiseBlanker(void)
 		{
 			i8 += nNBSens;
 			nNBSens = constrain(i8, 0, 3);
-			OLED_XYIntLen(15, 1, nNBSens, 1);
+			OLED_XYIntLen(15, 2, nNBSens, 1);
 			SetRFCtrlReg();
 		}
 
 		if ((nKey = GetKey()) != false)
 		{
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			AddSyncBits(NEEDSYNC_MISC2);
@@ -971,6 +1001,7 @@ void Menu_NoiseBlanker(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_NoiseBlanker(void)
 
@@ -981,17 +1012,17 @@ void Menu_BacklightAdj(void)
 	uint8_t nKey, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("BACKLT ADJ:     "));
+	OLED_XYStr(0, 2, ("BACKLT ADJ:     "));
 
 	for (lp = 0; ; lp++)
 	{
 		i16 = (i16 + GetLRot() + GetRRot() + 256) % 256;
-		OLED_XYIntLen(12, 1, i16, 3);
+		OLED_XYIntLen(12, 2, i16, 3);
 		OLED_SetBackLight(i16);
 		if ((nKey = GetKey()) != false)
 		{
 			nBacklightAdj = (uint8_t)i16;
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			NV_write_byte(NVMADDR_BKADJ, nBacklightAdj);
@@ -1001,6 +1032,7 @@ void Menu_BacklightAdj(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_BacklightAdj(void)
 
@@ -1011,17 +1043,17 @@ void Menu_BacklightKeep(void)
 	uint8_t nKey, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("BACKLT KEEP:    "));
+	OLED_XYStr(0, 2, ("BACKLT KEEP:    "));
 
 	for (lp = 0; ; lp++)
 	{
 		i16 = (i16 + GetLRot() + GetRRot() + 256) % 256;
-		OLED_XYIntLen(13, 1, i16, 3);
+		OLED_XYIntLen(13, 2, i16, 3);
 
 		if ((nKey = GetKey()) != false)
 		{
 			nBacklightKeep = (uint8_t)i16;
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			NV_write_byte(NVMADDR_BKKEEP, nBacklightKeep);
@@ -1031,6 +1063,7 @@ void Menu_BacklightKeep(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_BacklightKeep(void)
 
@@ -1041,18 +1074,18 @@ void Menu_ScanStayTime(void)
 	uint8_t nKey, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("TIME SCAN:     S"));
+	OLED_XYStr(0, 2, ("TIME SCAN:     S"));
 
 	for (lp = 0; ; lp++)
 	{
 		i16 += GetLRot() + GetRRot();
 		i16 = constrain(i16, 0, 255);
-		OLED_XYIntLen(12, 1, i16, 3);
+		OLED_XYIntLen(12, 2, i16, 3);
 
 		if ((nKey = GetKey()) != false)
 		{
 			nScanStayTime = (uint8_t)i16;
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			NV_write_byte(NVMADDR_SCSTAY, nScanStayTime);
@@ -1062,6 +1095,7 @@ void Menu_ScanStayTime(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_ScanStayTime(void)
 
@@ -1072,18 +1106,18 @@ void Menu_AnyHoldTime(void)
 	uint8_t nKey, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("TIME ANY:     S"));
+	OLED_XYStr(0, 2, ("TIME ANY:     S"));
 
 	for (lp = 0; ; lp++)
 	{
 		i16 += GetLRot() + GetRRot();
 		i16 = constrain(i16, 0, 255);
-		OLED_XYIntLen(11, 1, i16, 3);
+		OLED_XYIntLen(11, 2, i16, 3);
 
 		if ((nKey = GetKey()) != false)
 		{
 			nAnyHoldTime = (uint8_t)i16;
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			NV_write_byte(NVMADDR_ANYHOLD, nAnyHoldTime);
@@ -1093,6 +1127,7 @@ void Menu_AnyHoldTime(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_AnyHoldTime(void)
 
@@ -1103,7 +1138,7 @@ void Menu_Time(void)
 	uint8_t u8_data, lp;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("TIME    :  :    "));
+	OLED_XYStr(0, 2, ("TIME    :  :    "));
 
 	for (lp = 0; ; lp++)
 	{
@@ -1115,9 +1150,9 @@ void Menu_Time(void)
 			nSecondsOffset = 3600L * 24 * 15 - HAL_GetTick() / 1000;
 		}
 
-		OLED_XYUIntLenZP(6, 1, (nSeconds / 3600) % 24, 2);  // Hours
-		OLED_XYUIntLenZP(9, 1, (nSeconds / 60) % 60, 2);  // Minutes
-		OLED_XYUIntLenZP(12, 1, nSeconds % 60, 2);  // Seconds
+		OLED_XYUIntLenZP(6, 2, (nSeconds / 3600) % 24, 2);  // Hours
+		OLED_XYUIntLenZP(9, 2, (nSeconds / 60) % 60, 2);  // Minutes
+		OLED_XYUIntLenZP(12, 2, nSeconds % 60, 2);  // Seconds
 
 		if ((u8_data = GetKey()) != false)
 		{
@@ -1131,7 +1166,7 @@ void Menu_Time(void)
 					nSeconds += 60 - u8_data;
 			}
 			nSecondsOffset = nSeconds - HAL_GetTick() / 1000;
-			OLED_Clear1();
+			OLED_Clear2();
 			if (!(u8_data & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
 			return;
@@ -1140,6 +1175,7 @@ void Menu_Time(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }  // void Menu_Time(void)
 
@@ -1181,7 +1217,7 @@ void Menu_Stat(void)
 		{
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 				bExitMenu = true;
-			OLED_Clear1();
+			OLED_Clear2();
 			return;
 		}
 
@@ -1194,14 +1230,15 @@ void Menu_Stat(void)
 				u8_data = nItems;
 			else
 				u8_data = nItem;
-			OLED_Clear1();
-			OLED_XYStr(0, 1, str[u8_data]);
+			OLED_Clear2();
+			OLED_XYStr(0, 2, str[u8_data]);
 			nItemOld = nItem;
 			lp = 0;
 		}
 		else if (++lp % 16)
 		{
 			HAL_Delay(64);
+			OLED_Refresh();
 			continue;
 		}
 
@@ -1211,16 +1248,16 @@ void Menu_Stat(void)
 		{
 		case 0:
 			if (nRFMode == RFMODE_FM)
-				OLED_XYIntLen(13, 1, dsp_query1(0x02), 3);    // FM ultrasonic noise detector
+				OLED_XYIntLen(13, 2, dsp_query1(0x02), 3);    // FM ultrasonic noise detector
 			else
-				OLED_XYIntLen(12, 1, -((int8_t)dsp_query1(0x02)), 4);  // AM adjacent channel detector
+				OLED_XYIntLen(12, 2, -((int8_t)dsp_query1(0x02)), 4);  // AM adjacent channel detector
 			break;
 
 		case 1:
 			if (nRFMode == RFMODE_FM)
-				OLED_XYIntLen(13, 1, dsp_query1(0x03), 3);  // FM multipath
+				OLED_XYIntLen(13, 2, dsp_query1(0x03), 3);  // FM multipath
 			else
-				OLED_XYStr(13, 1, ("---"));       // FM multipath not applicable to AM mode
+				OLED_XYStr(13, 2, ("---"));       // FM multipath not applicable to AM mode
 			break;
 
 		case 2:
@@ -1230,12 +1267,12 @@ void Menu_Stat(void)
 			else
 				i8 = -u8_data;
 			if (nRFMode == RFMODE_FM)
-				OLED_XYIntLen(11, 1, i8, 4);
+				OLED_XYIntLen(11, 2, i8, 4);
 			else
 			{
-				OLED_XYIntLen(10, 1, i8 / 10, 3);
-				OLED_XYChar(13, 1, '.');
-				OLED_XYIntLen(14, 1, (int32_t)fabs((float)i8) % 10, 1);
+				OLED_XYIntLen(10, 2, i8 / 10, 3);
+				OLED_XYChar(13, 2, '.');
+				OLED_XYIntLen(14, 2, (int32_t)fabs((float)i8) % 10, 1);
 			}
 			break;
 
@@ -1251,15 +1288,15 @@ void Menu_Stat(void)
 			else
 				p = M_AMFilter[u8_data].pszMTxt;
 
-			OLED_XYStrLen(12, 1, p, 4, false);
+			OLED_XYStrLen(12, 2, p, 4, false);
 			break;
 
 		case 4:
-			OLED_XYIntLen(12, 1, dsp_query1(0x06), 3);  // Modulation index
+			OLED_XYIntLen(12, 2, dsp_query1(0x06), 3);  // Modulation index
 			break;
 
 		case 5:
-			memset(s, 0, sizeof(s));
+			memset(s, 0x20, sizeof(s));
 			*(s + 1) = '.';
 			*(s + 3) = ' ';
 			dsp_start_subaddr(0xE2);
@@ -1284,7 +1321,7 @@ void Menu_Stat(void)
 			else if (u8_data == 0x0E)
 				strcpy(s + 4, "7754");
 			*(s + 8) = ' ';
-			OLED_XYStr(5, 1, s);
+			OLED_XYStr(5, 2, s);
 			break;
 
 		case 6:
@@ -1295,10 +1332,12 @@ void Menu_Stat(void)
 			iIFFreq2 = I2C_ReadByte(false);
 			iIFFreq2 = (iIFFreq2 << 8) | I2C_ReadByte(true);
 			I2C_Stop();
-			OLED_XYIntLen(4, 1, iIFFreq1, 5);
-			OLED_XYIntLen(11, 1, iIFFreq2, 5);
+			OLED_XYIntLen(4, 2, iIFFreq1, 5);
+			OLED_XYIntLen(11, 2, iIFFreq2, 5);
 			break;
 		}
+	HAL_Delay(64);
+	OLED_Refresh();
 	}
 }  // void Menu_Stat(void)
 
@@ -1310,9 +1349,9 @@ void Menu_Tone(void)
 
 	// 01234567890123450123456789012345
 	OLED_FullStr("BASS:    MID    TREBLE");
-	OLED_XYIntLen(5, 0, nBass, 2);
-	OLED_XYIntLen(13, 0, nMiddle, 2);
-	OLED_XYIntLen(7, 1, nTreble, 2);
+	OLED_XYIntLen(5, 1, nBass, 2);
+	OLED_XYIntLen(13, 1, nMiddle, 2);
+	OLED_XYIntLen(7, 2, nTreble, 2);
 
 	nItem = 0;
 	nVal = nBass;
@@ -1323,8 +1362,8 @@ void Menu_Tone(void)
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 			{
 				bExitMenu = true;
-				OLED_Clear0();
 				OLED_Clear1();
+				OLED_Clear2();
 				TuneFreqDisp();
 				LCDUpdate();
 				return;
@@ -1334,24 +1373,24 @@ void Menu_Tone(void)
 			{
 				nItem = 1;
 				nVal = nMiddle;
-				OLED_XYChar(4, 0, ' ');
-				OLED_XYChar(12, 0, ':');
+				OLED_XYChar(4, 1, ' ');
+				OLED_XYChar(12, 1, ':');
 			}
 
 			else if (nItem == 1)
 			{
 				nItem = 2;
 				nVal = nTreble;
-				OLED_XYChar(12, 0, ' ');
-				OLED_XYChar(6, 1, ':');
+				OLED_XYChar(12, 1, ' ');
+				OLED_XYChar(6, 2, ':');
 			}
 
 			else
 			{
 				nItem = 0;
 				nVal = nBass;
-				OLED_XYChar(6, 1, ' ');
-				OLED_XYChar(4, 0, ':');
+				OLED_XYChar(6, 2, ' ');
+				OLED_XYChar(4, 1, ':');
 			}
 		}
 
@@ -1363,19 +1402,19 @@ void Menu_Tone(void)
 			if (nItem == 0)
 			{  // Bass
 				nBass = nVal;
-				OLED_XYIntLen(5, 0, nBass, 2);
+				OLED_XYIntLen(5, 1, nBass, 2);
 			}
 
 			else if (nItem == 1)
 			{  // Middle
 				nMiddle = nVal;
-				OLED_XYIntLen(13, 0, nMiddle, 2);
+				OLED_XYIntLen(13, 1, nMiddle, 2);
 			}
 
 			else
 			{  // Treble
 				nTreble = nVal;
-				OLED_XYIntLen(7, 1, nTreble, 2);
+				OLED_XYIntLen(7, 2, nTreble, 2);
 			}
 
 			SetTone();
@@ -1383,6 +1422,7 @@ void Menu_Tone(void)
 		}
 
 		HAL_Delay(50);
+		OLED_Refresh();
 	}  // for(;;)
 }  // void Menu_Tone(void)
 
@@ -1394,8 +1434,8 @@ void Menu_BalFader(void)
 
 	// 01234567890123450123456789012345
 	OLED_FullStr("BALANCE:        FADER");
-	OLED_XYIntLen(9, 0, nBalance, 3);
-	OLED_XYIntLen(9, 1, nFader, 3);
+	OLED_XYIntLen(9, 1, nBalance, 3);
+	OLED_XYIntLen(9, 2, nFader, 3);
 
 	nItem = 0;
 	nVal = nBalance;
@@ -1406,8 +1446,8 @@ void Menu_BalFader(void)
 			if (!(nKey & (KEY_LROT | KEY_RROT)))
 			{
 				bExitMenu = true;
-				OLED_Clear0();
 				OLED_Clear1();
+				OLED_Clear2();
 				TuneFreqDisp();
 				LCDUpdate();
 				return;
@@ -1417,16 +1457,16 @@ void Menu_BalFader(void)
 			{
 				nItem = 1;
 				nVal = nFader;
-				OLED_XYChar(7, 0, ' ');
-				OLED_XYChar(5, 1, ':');
+				OLED_XYChar(7, 1, ' ');
+				OLED_XYChar(5, 2, ':');
 			}
 
 			else
 			{
 				nItem = 0;
 				nVal = nBalance;
-				OLED_XYChar(5, 1, ' ');
-				OLED_XYChar(7, 0, ':');
+				OLED_XYChar(5, 2, ' ');
+				OLED_XYChar(7, 1, ':');
 			}
 		}
 
@@ -1438,13 +1478,13 @@ void Menu_BalFader(void)
 			if (nItem == 0)
 			{  // Balance
 				nBalance = nVal;
-				OLED_XYIntLen(9, 0, nBalance, 3);
+				OLED_XYIntLen(9, 1, nBalance, 3);
 			}
 
 			else
 			{  // Fader
 				nFader = nVal;
-				OLED_XYIntLen(9, 1, nFader, 3);
+				OLED_XYIntLen(9, 2, nFader, 3);
 			}
 
 			SetBalFader();
@@ -1452,6 +1492,7 @@ void Menu_BalFader(void)
 		}
 
 		HAL_Delay(50);
+		OLED_Refresh();
 	}  // for(;;)
 }  // void Menu_BalFader(void)
 
@@ -1460,7 +1501,7 @@ bool YesNo(bool bChkSig)
 {
 	uint8_t u8_data, lp;
 
-	OLED_XYStr(13, 1, ("Y/N"));
+	OLED_XYStr(13, 2, ("Y/N"));
 	GetKey();  // Clear key
 
 	for (lp = 0; ; lp++)
@@ -1476,6 +1517,7 @@ bool YesNo(bool bChkSig)
 		if (bChkSig && !(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 }
 
@@ -1487,7 +1529,8 @@ void Menu_SCSV(void)
 	bool bReturn = false;
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("Overwrite?   "));  // Confirm overwrite currrent band ch data
+	OLED_XYStr(0, 2, ("Overwrite?   "));  // Confirm overwrite currrent band ch data
+	OLED_Refresh();
 	if (!YesNo(true))
 		return;
 
@@ -1514,7 +1557,7 @@ void Menu_SCSV(void)
 		AdjFreq(false);
 		TuneFreqDisp();
 		HAL_Delay(5);
-
+		OLED_Refresh();
 		for (j = 0; j < 10; j++)
 		{
 			HAL_Delay(5);
@@ -1531,6 +1574,8 @@ void Menu_SCSV(void)
 
 		CheckUpdateSig();
 		CheckUpdateAlt(ALT_AUTO);
+		HAL_Delay(5);
+		OLED_Refresh();
 
 		if (bReturn || GetKey())
 			break;
@@ -1559,7 +1604,7 @@ void AddDelCh(void)
 	char s[4] = "A/D";
 
 	// 0123456789012345
-	OLED_XYStr(0, 1, ("CH           "));
+	OLED_XYStr(0, 2, ("CH           "));
 	for (bReturn = false, lp = 0; !bReturn; lp++)
 	{
 		if ((i8 = GetLRot()) != false)
@@ -1578,13 +1623,13 @@ void AddDelCh(void)
 		if (bReDISP)
 		{
 			u32 = ReadChFreq();
-			OLED_XYUIntLenZP(2, 1, nBandCh[nBand], 3);
-			OLED_XYIntLen(6, 1, u32, 6);
+			OLED_XYUIntLenZP(2, 2, nBandCh[nBand], 3);
+			OLED_XYIntLen(6, 2, u32, 6);
 			if (u32)  // Has frequency
 				s[2] = 'D';  // Not empty ch, can be deleted
 			else
 				s[2] = 'd';  // Empty ch
-			OLED_XYStr(13, 1, s);
+			OLED_XYStr(13, 2, s);
 			bReDISP = false;
 		}
 
@@ -1630,9 +1675,10 @@ void AddDelCh(void)
 		if (!(lp % 16))
 			CheckUpdateSig();
 		HAL_Delay(64);
+		OLED_Refresh();
 	}
 
-	OLED_Clear1();
+	OLED_Clear2();
 	LCDUpdate();
 	CheckUpdateAlt(ALT_AUTO);
 }  // void AddDelCh(void)
@@ -1722,11 +1768,13 @@ void Menu_Help(void)
 
 			OLED_FullStr(s[nItem] + ((nLine - 1) << 4));
 		}
+		OLED_Refresh();
 	}
 
-	OLED_Clear0();
 	OLED_Clear1();
+	OLED_Clear2();
 	TuneFreqDisp();
+	OLED_XYStr(0, 3,"*Powered by ADM*");//fix message
 	LCDUpdate();
 }  // void Menu_Help(void)
 
@@ -1794,11 +1842,11 @@ void Menu_Sine(void)
 
 		if (bUpdateDisp)
 		{
-			OLED_XYChar(5, 0, '1' + nSine);
-			OLED_XYIntLen(7, 0, nFreq[nSine], 5);
-			OLED_XYStr(13, 0, (bContinuous) ? ("---") : (".-."));
-			OLED_XYIntLen(4, 1, nStep, 4);
-			OLED_XYIntLen(14, 1, nVol[nSine], 2);
+			OLED_XYChar(5, 1, '1' + nSine);
+			OLED_XYIntLen(7, 1, nFreq[nSine], 5);
+			OLED_XYStr(13, 1, (bContinuous) ? ("---") : (".-."));
+			OLED_XYIntLen(4, 2, nStep, 4);
+			OLED_XYIntLen(14, 2, nVol[nSine], 2);
 			bUpdateDisp = 0;
 		}
 
@@ -1890,12 +1938,13 @@ void Menu_Sine(void)
 			}
 
 		}
+		OLED_Refresh();
 
 	}  // for()
 
 	SetVolume(0);
-	OLED_Clear0();
 	OLED_Clear1();
+	OLED_Clear2();
 	TuneFreqDisp();
 	LCDUpdate();
 	if (nMode == MODE_AUX)
@@ -1966,17 +2015,17 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 
 	for (;;)
 	{
-		OLED_Clear1();
+		OLED_Clear2();
 		if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
 		{
 			textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
-			OLED_Clear1();
-			OLED_XYStrLen(8 - textlen / 2, 1, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
+			OLED_Clear2();
+			OLED_XYStrLen(8 - textlen / 2, 2, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
 		}
 		else
 		{
 			for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
-				OLED_XYStrLen(1 + i8 * 5, 1, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
+				OLED_XYStrLen(1 + i8 * 5, 2, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
 		}
 
 		// Display special indicator char for selected item
@@ -2046,7 +2095,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 		{
 			nHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
 			if (nHit <= 2)
-				OLED_XYChar(nHit * 5, 1, CHAR_SEL);
+				OLED_XYChar(nHit * 5, 2, CHAR_SEL);
 		}
 
 
@@ -2096,7 +2145,9 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 			if (!(lp % 16))
 				CheckUpdateSig();
 			HAL_Delay(64);
+			OLED_Refresh();
 		}
+		OLED_Refresh();
 	}
 }  // void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 
@@ -2317,6 +2368,6 @@ void Menu(uint8_t nMenuID)
 {
 	bExitMenu = 0;
 	ProcMenuItem(nMenuID);
-	OLED_Clear1();
+	OLED_Clear2();
 	LCDUpdate();
 }

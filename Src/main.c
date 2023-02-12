@@ -128,12 +128,11 @@ int main(void)
   MX_SPI1_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
 	
 		
 	OLED_Init();
-  OLED_Clear();//OLED清屏
+  clear_screen();//OLED清屏
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -148,18 +147,27 @@ int main(void)
 	OLED_ShowCHinese(80,0,4);//显示中文(联)
 	OLED_ShowCHinese(98,0,5);//显示中文(网)
 	*/
-	OLED_ShowString(6,0,(u8 *)"SAF7751HV/20X");//显示字符
-	OLED_ShowString(6,3,(u8 *)"Initializing");
-	//OLED_ShowString(0,6,(u8 *)"FM");//显示字符  
-	//OLED_ShowString(83,6,(u8 *)"101.7");//显示字符 
+	HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_SET);
+	HAL_Delay(100);
+	HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_RESET);
 	HAL_Delay(500);
+		
+	OLED_XYStr(2,2,"Initializing");
+	HAL_GPIO_WritePin(LED_2_GPIO_Port,LED_2_Pin,GPIO_PIN_SET);
+	HAL_Delay(100);
+	HAL_GPIO_WritePin(LED_2_GPIO_Port,LED_2_Pin,GPIO_PIN_RESET);
+	
+	HAL_Delay(500);
+	OLED_Refresh();
 	TunerInit();
+	//HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_RESET);
 	//TuneFreq(101700);//fm 101.7
 	//TuneFreq(88000);//fm 88.0
 		
   while (1)
   {
 		TunerLoop();
+		OLED_Refresh();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

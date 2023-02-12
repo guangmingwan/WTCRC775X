@@ -44,7 +44,7 @@ extern uint8_t nStepIdx;   // Step index for current band
 
 extern uint8_t nFMFilter;  // Current FIR filter index for FM
 extern uint8_t nAMFilter;  // Current FIR filter index for AM
-
+extern void OLED_Refresh();
 
 // NV memory initialization data
 const uint8_t NVM_INIT[] =
@@ -63,16 +63,18 @@ const uint8_t NVM_INIT[] =
 void NVMInitStation(void)
 {
 	printf("NVMInitStations: %4X",eeprom_read_word(NVMADDR_SIGSTATION));
-	LCDXYStr(0, 1, "Init Station ...");
+	OLED_XYStr(0, 1, "Init Station ...");
 	eeprom_erase_full_chip();
 	NV_write_word(NVMADDR_SIGSTATION, NVMSIGSTATION);
+	OLED_Refresh();
 }
 
 void NVMInitSetting(void)
 {
 	printf("NVMInitSettings: %4X",eeprom_read_word(NVMADDR_SIG));
-	LCDXYStr(0, 1, "Init Setting ...");
+	OLED_XYStr(0, 1, "Init Setting ...");
 	NVMUnpkWrData(NVM_INIT);  // Initialize NV memory
+	OLED_Refresh();
 }
 
 void NVMGetArgs(void)
@@ -80,7 +82,7 @@ void NVMGetArgs(void)
 	uint8_t u8, i;
 	uint16_t u16;
 
-	if (eeprom_read_word(NVMADDR_SIGSTATION) != NVMSIGSTATION)
+	if (eeprom_read_word(NVMADDR_SIGSTATION) != NVMSIGSTATION )
 		NVMInitStation();
 
 	if (eeprom_read_word(NVMADDR_SIG) != NVMSIG)

@@ -1,7 +1,11 @@
 #include "tuner.h"
 #include "global.h"
 #include "ui.h"
+#ifdef LCD25696
+#include "lcd25696.h"
+#else
 #include "oled.h"
+#endif
 #include "soft_i2c.h"
 #include "nv_memory.h"
 
@@ -879,6 +883,7 @@ void TuneFreqDisp(void)
 		OLED_XYIntLen(FREQ_X, FREQ_Y, f, 6);
 		OLED_XYChar(FREQ_X + 6, FREQ_Y, 'K');
 	}
+	OLED_Refresh();
 }
 
 
@@ -1029,6 +1034,7 @@ void ProcStepFilter(uint8_t nKey)
 
 void GetRFStatReg(void)
 {
+	I2C_Stop();
 	dsp_start_subaddr(0x00);
 	I2C_Restart(DSP_I2C | I2C_READ);
 	bSTIN = (I2C_ReadByte(false) >> 3) & 1;
@@ -1118,6 +1124,7 @@ int8_t Seek(int8_t nDir)
 			HAL_Delay(5);
 			GetRFStatReg();
 			CheckUpdateSig();
+			HAL_Delay(5);
 			if (IsSigOK())
 			{  // Find one signal
 				SetFilter(false);
@@ -1146,7 +1153,7 @@ uint8_t ScanAny()
 
 	for (;;)
 	{
-		LCDOn();
+		OLED_Display_On();
 
 		if ((nKey = Seek(+1)) != false)  // Key(Other than STEP & FILTER) pressed, user abort
 			return nKey;
@@ -1155,8 +1162,11 @@ uint8_t ScanAny()
 		t1 = HAL_GetTick();
 		for (lp = 0; ; lp++)
 		{
-			if (!(lp % 16))
+			if (!(lp % 16)) {
 				CheckUpdateSig();
+				HAL_Delay(5);
+			}
+			
 			if (nTuneType == TYPE_ANY && IsSigOK())
 				t1 = HAL_GetTick();
 
@@ -1247,11 +1257,14 @@ void TunerInit(void)
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_Delay(35);
-	//OLED_Init();
-	OLED_Clear0();
-	OLED_XYStr(3, 0, "WTCRC7751");
-	OLED_XYStr(3, 1, "V3 Build 3");
-	HAL_Delay(800);
+	
+	OLED_Clear2();
+	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");//ÏÔÊ¾×Ö·û
+	OLED_XYStr(3, 1, "WTCRC7751");
+	OLED_XYStr(3, 2, "V3 Build 3");
+	OLED_XYStr(0, 3,"*Powered by ADM*");
+	OLED_Refresh();
+	HAL_Delay(2800);
 	NVMGetArgs();
 	if (!IsMenuVisible(MID_INCA)) //��INCA֧�ֵ��ͺ��Ͻ���INCA������R7.1�̼�������������
 		nINCA = 0;
@@ -1259,8 +1272,8 @@ void TunerInit(void)
 	//HAL_Delay(1000);	
 	//HAL_Delay(1000);	
 	BootDirana3();
-	OLED_Clear0();
 	OLED_Clear1();
+	OLED_Clear2();
 	nLRot = 0;
 	nRRot = 0;
 	nBootMode = nMode;
@@ -1355,11 +1368,13 @@ void TunerLoop(void)
 	{
 		bHAL_DelayedCheck = false;
 		CheckUpdateSig();  // Update RSSI, SNR & FM stereo indicator
+		OLED_Refresh();
 		timer = HAL_GetTick() - (TIMER_INTERVAL >> 2);
 	}
 	else if ((HAL_GetTick() - timer) >= TIMER_INTERVAL)
 	{  // Check every TIMER_INTERVAL ms
 		CheckUpdateSig();  // Update RSSI, SNR & FM stereo indicator
+		OLED_Refresh();
 		timer = HAL_GetTick();
 
 		if (!bMuted && (nMode != MODE_AUX))
