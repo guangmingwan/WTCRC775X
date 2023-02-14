@@ -1,7 +1,6 @@
 --cpu Cortex-M3
 "wtcrc103rgt6\startup_stm32f103xg.o"
 "wtcrc103rgt6\eeprom.o"
-"wtcrc103rgt6\lcd.o"
 "wtcrc103rgt6\nv_memory.o"
 "wtcrc103rgt6\tuner.o"
 "wtcrc103rgt6\ui.o"

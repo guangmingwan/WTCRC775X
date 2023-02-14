@@ -9,12 +9,13 @@ void HAL_Delay_us(uint32_t nus)
 	HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 }
 
-static void I2C_Delay(void)
+static void I2C_Delay1(void)
 {
+	uint32_t freq = HAL_RCC_GetHCLKFreq();
 	uint8_t i;
-	uint8_t delay_type = 0;
+	uint8_t delay_type = 1;
 	if(delay_type ==0) {
-		HAL_Delay_us(2);
+		HAL_Delay_us(1);
 	}
 	else if(delay_type == 1) {
 		uint16_t cnt = 40;
@@ -32,10 +33,15 @@ static void I2C_Delay(void)
         上面的意思是SCL的频率是变化的。因为I2C要求，delay（）延时超过4us。即scl频率低于250Khz。
       上面的处理大抵是符合的。
     */
+		
     for (i = 0; i <= 20; i++);
 	}
 }
-
+static void I2C_Delay(void)
+{
+	uint8_t i;
+	for (i = 0; i <= 40; i++);
+}
 bool I2C_Start(uint8_t addr)
 {
 	I2C_SDA_LOW;

@@ -18,7 +18,7 @@
 #define X_WIDTH 	128
 #define Y_WIDTH 	64	 
 
-//-----------------OLED??????---------------- 
+//-----------------OLED�˿ڶ���---------------- 
 
 //#define OLED_SCL_Clr() GPIO_ResetBits(GPIOA,GPIO_Pin_0)//SCL
 //#define OLED_SCL_Set() GPIO_SetBits(GPIOA,GPIO_Pin_0)
@@ -34,7 +34,7 @@
 // 		     
 //#define OLED_CS_Clr()  GPIO_ResetBits(GPIOA,GPIO_Pin_4)//CS
 //#define OLED_CS_Set()  GPIO_SetBits(GPIOA,GPIO_Pin_4)
-//****************???*********************
+//****************��λ*********************
 
 #define OLED_SCL_Clr() HAL_GPIO_WritePin(OLED_SCLK_GPIO_Port, OLED_SCLK_Pin, RESET)//CLK
 #define OLED_SCL_Set() HAL_GPIO_WritePin(OLED_SCLK_GPIO_Port, OLED_SCLK_Pin, SET)
@@ -51,21 +51,21 @@
 #define OLED_RES_Clr()  HAL_GPIO_WritePin(OLED_RES_GPIO_Port,OLED_RES_Pin, GPIO_PIN_RESET)
 #define OLED_RES_Set()  HAL_GPIO_WritePin(OLED_RES_GPIO_Port,OLED_RES_Pin, GPIO_PIN_SET)
 
-//****************????/????***************
+//****************����/����***************
 
 #define OLED_DC_Clr()  HAL_GPIO_WritePin(OLED_DC_GPIO_Port,OLED_DC_Pin, GPIO_PIN_RESET)
 #define OLED_DC_Set()  HAL_GPIO_WritePin(OLED_DC_GPIO_Port,OLED_DC_Pin, GPIO_PIN_SET)
 
-//****************??*********************
+//****************Ƭѡ*********************
 
 #define OLED_CS_Clr()  HAL_GPIO_WritePin(OLED_CS_GPIO_Port,OLED_CS_Pin, GPIO_PIN_RESET)
 #define OLED_CS_Set()  HAL_GPIO_WritePin(OLED_CS_GPIO_Port,OLED_CS_Pin, GPIO_PIN_SET)
 
-#define OLED_CMD  0	//?????
-#define OLED_DATA 1	//?????
+#define OLED_CMD  0	//д����
+#define OLED_DATA 1	//д����
 
 
-//OLED?????�???
+//OLED�����ú���
 void OLED_Refresh();	   
 void OLED_WR_Byte(u8 dat,u8 cmd);	    
 void OLED_Display_On(void);

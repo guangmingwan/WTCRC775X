@@ -1,4 +1,8 @@
+#ifdef STM32F405xx
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 #include "global.h"
 #include <stdbool.h>
 
@@ -23,31 +27,31 @@
 
 // LCD locations
 #define BAND_X      0
-#define BAND_Y      0
+#define BAND_Y      1
 
 #define FREQ_X      2
-#define FREQ_Y      0
+#define FREQ_Y      1
 
 #define RSSI_X     10
-#define RSSI_Y      0
+#define RSSI_Y      1
 
 #define STEREO_X   12
-#define STEREO_Y    0
+#define STEREO_Y    1
 
 #define SN_X       13
-#define SN_Y        0
+#define SN_Y        1
 
 #define TYPE_X      0
-#define TYPE_Y      1
+#define TYPE_Y      2
 
 #define STEP_X      2
-#define STEP_Y      1
+#define STEP_Y      2
 
 #define FILTER_X    6
-#define FILTER_Y    1
+#define FILTER_Y    2
 
 #define ALT_X      11
-#define ALT_Y       1
+#define ALT_Y       2
 
 
 // Display contents in ALT area
@@ -208,7 +212,7 @@ void LCDOn(void);
 void LCDInit(void);
 void LCDXY(uint8_t x, uint8_t y);
 void LCDXYChar(uint8_t x, uint8_t y, const char c);
-void LCDXYStr(uint8_t x, uint8_t y, const char *str);
+void OLED_XYStr(uint8_t x, uint8_t y, const char *str);
 void LCDFullStr(const char *str);
 void LCDXYStrLen(uint8_t x, uint8_t y, const char *str, uint8_t nLen, uint8_t bLeftAlign);
 void LCDXYIntLen(uint8_t x, uint8_t y, int32_t n, uint8_t nLen);

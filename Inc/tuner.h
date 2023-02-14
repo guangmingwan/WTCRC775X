@@ -1,4 +1,8 @@
+#ifdef STM32F405xx
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 #include <stdint.h>
 #include "global.h"
 #include <stdbool.h>

@@ -1,7 +1,10 @@
 #ifndef _I2C_H
 #define _I2C_H
-
+#ifdef STM32F405xx
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 #include "main.h"
 #include <stdbool.h>
 
@@ -18,7 +21,7 @@
 
 #define I2C_ACK                   0                        //Ó¦´ð
 #define I2C_NOACK                 1                        //·ÇÓ¦´ð
-
+static void I2C_Delay(void);
 bool I2C_Start(uint8_t addr);
 bool I2C_Restart(uint8_t addr);
 void I2C_Stop(void);
