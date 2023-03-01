@@ -47,7 +47,12 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "font.h"
+#ifdef LCD25696
+#include "lcd25696.h"
+#include "chinese_code.h"
+#else
 #include "oled.h"
+#endif
 #include "bmp.h"
 #include "tuner.h"
 /* USER CODE END Includes */
@@ -132,21 +137,23 @@ int main(void)
 	
 		
 	OLED_Init();
-  clear_screen();//OLEDÇåÆÁ
+  clear_screen();//OLEDï¿½ï¿½ï¿½ï¿½
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 		
-	//OLED_Clear();//OLEDÇåÆÁ 
-	/*
-	OLED_ShowCHinese(8,0,0);//ÏÔÊ¾ÖÐÎÄ(Íø)
-	OLED_ShowCHinese(26,0,1);//ÏÔÊ¾ÖÐÎÄ(¹â)
-	OLED_ShowCHinese(44,0,2);//ÏÔÊ¾ÖÐÎÄ(×Ó)
-	OLED_ShowCHinese(62,0,3);//ÏÔÊ¾ÖÐÎÄ(Îï)
-	OLED_ShowCHinese(80,0,4);//ÏÔÊ¾ÖÐÎÄ(Áª)
-	OLED_ShowCHinese(98,0,5);//ÏÔÊ¾ÖÐÎÄ(Íø)
+	//clear_screen();//OLEDï¿½ï¿½ï¿½ï¿½ 
+	
+	/*OLED_ShowCHinese(8,0,0);//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)
+	OLED_ShowCHinese(26,0,1);//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)
+	OLED_ShowCHinese(44,0,2);//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)
+	OLED_ShowCHinese(62,0,3);//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)
+	OLED_ShowCHinese(80,0,4);//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)
+	OLED_ShowCHinese(98,0,5);//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)
 	*/
+	//OLED_ShowPicture(0,0,128,64,BMP1,1);
+	//OLED_Refresh();
 	HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_SET);
 	HAL_Delay(100);
 	HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_RESET);
@@ -160,12 +167,12 @@ int main(void)
 	HAL_Delay(500);
 	OLED_Refresh();
 	TunerInit();
-	//HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_RESET);
 	//TuneFreq(101700);//fm 101.7
 	//TuneFreq(88000);//fm 88.0
 		
   while (1)
   {
+		//disp_256x96(1,1,bmp1);
 		TunerLoop();
 		OLED_Refresh();
     /* USER CODE END WHILE */
