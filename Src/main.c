@@ -154,6 +154,16 @@ int main(void)
 	*/
 	//OLED_ShowPicture(0,0,128,64,BMP1,1);
 	//OLED_Refresh();
+	HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_SET);
+	HAL_Delay(100);
+	HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_RESET);
+	HAL_Delay(500);
+		
+	OLED_XYStr(2,2,"Initializing");
+	HAL_GPIO_WritePin(LED_2_GPIO_Port,LED_2_Pin,GPIO_PIN_SET);
+	HAL_Delay(100);
+	HAL_GPIO_WritePin(LED_2_GPIO_Port,LED_2_Pin,GPIO_PIN_RESET);
+	
 	HAL_Delay(500);
 		
 	OLED_XYStr(2,2,"Initializing");

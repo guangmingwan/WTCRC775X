@@ -249,7 +249,13 @@ void OLED_Init(void)
 }  
 void OLED_SetBackLight(uint8_t Data)
 {
-	
+	if(Data == 0x0) {
+		OLED_WR_Byte(0xAE,OLED_CMD);
+	}
+	else {
+		OLED_WR_Byte(0xAF,OLED_CMD);
+		//bLCDOff = false;
+	}
 }
 
 void OLED_Data(uint8_t Data)  // Write LCD data
