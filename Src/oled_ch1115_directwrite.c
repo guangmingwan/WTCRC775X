@@ -253,6 +253,8 @@ void OLED_SetBackLight(uint8_t Data)
 		OLED_WR_Byte(0xAE,OLED_CMD);
 	}
 	else {
+		OLED_WR_Byte(0x81,OLED_CMD);//--set contrast control register
+		OLED_WR_Byte(Data,OLED_CMD); // Set SEG Output Current Brightness
 		OLED_WR_Byte(0xAF,OLED_CMD);
 		//bLCDOff = false;
 	}
