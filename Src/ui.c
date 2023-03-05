@@ -168,8 +168,8 @@ struct M_ITEM M_FMCE[] =
 
 
 // Menu Option->FMMP
-const char MT_FMMPOFF[] = "OFF ";
-const char MT_FMMPON[] = "ON  ";
+const char MT_FMMPOFF[] = "OFF";
+const char MT_FMMPON[] = "ON";
 
 struct M_ITEM M_FMMP[] =
 {
@@ -564,7 +564,7 @@ uint8_t GetKey(void)
 		{
 			OLED_Display_On();
 			bLCDOff = false;
-			nBacklightTimer = HAL_GetTick();
+			nBacklightTimer = HAL_GetTick();			
 			return nKey0;  // Key up
 		}
 
