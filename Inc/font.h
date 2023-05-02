@@ -45,19 +45,19 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
-
+#include <stdbool.h>
 //ASCII
 typedef struct _tFont
 {    
   const uint8_t *table;
   uint16_t Width;
   uint16_t Height;
-  
+  bool revert; //
 } sFONT;
 
 extern sFONT Font8;
 extern sFONT Font16;
-
+extern sFONT Font32;
 #ifdef __cplusplus
 }
 #endif

@@ -47,7 +47,11 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "font.h"
+#ifdef LCD25696
+#include "lcd25696.h"
+#else
 #include "oled.h"
+#endif
 #include "bmp.h"
 #include "tuner.h"
 /* USER CODE END Includes */
@@ -128,6 +132,7 @@ int main(void)
   MX_SPI1_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
 	
 		
@@ -159,6 +164,7 @@ int main(void)
 	
 	HAL_Delay(500);
 	OLED_Refresh();
+	BackLightOn();
 	TunerInit();
 	//HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_RESET);
 	//TuneFreq(101700);//fm 101.7

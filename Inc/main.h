@@ -98,8 +98,8 @@ void Error_Handler(void);
 #define LED_2_GPIO_Port GPIOC
 #define RS_Pin GPIO_PIN_0
 #define RS_GPIO_Port GPIOB
-#define D3BUSY_READ_Pin GPIO_PIN_1
-#define D3BUSY_READ_GPIO_Port GPIOB
+#define OLED_BL_Pin GPIO_PIN_1
+#define OLED_BL_GPIO_Port GPIOB
 #define D3_CS_Pin GPIO_PIN_2
 #define D3_CS_GPIO_Port GPIOB
 #define OLED_SCLK_Pin GPIO_PIN_13

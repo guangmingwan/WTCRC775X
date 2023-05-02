@@ -12,6 +12,7 @@
 #include "oled.h"
 #endif
 
+
 uint8_t nDelayedSmooth = 0;
 
 volatile int8_t nLRot;
@@ -482,6 +483,8 @@ int8_t GetLRot(void)
 		nLRot = 0;
 		HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 		OLED_Display_On();
+		bLCDOff = false;
+		nBacklightTimer = HAL_GetTick();
 		return n;
 	}
 	return 0;
@@ -498,6 +501,8 @@ int8_t GetRRot(void)
 		nRRot = 0;
 		HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 		OLED_Display_On();
+		bLCDOff = false;
+		nBacklightTimer = HAL_GetTick();
 		return n;
 	}
 	return 0;
@@ -559,6 +564,8 @@ uint8_t GetKey(void)
 		if ((nKey = PeekKey()) == 0)
 		{
 			OLED_Display_On();
+			bLCDOff = false;
+			nBacklightTimer = HAL_GetTick();			
 			return nKey0;  // Key up
 		}
 
@@ -573,6 +580,8 @@ uint8_t GetKey(void)
 	tKeyWaitUp = HAL_GetTick();
 	nKeyWaitUp = nKey0;
 	OLED_Display_On();
+	bLCDOff = false;
+	nBacklightTimer = HAL_GetTick();
 	return nKey0 | KEY_LONGPRESS;
 }  // uint8_t GetKey(void)
 

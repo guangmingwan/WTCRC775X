@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xG,SSD_1115_DW</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xG,LCD25696</Define>
               <Undefine></Undefine>
               <IncludePath>../Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
@@ -400,11 +400,6 @@
               <FilePath>..\Src\eeprom.c</FilePath>
             </File>
             <File>
-              <FileName>lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\lcd.c</FilePath>
-            </File>
-            <File>
               <FileName>nv_memory.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\nv_memory.c</FilePath>
@@ -433,6 +428,11 @@
               <FileName>soft_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\soft_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd25696.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\lcd25696.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -519,6 +519,11 @@
               <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f1xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>font32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\font32.c</FilePath>
             </File>
           </Files>
         </Group>

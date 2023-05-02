@@ -1154,7 +1154,8 @@ uint8_t ScanAny()
 	for (;;)
 	{
 		OLED_Display_On();
-
+		bLCDOff = false;
+		nBacklightTimer = HAL_GetTick();
 		if ((nKey = Seek(+1)) != false)  // Key(Other than STEP & FILTER) pressed, user abort
 			return nKey;
 
