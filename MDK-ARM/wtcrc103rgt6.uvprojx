@@ -435,26 +435,6 @@
               <FilePath>..\Src\soft_i2c.c</FilePath>
             </File>
             <File>
-              <FileName>oled_ch1115_directwrite.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\oled_ch1115_directwrite.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_ssd1306.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\oled_ssd1306.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_ssd1309.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\oled_ssd1309.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_ssd1309_directwrite.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\oled_ssd1309_directwrite.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>

@@ -1,6 +1,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "font.h"
-
+#include "stdbool.h"
 //
 //  Font data of DejaVu Sans Mono
 //	W8 * H16
@@ -109,7 +109,7 @@ sFONT Font16 = {
 	Font16_Table,
 	8,	  /* Width */
 	16,	  /* Height */
-	true, /*revert*/
+	true /*revert*/
 };
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
