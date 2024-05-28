@@ -1,6 +1,7 @@
 #include "soft_i2c.h"
 void HAL_Delay_us(uint32_t nus)
 {
+	int freg = HAL_RCC_GetHCLKFreq();
 	//将systic设置为1us中断
 	HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000000);
 	//延时nus
@@ -12,7 +13,7 @@ void HAL_Delay_us(uint32_t nus)
 static void I2C_Delay(void)
 {
 	uint8_t i;
-	uint8_t delay_type = 0;
+	uint8_t delay_type = 2;
 	if(delay_type ==0) {
 		HAL_Delay_us(2);
 	}

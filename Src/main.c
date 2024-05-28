@@ -54,6 +54,7 @@
 #endif
 #include "bmp.h"
 #include "tuner.h"
+extern void IR_Check();
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -133,24 +134,25 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM3_Init();
   MX_SPI2_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	
 		
 	OLED_Init();
-  clear_screen();//OLED清屏
+  clear_screen();//OLED????
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 		
-	//OLED_Clear();//OLED清屏 
+	//OLED_Clear();//OLED???? 
 	/*
-	OLED_ShowCHinese(8,0,0);//显示中文(网)
-	OLED_ShowCHinese(26,0,1);//显示中文(光)
-	OLED_ShowCHinese(44,0,2);//显示中文(子)
-	OLED_ShowCHinese(62,0,3);//显示中文(物)
-	OLED_ShowCHinese(80,0,4);//显示中文(联)
-	OLED_ShowCHinese(98,0,5);//显示中文(网)
+	OLED_ShowCHinese(8,0,0);//???????(??)
+	OLED_ShowCHinese(26,0,1);//???????(??)
+	OLED_ShowCHinese(44,0,2);//???????(??)
+	OLED_ShowCHinese(62,0,3);//???????(??)
+	OLED_ShowCHinese(80,0,4);//???????(??)
+	OLED_ShowCHinese(98,0,5);//???????(??)
 	*/
 	HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_SET);
 	HAL_Delay(100);
@@ -158,6 +160,8 @@ int main(void)
 	HAL_Delay(500);
 		
 	OLED_XYStr(2,2,"Initializing");
+  printf("欢迎使用7751收音机");
+  fflush(stdout);
 	HAL_GPIO_WritePin(LED_2_GPIO_Port,LED_2_Pin,GPIO_PIN_SET);
 	HAL_Delay(100);
 	HAL_GPIO_WritePin(LED_2_GPIO_Port,LED_2_Pin,GPIO_PIN_RESET);
@@ -173,6 +177,7 @@ int main(void)
   while (1)
   {
 		TunerLoop();
+		IR_Check();
 		OLED_Refresh();
     /* USER CODE END WHILE */
 

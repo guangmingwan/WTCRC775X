@@ -435,6 +435,11 @@
               <FilePath>..\Src\lcd25696.c</FilePath>
             </File>
             <File>
+              <FileName>font32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\font32.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
@@ -519,11 +524,6 @@
               <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f1xx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>font32.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\font32.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -8,7 +8,8 @@
 #endif
 #include "soft_i2c.h"
 #include "nv_memory.h"
-
+extern char* getTurnName(uint8_t turn_type);
+extern char* getBandName(uint8_t band_type);
 extern volatile int8_t nLRot;
 extern volatile int8_t nRRot;
 
@@ -16,7 +17,8 @@ extern struct M_ITEM M_FMFilter[NUM_FILTERS + 1];
 extern struct M_ITEM M_AMFilter[NUM_FILTERS + 1];
 extern struct M_ITEM M_Frequency[];
 extern struct M_SUBMENU SM_List[];
-
+extern char* pszFilter;
+extern char szStep[];
 extern TIM_HandleTypeDef htim3;
 
 // SAF7751 write reg
@@ -568,6 +570,35 @@ void dsp_write_data(const uint8_t* data)
 	}
 }
 
+bool isThrottled = false;
+uint8_t lastVolume = 0;
+int32_t lastFreq = 0;
+uint8_t adjType = 0;
+// 保存原来的SysTick定时器设定
+uint32_t originalSysTickConfig = 0;
+
+
+void ThrottleFunction(uint8_t v30)
+{
+    // 在这里实现您的节流逻辑
+    // ...
+    // 执行您的函数操作
+	if(adjType == 1) {
+		if(nBand == BAND_FM) {
+			printf("%s %.1f\n", getBandName(nBand), nBandFreq[nBand]/1000.0);
+		}
+		else {
+			printf("%s %dK\n", getBandName(nBand), nBandFreq[nBand]);
+		}
+		fflush(stdout);
+	}
+    else {
+		printf("音量%d\n", v30);
+		fflush(stdout);
+	}
+	// 恢复原来的SysTick定时器设定
+    SysTick_Config(originalSysTickConfig);
+}
 ////////////////////////////////////////////////////////////
 void SetVolume(uint8_t v30)
 {
@@ -576,7 +607,21 @@ void SetVolume(uint8_t v30)
 		I2C_WriteByte(*(&DSP_VOL[v30][i]));
 	I2C_Stop();
 }
+void SetVolumeThr(uint8_t v30)
+{
+	lastVolume = v30;
+	SetVolume(v30);
+    if (!isThrottled) {
+        isThrottled = true;
+        adjType = 0;
+		// 保存原来的SysTick定时器设定
+        //originalSysTickConfig = SysTick->CTRL;
 
+        // 使用定时器或延时函数延迟一段时间
+        // 例如使用SysTick定时器进行延时
+        SysTick_Config(SystemCoreClock / 1000); // 设置SysTick为1毫秒间隔
+    }
+}
 
 void CheckVolume(void)
 {
@@ -588,7 +633,7 @@ void CheckVolume(void)
 			nVolume = 0;
 		else
 			nVolume = constrain(nVolume + i8, MIN_VOL, MAX_VOL);
-		SetVolume(nVolume);
+		SetVolumeThr(nVolume);
 		if (nVolume)
 			bMuted = false;
 		AddSyncBits(NEEDSYNC_VOL);
@@ -862,6 +907,9 @@ void AdjFreq(bool bCurrStep)
 		nFreq -= nStep;
 
 	nBandFreq[nBand] = nFreq;
+	lastFreq = nBandFreq[nBand];
+
+
 }
 
 
@@ -870,6 +918,7 @@ void TuneFreqDisp(void)
 	int32_t f;
 
 	f = nBandFreq[nBand];
+	
 	TuneFreq(f);
 
 	if (nBand >= BAND_FL)
@@ -1254,20 +1303,22 @@ void AddSyncBits(uint32_t SyncBit)
 
 void TunerInit(void)
 {
+	originalSysTickConfig = SysTick->CTRL;
+
 	uint8_t nBootMode;
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_Delay(35);
 	
 	OLED_Clear2();
-	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");//脧脭脢戮脳脰路没
+	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");//????×?·?
 	OLED_XYStr(3, 1, "WTCRC7751");
 	OLED_XYStr(3, 2, "V3 Build 3");
 	OLED_XYStr(0, 3,"*Powered by ADM*");
 	OLED_Refresh();
 	HAL_Delay(2800);
 	NVMGetArgs();
-	if (!IsMenuVisible(MID_INCA)) //锟斤拷INCA支锟街碉拷锟酵猴拷锟较斤拷锟斤拷INCA锟斤拷锟斤拷锟斤拷R7.1锟教硷拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
+	if (!IsMenuVisible(MID_INCA)) //??INCA????????????INCA??????R7.1???????????????
 		nINCA = 0;
 	HAL_Delay(1000);	
 	//HAL_Delay(1000);	
@@ -1309,61 +1360,7 @@ void TunerLoop(void)
 	uint8_t nKey;
 	uint16_t u16;
 
-	//if (HAL_GetTick() - timerRDS >= TIMER_RDSCHECK)
-	//{
-	//	timerRDS = HAL_GetTick();
-	//	for (uint8_t i = 0; i < 10; i++)
-	//	{
-	//		if (dsp_query1(0x00) & 0x10)
-	//		{
-	//			//RDAV == 1
-	//			//printf("RDS: %4X,%4X,%4X,%4X Error: %X\n", dsp_query2(0x08), dsp_query2(0x0A), dsp_query2(0x0C), dsp_query2(0x0E), dsp_query1(0x10));
-	//			uRDSErrorCode = dsp_query1(0x10);
-	//			uRDSBlockD = dsp_query2(0x0E);
-	//			uRDSBlockC = dsp_query2(0x0C);
-	//			uRDSBlockB.uRawDataB = dsp_query2(0x0A);
-	//			uRDSBlockA = dsp_query2(0x08);
-	//			if (uRDSBlockB.uDetailData.B0)
-	//			{
-	//				//B锟芥本锟斤拷Block1锟斤拷PI锟斤拷锟斤拷锟紹lock1锟斤拷Block3
-	//			}
-	//			else
-	//			{
-	//				//A锟芥本锟斤拷Block1锟斤拷PI锟斤拷只锟斤拷锟诫到Block1
-	//				//printf("锟姐播锟斤拷锟酵ｏ拷 %s \n", PTYASCIITable[uRDSBlockB.uDetailData.PTY]);
-	//				if (uRDSErrorCode == 0 && uRDSBlockB.uDetailData.GroupCode == 2)
-	//				{
-	//					//锟姐播锟侥憋拷
-	//					//if(ABOld != uRDSBlockB.uDetailData.AB)
-	//					uRTSegmentAvailableBit |= (0x0001 << uRDSBlockB.uDetailData.ADDR);
-	//					cRadioText[uRDSBlockB.uDetailData.ADDR * 4] = (unsigned char)(uRDSBlockC >> 8);
-	//					cRadioText[uRDSBlockB.uDetailData.ADDR * 4 + 1] = (unsigned char)(uRDSBlockC & 0x00FF);
-	//					cRadioText[uRDSBlockB.uDetailData.ADDR * 4 + 2] = (unsigned char)(uRDSBlockD >> 8);
-	//					cRadioText[uRDSBlockB.uDetailData.ADDR * 4 + 3] = (unsigned char)(uRDSBlockD & 0x00FF);
-	//					//if (uRTSegmentAvailableBit == 0xFFFF) // get all 16 segments
-	//					{
-	//						cRadioText[64] = '\0';
-	//						printf("锟姐播锟侥憋拷锟斤拷 %s \n", cRadioText);
-	//					}
-	//					//char ss[5] = { 0 };	
-	//					//ss[0] = uRDSBlockC >> 8;
-	//					//ss[1] = uRDSBlockC & 0x0F;
-	//					//ss[2] = uRDSBlockD >> 8;
-	//					//ss[3] = uRDSBlockD & 0x0F;
-	//					//printf("锟姐播锟侥憋拷锟斤拷 %s \n", ss);
-	//				}
-	//			}
-	//			//printf("RDSB: %4X,%X,%X,%X,%X,%X,%X Error: %X\n", uRDSBlockB.uRawDataB
-	//			//	, uRDSBlockB.uDetailData.GroupCode
-	//			//	, uRDSBlockB.uDetailData.B0
-	//			//	, uRDSBlockB.uDetailData.TP
-	//			//	, uRDSBlockB.uDetailData.PTY
-	//			//	, uRDSBlockB.uDetailData.AB
-	//			//	, uRDSBlockB.uDetailData.ADDR
-	//			//	, uRDSErrorCode);
-	//		}
-	//	}
-	//}
+	
 
 	if (bHAL_DelayedCheck && HAL_GetTick() >= nHAL_DelayedTimer)
 	{
@@ -1491,6 +1488,16 @@ void TunerLoop(void)
 		case TYPE_FREQ:
 			nBandFreq[nBand] += i8 * nBandStep[nBand][nStepIdx];
 			AdjFreq(true);
+			if (!isThrottled) {
+					isThrottled = true;
+					adjType = 1;
+			// 保存原来的SysTick定时器设定
+					//originalSysTickConfig = SysTick->CTRL;
+
+					// 使用定时器或延时函数延迟一段时间
+					// 例如使用SysTick定时器进行延时
+					SysTick_Config(SystemCoreClock / 1000); // 设置SysTick为1毫秒间隔
+			}
 			TuneFreqDisp();
 			break;
 
@@ -1514,18 +1521,24 @@ void TunerLoop(void)
 		{
 		case KEY_LROT:
 			Menu(MID_OPTION);
+			printf("<Z>3");
 			break;
 
 		case KEY_LROT | KEY_LONGPRESS:  // Toggle mute/unmute
-			if (bMuted)
+			if (bMuted) {
 				SetVolume(nVolume);  // Unmute
-			else
+				printf("取消静音");
+			}
+			else {
 				SetVolume(0);  // Mute
+				printf("静音");
+			}
 			bMuted = !bMuted;
 			break;
 
 		case KEY_RROT:
 			Menu(MID_FREQUENCY);
+			printf("<Z>3");
 			break;
 
 		case KEY_RROT | KEY_LONGPRESS:
@@ -1535,6 +1548,7 @@ void TunerLoop(void)
 
 		case KEY_TUNE:
 			nTuneType = (nTuneType + 1) % NUM_TYPES;
+			printf("%s", getTurnName(nTuneType));
 			if (nTuneType == TYPE_CH)
 				SeekCh(0);
 			AddSyncBits(NEEDSYNC_TUNE);
@@ -1553,6 +1567,15 @@ void TunerLoop(void)
 
 		case KEY_BAND:
 			ProcBand((nBand + 1) % NUM_BANDS);
+			
+			if(nBand == BAND_FM || nBand == BAND_FL) {
+				printf("%s %.1fM\n", getBandName(nBand), nBandFreq[nBand]/1000.0);
+			}
+			else {
+				printf("%s %dK\n", getBandName(nBand), nBandFreq[nBand]);
+			}
+			//printf("切换到FM频道 %.1f\n", channel);
+			fflush(stdout);		
 			break;
 
 		case KEY_BAND | KEY_LONGPRESS:
@@ -1561,9 +1584,15 @@ void TunerLoop(void)
 			else
 				ProcBand(BAND_MW);
 			break;
-
+		case KEY_STEP:
+			ProcStepFilter(nKey);
+			LCDUpdate();
+			printf("%s",szStep);
+			break;
 		default:  // Include KEY_STEP, KEY_STEP | KEY_LONGPRESS, KEY_FILTER, KEY_FILTER | KEY_LONGPRESS
 			ProcStepFilter(nKey);
+			LCDUpdate();
+			printf("%s",pszFilter);
 			break;
 		}
 		LCDUpdate();
@@ -1575,6 +1604,7 @@ void TunerLoop(void)
 			nTuneType = TYPE_ANY;
 		else
 			nTuneType = TYPE_FREQ;
+		printf("%s", getTurnName(nTuneType));
 		LCDUpdate();
 		AddSyncBits(NEEDSYNC_TUNE);
 	}
@@ -1583,6 +1613,7 @@ void TunerLoop(void)
 	{
 		ScanAny();
 		nTuneType = TYPE_FREQ;
+		printf("%s", getTurnName(nTuneType));
 		LCDUpdate();
 		AddSyncBits(NEEDSYNC_TUNE);
 	}

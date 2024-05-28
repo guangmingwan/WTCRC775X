@@ -5,10 +5,10 @@
 <h2>Tool Versions:</h2>
 IDE-Version: ��Vision V5.38.0.0
 Copyright (C) 2022 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: wan abc, ty, LIC=WHYH9-4YRD9-AR4XW-QVWZG-YHSE0-QL8NU
+License Information: wan abc, ty, LIC=GE7DL-0N7ZD-XCXJ0-B9BDQ-5RI7B-9IXEI
  
 Tool Versions:
-Toolchain:       MDK-ARM Plus  Version: 5.38.0.0
+Toolchain:       MDK-ARM Professional  Version: 5.38.0.0
 Toolchain Path:  D:\Keil_v5\ARM\ARMCLANG\Bin
 C Compiler:      ArmClang.exe V6.19
 Assembler:       Armasm.exe V6.19
@@ -22,16 +22,503 @@ Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
 D:\myprojects\WTCRC775X-f103-HAL-LCD\MDK-ARM\wtcrc103rgt6.uvprojx
-Project File Date:  05/02/2023
+Project File Date:  10/21/2023
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.19', folder: 'D:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'wtcrc103rgt6'
-compiling main.c...
+../Src/ui.c(55): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_RADI, MT_RADI, "<CA><D5><D2><F4><BB><FA><C9><E8><D6><C3>"},
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(56): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_AUDI, MT_AUDI, "<D2><F4>Ƶ<C9><E8><D6><C3>"},
+                                     ^~~~~~~~ ~~~~~~~~~~~~~~~~
+../Src/ui.c(57): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_APPL, MT_APPL, "Ӧ<D3><C3><C9><E8><D6><C3>"},
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(58): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_EXIT, MT_EXIT, "<CD>˳<F6><B2>˵<A5>"}};
+                                     ^~~~ ~~~~~~~~ ~~~~
+../Src/ui.c(85): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_SQUELCH1, MT_SQU1, "<BE><B2><D2><F4><E3><D0>ֵ"},
+                                         ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(86): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_SQUELCH2, MT_SQU2, "<CB><D1><CB><F7><E3><D0>ֵ"},
+                                         ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(87): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_LSIG, MT_LSIG,"<D0>źŵ<CD><E3><D0>ֵ"},
+                                    ^~~~  ~~~~~~~~~~~~
+../Src/ui.c(88): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FIRM, MT_FIRM,"<B9>̼<FE>ѡ<D4><F1>"},
+                                    ^~~~~~~~ ~~~~~~~~
+../Src/ui.c(89): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMST, MT_FMST,"FM<C1><A2><CC><E5><C9><F9><C9>趨"},
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(90): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMAT, MT_FMAT,"FM<CC><EC><CF><DF>ѡ<D4><F1>"},
+                                      ^~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(91): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMSI, MT_FMSI,"FM<C1><A2><CC><E5><C9><F9><D4><F6>ǿ"},
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(92): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMCE, MT_FMCE,"FMƵ<B5><C0><BE><F9><BA><E2>"},
+                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(93): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMMP, MT_FMMP,"FM<B6><E0>·<BE><B6><D4><F6>ǿ"},
+                                      ^~~~~~~~ ~~~~~~~~~~~~~~~~
+../Src/ui.c(94): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMNS, MT_FMNS,"FM<B5>δ<F0><C9><F9><CF><FB><B3><FD>"},
+                                      ^~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(95): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_INCA, MT_INCA,"FM/AM<BE><B2><D4><EB>"},
+                                         ^~~~~~~~~~~~~~~~
+../Src/ui.c(96): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMBW, MT_FMBW,"FM<B6><AF>̬<B4><F8><BF><ED>"},
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(97): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_DEEM, MT_DEEM,"FMȥ<BC><D3><D6><D8>"},
+                                       ^~~~~~~~~~~~~~~~
+../Src/ui.c(98): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_AGC, MT_AGC,"AGC<E3><D0>ֵ"},
+                                     ^~~~~~~~
+../Src/ui.c(99): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_NB, MT_NB,"<D4><EB><D2><F4><CF><FB><B3><FD>"},
+                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(100): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_RET, MT_RET,"<B7><B5><BB><D8>"}};
+                                  ^~~~~~~~~~~~~~~~
+../Src/ui.c(104): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_TONE, MT_TONE, "<D2><F4>Ч<C9><E8><D6><C3>"},
+                                     ^~~~~~~~ ~~~~~~~~~~~~~~~~
+../Src/ui.c(105): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_BAL, MT_BAL,"<B8><DF><D6>е<CD>ƽ<BA><E2>"},
+                                  ^~~~~~~~~~~~ ~~~~ ~~~~~~~~
+../Src/ui.c(106): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_RET, MT_RET,"<B7><B5><BB><D8>"}};
+                                  ^~~~~~~~~~~~~~~~
+../Src/ui.c(110): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_BKLT, MT_BKLT, "<B1><B3><B9><E2>"},
+                                     ^~~~~~~~~~~~~~~~
+../Src/ui.c(111): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_TSCN, MT_TSCN, "ɨ<C3><E8>ģʽ<B5>ȴ<FD>ʱ<BC><E4>"},
+                                      ^~~~~~~~  ~~~~ ~~~~ ~~~~~~~~
+../Src/ui.c(112): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_TANY, MT_TANY, "<C8><CE><D2><E2>ģʽ<B5>ȴ<FD>ʱ<BC><E4>"},
+                                     ^~~~~~~~~~~~~~~~  ~~~~ ~~~~ ~~~~~~~~
+../Src/ui.c(113): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_TIME, MT_TIME, "<C9><E8><D6><C3>ʱ<BC><E4>"},
+                                     ^~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(114): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_RET, MT_RET,"<B7><B5><BB><D8>"}};
+                                  ^~~~~~~~~~~~~~~~
+../Src/ui.c(122): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_LSIGNORM, MT_LSIGNORM, "<D5><FD><B3><A3>"},
+                                             ^~~~~~~~~~~~~~~~
+../Src/ui.c(123): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_LSIGLOW, MT_LSIGLOW,"<B5><CD>"}};
+                                          ^~~~~~~~
+../Src/ui.c(132): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FIRM1, MT_FIRM1, "<C4><DA><D6>ù̼<FE>"},
+                                       ^~~~~~~~~~~~ ~~~~
+../Src/ui.c(133): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FIRM2, MT_FIRM2, "7.1<B9>̼<FE>"},
+                                          ^~~~~~~~
+../Src/ui.c(134): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FIRM3, MT_FIRM3, "8.0<B9>̼<FE>"}};
+                                          ^~~~~~~~
+../Src/ui.c(143): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMAT1, MT_FMAT1,"<CC><EC><CF><DF>1"},
+                                      ^~~~~~~~~~~~~~~~
+../Src/ui.c(144): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMAT2, MT_FMAT2,"<CC><EC><CF><DF>2"},
+                                      ^~~~~~~~~~~~~~~~
+../Src/ui.c(145): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMAT3, MT_FMAT3,"˫<CC><EC><CF><DF>"}};
+                                       ^~~~~~~~~~~~~~~~
+../Src/ui.c(153): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMSIOFF, MT_FMSIOFF, "ͣ<D3><C3>"},
+                                           ^~~~~~~~
+../Src/ui.c(154): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMSION, MT_FMSION,"<C6><F4><D3><C3>"}
+                                        ^~~~~~~~~~~~~~~~
+../Src/ui.c(163): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMCEOFF, MT_FMCEOFF, "ͣ<D3><C3>"},
+                                           ^~~~~~~~
+../Src/ui.c(164): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMCEON, MT_FMCEON,"<C6><F4><D3><C3>"}};
+                                        ^~~~~~~~~~~~~~~~
+../Src/ui.c(172): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMMPOFF, MT_FMMPOFF, "ͣ<D3><C3>"},
+                                           ^~~~~~~~
+../Src/ui.c(173): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMMPON, MT_FMMPON,"<C6><F4><D3><C3>"}};
+                                        ^~~~~~~~~~~~~~~~
+../Src/ui.c(181): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMNSOFF, MT_FMNSOFF, "ͣ<D3><C3>"},
+                                           ^~~~~~~~
+../Src/ui.c(182): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FMNSON, MT_FMNSON,"<C6><F4><D3><C3>"}};
+                                        ^~~~~~~~~~~~~~~~
+../Src/ui.c(190): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_INCAOFF, MT_INCAOFF, "ͣ<D3><C3>"},
+                                           ^~~~~~~~
+../Src/ui.c(191): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_INCAON, MT_INCAON,"<C6><F4><D3><C3>"}};
+                                        ^~~~~~~~~~~~~~~~
+../Src/ui.c(200): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_DEEM0, MT_DEEM0, "ͣ<D3><C3>"},
+                                       ^~~~~~~~
+../Src/ui.c(201): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_DEEM50, MT_DEEM50, "<CE><E5>ʮus"},
+                                         ^~~~~~~~
+../Src/ui.c(202): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_DEEM75, MT_DEEM75, "<C6><DF>ʮ<CE><E5>us"}};
+                                         ^~~~~~~~ ~~~~~~~~
+../Src/ui.c(210): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_BKKEEP, MT_BKKEEP,"<B1><B3><B9><E2><B3><D6><D0><F8>ʱ<BC><E4>"},
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(211): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_BKADJ, MT_BKADJ,"<B1><B3><B9><E2><C1><C1><B6><C8>"},
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(212): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_RET, MT_RET, "<B7><B5><BB><D8>"}};
+                                   ^~~~~~~~~~~~~~~~
+../Src/ui.c(225): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_MODE, MT_MODE,"<B9><A4><D7><F7>ģʽ"},
+                                    ^~~~~~~~~~~~~~~~
+../Src/ui.c(226): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_STAT, MT_STAT,"<D0>ź<C5><D6><CA><C1><BF>"},
+                                    ^~~~ ~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(227): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_TUNE, MT_TUNE,"<B5><F7>г<B7><BD>ʽ"},
+                                    ^~~~~~~~ ~~~~~~~~
+../Src/ui.c(228): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_BAND, MT_BAND,"<B2><A8><B6><CE>ѡ<D4><F1>"},
+                                    ^~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(229): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FILT, MT_FILT,"<C9><E4>Ƶ<B4><F8><BF><ED>ѡ<D4><F1>"},
+                                    ^~~~~~~~ ~~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(230): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_SINE, MT_SINE,"<D5><FD><CF>Ҳ<A8><B7><A2><C9><FA><C6><F7>"},
+                                    ^~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(231): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_HELP, MT_HELP,"ʹ<D3>ð<EF><D6><FA>"},
+                                     ^~~~ ~~~~~~~~~~~~
+../Src/ui.c(232): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_EXIT, MT_EXIT,"<CD>˳<F6>"}};
+                                    ^~~~ ~~~~
+../Src/ui.c(240): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_MODERF, MT_MODERF,"<C9><E4>Ƶ"},
+                                        ^~~~~~~~
+../Src/ui.c(241): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_MODEAUX, MT_MODEAUX,"<BB><EC><BA><CF><D2><F4>Ƶ<CA><E4><C8><EB>"},
+                                          ^~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~
+../Src/ui.c(242): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_RET, MT_RET,"<B7><B5><BB><D8>"}};
+                                  ^~~~~~~~~~~~~~~~
+../Src/ui.c(254): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FREQ, MT_FREQ,"<D7><D4><D3>ɵ<F7>г"},
+                                    ^~~~~~~~~~~~ ~~~~
+../Src/ui.c(255): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_SEEK, MT_SEEK,"<C9><CF><CF><C2><CB><D1>̨"},
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(256): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_CH, MT_CH,"Ƶ<B5><C0>ģʽ"},
+                                 ^~~~~~~~
+../Src/ui.c(257): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_SCAN, MT_SCAN,"<C1><AC><D0><F8><CB><D1>̨"},
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(258): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_ANY, MT_ANY,"<C8><CE><D2><E2>ģʽ"},
+                                  ^~~~~~~~~~~~~~~~
+../Src/ui.c(259): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_SCSV, MT_SCSV,"ɨ<C3>貢<B4><E6>̨"},
+                                     ^~~~  ~~~~~~~~
+../Src/ui.c(260): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_RET, MT_RET,"<B7><B5><BB><D8>"}};
+                                  ^~~~~~~~~~~~~~~~
+../Src/ui.c(271): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_LW, MT_LW,"<B3><A4><B2><A8>"},
+                                ^~~~~~~~~~~~~~~~
+../Src/ui.c(272): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_MW, MT_MW,"<D6>в<A8>"},
+                                ^~~~ ~~~~
+../Src/ui.c(273): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_SW, MT_SW,"<B6>̲<A8>"},
+                                ^~~~~~~~
+../Src/ui.c(274): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FL, MT_FL,"<B5><CD>Ƶ<B6><CE>FM"},
+                                ^~~~~~~~ ~~~~~~~~
+../Src/ui.c(275): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FM, MT_FM,"<B5><F7>Ƶ"},
+                                ^~~~~~~~
+../Src/ui.c(315): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FTFM00, MT_FTFM00,"<D7>Զ<AF>"},
+                                        ^~~~ ~~~~
+../Src/ui.c(334): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                {MID_FTAM00, MT_FTAM00,"<D7>Զ<AF>"},
+                                        ^~~~ ~~~~
+../Src/ui.c(406): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        printf("<D2><F4><C1><BF>%d\n", nVolume);
+                                ^~~~~~~~~~~~~~~~
+../Src/ui.c(413): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        printf("<D2><F4><C1><BF>%d\n", nVolume);
+                                ^~~~~~~~~~~~~~~~
+../Src/ui.c(438): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "<B5><F7>г";
+                                ^~~~~~~~
+../Src/ui.c(440): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "<B6><A8>λ";
+                                ^~~~~~~~
+../Src/ui.c(442): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "Ƶ<B5><C0>";
+                                 ^~~~~~~~
+../Src/ui.c(444): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "<CB><D1><CB><F7>";
+                                ^~~~~~~~~~~~~~~~
+../Src/ui.c(446): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "<C8><CE><D2><E2>";
+                                ^~~~~~~~~~~~~~~~
+../Src/ui.c(448): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "<CB>Ѵ<E6>";
+                                ^~~~ ~~~~
+../Src/ui.c(457): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "<B3><A4><B2><A8>";
+                                ^~~~~~~~~~~~~~~~
+../Src/ui.c(459): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "<D6>в<A8>";
+                                ^~~~ ~~~~
+../Src/ui.c(461): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "<B6>̲<A8>";
+                                ^~~~~~~~
+../Src/ui.c(463): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "<B5><F7>Ƶ";
+                                ^~~~~~~~
+../Src/ui.c(467): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        return "δ֪Ƶ<C2><CA>";
+                                  ^~~~~~~~
+../Src/ui.c(566): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        printf("<B5><E3>");
+                                ^~~~~~~~
+../Src/ui.c(608): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                                                printf("<CA><E4><C8><EB><CE><DE>Ч<A3><BA>%s\n", input);
+                                                        ^~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(614): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                                printf("<CA><E4><C8><EB><CE><DE>Ч<A3><BA>%s\n", input);
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(902): warning: assigning to 'char *' from 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+        pszFilter = p;
+                  ^ ~
+../Src/ui.c(1066): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("<D0><FD>ת<A3><AC><B0><B4>ѹ<B1><E0><C2><EB><C6><F7><D0><U+07B8>ģ<AC><C8><CE><D2><E2><BC><FC><B7><B5><BB><D8>\n");
+                ^~~~~~~~ ~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(1115): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("<B6><AF>̬<B4><F8><BF><ED>%d", nFMDynamicBW);
+                ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(1152): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("<D7>Զ<AF><D4><F6><D2><E6><E3><D0>ֵ%d", nAGC);
+                ^~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(1188): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("<C1><A2><CC><E5><C9><F9>%d", nStereo);
+                ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(1226): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("<BD><B5><D4><EB>%d", nNBSens);
+                ^~~~~~~~~~~~~~~~
+../Src/ui.c(1291): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("<B1><B3><B9>Ᵽ<B3><D6>ʱ<BC><E4>%d\n",i16 );
+                ^~~~~~~~~~~~ ~~~~~~~~ ~~~~~~~~
+../Src/ui.c(1326): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("ɨ<C3>赽<BD><DA>Ŀ<BA><F3>ͣ<C1><F4> %d", i16 );
+                 ^~~~  ~~~~~~~~ ~~~~~~~~~~~~~~~~
+../Src/ui.c(1362): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("<C8><CE><D2><E2>ģʽͣ<C1><F4>ʱ<BC><E4>%d", i16 );
+                ^~~~~~~~~~~~~~~~  ~~~~~~~~ ~~~~~~~~
+../Src/ui.c(1404): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("ʱ<BC><E4>%02dʱ%02d<B7><D6>%02d<C3><EB>",(nSeconds / 3600) % 24,(nSeconds / 60) % 60 ,nSeconds % 60);
+                 ^~~~~~~~         ~~~~~~~~    ~~~~~~~~
+../Src/ui.c(1422): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        printf("%02dʱ%02d<B7><D6>%02d<C3><EB>",(nSeconds / 3600) % 24,(nSeconds / 60) % 60 ,nSeconds % 60);
+                                         ^~~~~~~~    ~~~~~~~~
+../Src/ui.c(1480): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("<B5><F7>Ƶ<D4><EB><C9><F9>:"), // 1st item
+                          ^~~~~~~~ ~~~~~~~~~~~~~~~~
+../Src/ui.c(1481): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FM<B6><E0>·<BE><B6>:"),
+                            ^~~~~~~~ ~~~~~~~~
+../Src/ui.c(1482): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("<C9><E4>Ƶƫ<D2><C6>:K"),
+                          ^~~~~~~~  ~~~~~~~~
+../Src/ui.c(1483): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("<C9><E4>Ƶ<B4><F8><BF><ED>:"),
+                          ^~~~~~~~ ~~~~~~~~~~~~~~~~
+../Src/ui.c(1484): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("<B5><F7><D6><C6>:%"),
+                          ^~~~~~~~~~~~~~~~
+../Src/ui.c(1485): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("оƬ<B9>̼<FE>:"),
+                            ^~~~~~~~
+../Src/ui.c(1486): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("<D6><D0>Ƶ:"),               // Last item
+                          ^~~~~~~~
+../Src/ui.c(1487): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("<B5><F7><B7><F9><CF><E0><C1><DA>:") // Another 1st item for AM mode
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(1512): warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+                        printf(chs_str[u8_data]);
+                               ^~~~~~~~~~~~~~~~
+../Src/ui.c(1512): note: treat the string as an argument to avoid this
+                        printf(chs_str[u8_data]);
+                               ^
+                               "%s", 
+../Src/ui.c(1610): warning: 'strcpy' will always overflow; destination buffer has size 1, but the source string has length 3 (including NUL byte) [-Wfortify-source]
+                                strcpy(s + 9, "Eg");
+                                ^
+../Src/ui.c(1612): warning: 'strcpy' will always overflow; destination buffer has size 1, but the source string has length 3 (including NUL byte) [-Wfortify-source]
+                                strcpy(s + 9, "Pr");
+                                ^
+../Src/ui.c(1714): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                                printf("<B5><CD><D2><F4>%d\n",nVal );
+                                        ^~~~~~~~~~~~~~~~
+../Src/ui.c(1721): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                                printf("<D6><D0><D2><F4>%d\n",nVal );
+                                        ^~~~~~~~~~~~~~~~
+../Src/ui.c(1728): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                                printf("<B8><DF><D2><F4>%d\n",nVal );
+                                        ^~~~~~~~~~~~~~~~
+../Src/ui.c(1749): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        printf("<D0><FD>ת<A3><AC><B0><B4>ѹ<B1><E0><C2><EB><C6><F7><D0><U+07B8>ģ<AC><C8><CE><D2><E2><BC><FC><B7><B5><BB><D8>\n");
+                ^~~~~~~~ ~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(1792): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                                printf("ƽ<BA><E2>%d\n",nVal );
+                                         ^~~~~~~~
+../Src/ui.c(1799): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                                printf("<C9><F9><B3><A1>%d\n",nVal );
+                                        ^~~~~~~~~~~~~~~~
+../Src/ui.c(2041): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("SQU1:<CA><D5><CC><FD><B5><C4>ʱ<BA><F2><BE><B2><D4><EB>"),
+                               ^~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2042): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("SQU2:<B6><A8>λ<A3><AC><CB><D1><CB><F7><A3><AC><C8><CE><D2><E2>ģʽ<B5><C4>ʱ<BA><F2><BE><B2><D4><EB>"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2043): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("LSIG:Ѱ<B5><C0>/ɨ<C3><E8>/<C8><CE><D2><E2><D0>ź<C5><D6><CA><C1><BF><BD>ϵ͵Ĳο<BC>ֵ"),
+                                ^~~~~~~~  ~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~    ~~~~
+../Src/ui.c(2044): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FMST:<B5><F7>Ƶ<C1><A2><CC><E5><C9><F9>  0=ǿ<D6>Ƶ<A5><C9><F9><B5><C0>    5=Ĭ<C8><CF>       9=<D7><EE>ǿ"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~     ~~~~ ~~~~~~~~~~~~~~~~~~~~       ~~~~~~~~         ~~~~~~~~
+../Src/ui.c(2045): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FMAT:<B5><F7>Ƶ<CC><EC><CF><DF>ѡ<D4><F1>"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(2046): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FMSI:<B5><F7>Ƶ<C1><A2><CC><E5><C9><F9><D4><F6>ǿ"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2047): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FMCE:<B5><F7>Ƶ<D0>ŵ<C0><BE><F9><BA><E2><C6><F7>"),
+                               ^~~~~~~~ ~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2048): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FMMP:FM<D4><F6>ǿ<B6><E0>·֧<B3><D6>"),
+                                 ^~~~~~~~ ~~~~~~~~ ~~~~~~~~
+../Src/ui.c(2049): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FMNS:<B5><F7>Ƶ<E0><D6><E0><AA><D4><EB><C9><F9><D2><D6><D6><C6><C6><F7>"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2050): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("INCA:<B5><F7>Ƶ<B5><F7><B7><F9><B8>Ľ<F8><D0><CD><D4><EB><C9><F9><C1><BF>Ͳ"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2051): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FMBW:<B5><F7>Ƶ<B6><AF>̬<B4><F8><BF><ED><BF><D8><D6><C6>ƫ<BA><C3>"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(2052): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("DEEM:<B5><F7>Ƶȥ<BC><D3><D6>س<A3><C1><BF>"),
+                               ^~~~~~~~  ~~~~~~~~~~~~ ~~~~~~~~~~~~
+../Src/ui.c(2053): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("AGC:<BF><ED><B4><F8>agc<E3><D0>ֵ"),
+                              ^~~~~~~~~~~~~~~~   ~~~~~~~~
+../Src/ui.c(2054): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("NB:<D4><EB><C9><F9><C6><C1><B1><CE><C1><E9><C3><F4><B6><C8>"),
+                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2055): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("TONE:<B5><F7><D5><FB><B5><CD><D2><F4><BA><U+0378><DF><D2><F4>"),
+                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        ~~~~~~~~~~~~
+../Src/ui.c(2056): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("BAL:<B5><F7><D5><FB>ƽ<BA><E2><BA>ͳ<A1><C9><EE><BF><D8><D6><C6><C6><F7>"),
+                              ^~~~~~~~~~~~~~~~ ~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2057): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("BKLT:<B5><F7><BD><DA>Һ<BE><A7><B1><B3><B9><E2>"),
+                               ^~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2058): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("KEEP:Һ<BE><A7><CF><D4>ʾ<C6><F7><B3><D6><D0><F8><C1><C1><C6><F0><B5><C4><C3><EB><CA><FD>"),
+                                ^~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2059): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("ADJ:<B5><F7><D5><FB>Һ<BE><A7><CF><D4>ʾ<C6><F7><C1><C1><B6><C8>"),
+                              ^~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2060): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("TSCN:ɨ<C3>赽<B5><E7>̨ͣ<C1><F4>ʱ<BC><E4>"),
+                                ^~~~  ~~~~~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(2061): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("TANY:<C8>κε<E7>̨<B5><C4>ʱ<BC><E4>"),
+                               ^~~~  ~~~~~~~~~~~~ ~~~~~~~~
+../Src/ui.c(2062): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("TIME:<B5><F7><D5><FB>ʱ<D6>ӵ<C4>ʱ<BC><E4>"),
+                               ^~~~~~~~~~~~~~~~ ~~~~ ~~~~ ~~~~~~~~
+../Src/ui.c(2063): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("MODE:<BD><AB>ģʽ<C9><E8><D6><C3>ΪRF/AUX"),
+                               ^~~~~~~~  ~~~~~~~~~~~~~~~~
+../Src/ui.c(2064): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("STAT:<CF><D4>ʾ<C6><E4><CB><FB>RF״̬"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~
+../Src/ui.c(2065): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("TUNE:<C9><E8><D6>õ<F7><D5><FB><B7><BD><B7><A8>"),
+                               ^~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2066): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FILT:<C9><E8><D6><C3><C2>˲<A8><C6><F7><B4><F8><BF><ED>"),
+                               ^~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2067): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FREQ:<B5><F7>гƵ<C2>ʵĲ<BD><BD><F8>"),
+                               ^~~~~~~~  ~~~~  ~~~~~~~~~~~~
+../Src/ui.c(2068): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("SEEK:<B5><F7>г<B5><BD><CF><C2>һ<B8><F6><B5><E7>̨"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~
+../Src/ui.c(2069): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("CH:ͨ<B9><FD>Ƶ<B5><C0><B1><E0><BA>Ž<F8><D0>е<F7>г"),
+                             ^~~~~~~~ ~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~ ~~~~
+../Src/ui.c(2070): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("SCAN:<B5><F7><B5><BD>ÿһ<B8><F6><B5><E7>̨<A3><AC><C7>ұ<A3><B3><D6>һ<B6><CE>ʱ<BC><E4>"),
+                               ^~~~~~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~ ~~~~~~~~ ~~~~~~~~
+../Src/ui.c(2071): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("ANY:<B5><F7>г<B5><BD><C8>κε<E7>̨<A1><A3><B3><D6><D0><F8><B2><A5><B7><C5>ֱ<B5><BD><B6><AA>ʧǰһ<B8><F6><D0>ź<C5>"),
+                              ^~~~~~~~ ~~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   ~~~~~~~~~~~~ ~~~~
+../Src/ui.c(2072): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("S&S:ɨ<C3>貢<B1><A3><B4>沨<B6><CE><D6>еĵ<E7>̨"),
+                               ^~~~  ~~~~~~~~~~~~  ~~~~~~~~~~~~  ~~~~
+../Src/ui.c(2073): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("FM-L:<B5><F7>Ƶ<B2><A8><B6><CE><D2><D4><CF>µĲ<A8><B6><CE>"),
+                               ^~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~~~~~~~~~
+../Src/ui.c(2074): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                        ("SINE:<D5><FD><CF>Ҳ<A8><B7><A2><C9><FA><C6><F7>"),
+                               ^~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2365): warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+                        printf((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->chs_pszMTxt);
+                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2365): note: treat the string as an argument to avoid this
+                        printf((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->chs_pszMTxt);
+                               ^
+                               "%s", 
+../Src/ui.c(2372): warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+                                        printf((pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->chs_pszMTxt);
+                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/ui.c(2372): note: treat the string as an argument to avoid this
+                                        printf((pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->chs_pszMTxt);
+                                               ^
+                                               "%s", 
+../Src/ui.c(2504): warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+                printf("<CD>˳<F6>\n");               
+                        ^~~~ ~~~~
+158 warnings generated.
+compiling ui.c...
 linking...
-Program Size: Code=51536 RO-data=11380 RW-data=1184 ZI-data=1472  
+Program Size: Code=62648 RO-data=13632 RW-data=1616 ZI-data=1592  
 FromELF: creating hex file...
-"wtcrc103rgt6\wtcrc103rgt6.axf" - 0 Error(s), 0 Warning(s).
+"wtcrc103rgt6\wtcrc103rgt6.axf" - 0 Error(s), 158 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -54,7 +541,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.6.0
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:06
 </pre>
 </body>
 </html>

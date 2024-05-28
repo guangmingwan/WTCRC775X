@@ -51,11 +51,21 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+#include <stdbool.h>
+extern bool isThrottled ;
+extern uint8_t lastVolume;
+extern void ThrottleFunction(uint8_t v30);
+uint16_t IRTimer_Data = 0;//?????
+uint32_t IRCode = 0;//?????
+uint8_t IR_Flag = 0;//IR???????
+uint8_t i = 0;//IR???????
+uint8_t IR_LeaderCode = 0;
+void TIM_IRQHandler(void);
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -183,7 +193,17 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+  static uint16_t count = 0;
+  if(isThrottled) {
+    count++;
+    if (count >= 500) {
+        count = 0;
+        isThrottled = false;
+        ThrottleFunction(lastVolume);
+        // 关闭定时器或延时函数
+        //SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk; // 关闭SysTick定时器
+    }
+  }
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -213,6 +233,35 @@ void EXTI9_5_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM2 global interrupt.
+  */
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+	TIM_IRQHandler();
+
+  /* USER CODE END TIM2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM3 global interrupt.
+  */
+void TIM3_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM3_IRQn 0 */
+
+  /* USER CODE END TIM3_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim3);
+  /* USER CODE BEGIN TIM3_IRQn 1 */
+
+  /* USER CODE END TIM3_IRQn 1 */
+}
+
+/**
   * @brief This function handles EXTI line[15:10] interrupts.
   */
 void EXTI15_10_IRQHandler(void)
@@ -226,5 +275,37 @@ void EXTI15_10_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
+/* USER CODE BEGIN 4 */
+void Paser_IRCode(uint16_t PData)
+{  
+  if((PData>12000)&&(PData<15000))//?????,???13500
+    IR_LeaderCode = 1;
+ 
+  if(IR_LeaderCode==1)
+  {
+    if((PData>1000)&&(PData<1300))//0,???1125
+    {
+      IRCode=(IRCode<<1);
+      i++;
+    }
+    else if((PData>2000)&&(PData<2500))//1,???2250
+    {
+      IRCode = (IRCode<<1)|0x01;
+      i++;
+    }
+    if(i==32)
+    {
+      i = 0;
+      IR_LeaderCode = 0;
+      IR_Flag = 1;
+    }
+  }
+}
+ 
+void TIM_IRQHandler(void)
+{	
+    IRTimer_Data = HAL_TIM_ReadCapturedValue(&htim2,TIM_CHANNEL_2);//????????. 
+    __HAL_TIM_SET_COUNTER(&htim2,0);   //???????????0
+    Paser_IRCode(IRTimer_Data);
+}
 /* USER CODE END 1 */
