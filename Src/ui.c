@@ -312,6 +312,7 @@ const char MT_FTFM12[] = "262K";
 const char MT_FTFM13[] = "280K";
 const char MT_FTFM14[] = "297K";
 const char MT_FTFM15[] = "314K";
+const char MT_FTFM16[] = "OFF ";
 
 const char MT_FTAM00[] = "AUTO";
 const char MT_FTAM01[] = "1K8 ";
@@ -347,7 +348,8 @@ struct M_ITEM M_FMFilter[] =
 	{MID_FTFM12, MT_FTFM12},
 	{MID_FTFM13, MT_FTFM13},
 	{MID_FTFM14, MT_FTFM14},
-	{MID_FTFM15, MT_FTFM15}
+	{MID_FTFM15, MT_FTFM15},
+	{MID_FTFM16, MT_FTFM16},
 };
 
 struct M_ITEM M_AMFilter[] =
@@ -406,7 +408,7 @@ void Delay(uint16_t time)
 }
 
 
-void HAL_GPIO_EXTI_Callback_ori(uint16_t GPIO_Pin)
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (GPIO_Pin == SH1A_Pin)
 	{
@@ -426,7 +428,7 @@ void HAL_GPIO_EXTI_Callback_ori(uint16_t GPIO_Pin)
 ////////////////////////////////////////////////////////////
 // Rotary encoder & key utility
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+void HAL_GPIO_EXTI_Callback_adv(uint16_t GPIO_Pin)
 {
 	if (GPIO_Pin == SH1A_Pin)
 	{
@@ -2377,5 +2379,8 @@ void Menu(uint8_t nMenuID)
 	bExitMenu = 0;
 	ProcMenuItem(nMenuID);
 	OLED_Clear2();
+	TuneFreqDisp();
+	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");
+	OLED_XYStr(0, 3,"*Powered by ADM*");//fix message
 	LCDUpdate();
 }

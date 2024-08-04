@@ -160,6 +160,8 @@
 #define MID_FTFM13      0x7d
 #define MID_FTFM14      0x7e
 #define MID_FTFM15      0x7f
+#define MID_FTFM16      0x7f
+
 
 #define MID_FTAM00      0x80
 #define MID_FTAM01      0x81

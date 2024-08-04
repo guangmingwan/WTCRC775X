@@ -1513,6 +1513,7 @@ void TunerLoop(void)
 		switch (nKey)
 		{
 		case KEY_LROT:
+			clear_screen();
 			Menu(MID_OPTION);
 			break;
 
@@ -1525,6 +1526,7 @@ void TunerLoop(void)
 			break;
 
 		case KEY_RROT:
+			clear_screen();
 			Menu(MID_FREQUENCY);
 			break;
 
