@@ -890,8 +890,8 @@ void Menu_FMDynamicBW(void)
 			return;
 		}
 
-		if (!(lp % 16))
-			CheckUpdateSig();
+		//if (!(lp % 16))
+		//	CheckUpdateSig();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -926,8 +926,8 @@ void Menu_AGC(void)
 			return;
 		}
 
-		if (!(lp % 16))
-			CheckUpdateSig();
+		//if (!(lp % 16))
+		//	CheckUpdateSig();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1002,8 +1002,8 @@ void Menu_NoiseBlanker(void)
 			return;
 		}
 
-		if (!(lp % 16))
-			CheckUpdateSig();
+		//if (!(lp % 16))
+		//	CheckUpdateSig();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1033,8 +1033,8 @@ void Menu_BacklightAdj(void)
 			return;
 		}
 
-		if (!(lp % 16))
-			CheckUpdateSig();
+		//if (!(lp % 16))
+		//	CheckUpdateSig();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1064,8 +1064,8 @@ void Menu_BacklightKeep(void)
 			return;
 		}
 
-		if (!(lp % 16))
-			CheckUpdateSig();
+		//if (!(lp % 16))
+		//	CheckUpdateSig();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1096,8 +1096,8 @@ void Menu_ScanStayTime(void)
 			return;
 		}
 
-		if (!(lp % 16))
-			CheckUpdateSig();
+		//if (!(lp % 16))
+		//	CheckUpdateSig();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1128,8 +1128,8 @@ void Menu_AnyHoldTime(void)
 			return;
 		}
 
-		if (!(lp % 16))
-			CheckUpdateSig();
+		//if (!(lp % 16))
+		//	CheckUpdateSig();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1176,8 +1176,8 @@ void Menu_Time(void)
 			return;
 		}
 
-		if (!(lp % 16))
-			CheckUpdateSig();
+		//if (!(lp % 16))
+		//	CheckUpdateSig();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1246,7 +1246,7 @@ void Menu_Stat(void)
 			continue;
 		}
 
-		CheckUpdateSig();
+		//CheckUpdateSig();
 		int16_t iIFFreq1, iIFFreq2;
 		switch (nItem)
 		{
@@ -1813,9 +1813,10 @@ void Menu_Help(void)
 
 	OLED_Clear1();
 	OLED_Clear2();
+	OLED_Clear3();
 	//TuneFreqDisp();
 	//OLED_XYStr(0, 3,"*Powered by ADM*");//fix message
-	LCDUpdate();
+	//LCDUpdate();
 }  // void Menu_Help(void)
 
 void SetSineFreq(int16_t Freq)
@@ -2456,6 +2457,12 @@ void ProcMenuItem(uint8_t nMenuID)
 void Menu(uint8_t nMenuID)
 {
 	bExitMenu = 0;
+	if(nMenuID == MID_OPTION) {
+		OLED_XYStr(0, 0,">Options:");
+	}
+	else if(nMenuID == MID_FREQUENCY) {
+		OLED_XYStr(0, 0,">Frequency:");
+	}
 	ProcMenuItem(nMenuID);
 	OLED_Clear2();
 	TuneFreqDisp();
