@@ -88,6 +88,7 @@ void OLED_Clear(void);
 void OLED_Clear0(void);
 void OLED_Clear1(void);
 void OLED_Clear2(void);
+void OLED_Clear3(void);
 void OLED_DrawPoint(u8 x,u8 y,u8 t);
 void OLED_Fill(u8 x1,u8 y1,u8 x2,u8 y2,u8 dot);
 void OLED_ShowChar(u8 x,u8 y,u8 chr);

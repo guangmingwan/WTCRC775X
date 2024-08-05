@@ -717,27 +717,11 @@ void CheckUpdateSig(void)
 			c = 'S';  // Stereo
 	}
 
-	if (nDelayedSmooth--)
-	{
-		nRSSI_Disp = nRSSI;
-		nSNR_Disp = nSNR;
+	
+	nRSSI_Disp = nRSSI;
+	nSNR_Disp = nSNR;
 		
-	}
-	else
-	{
-		nDelayedSmooth = 0;
-		fv = (float)nRSSI_Last * 0.7 + (float)nRSSI * 0.3;
-		if (fv > 0.0)
-			nRSSI_Disp = (int)(fv + 0.5);
-		else
-			nRSSI_Disp = (int)(fv - 0.5);
 
-		fv = (float)nSNR_Last * 0.7 + (float)nSNR * 0.3;
-		if (fv > 0.0)
-			nSNR_Disp = (int)(fv + 0.5);
-		else
-			nSNR_Disp = (int)(fv - 0.5);
-	}
 
 	OLED_XYIntLen(RSSI_X, RSSI_Y, constrain(nRSSI_Disp, -9, 99), 2);  // Update RF signal level in dBuv
 	OLED_XYChar(STEREO_X, STEREO_Y, c);                               // Update FM stereo indicator
@@ -746,8 +730,8 @@ void CheckUpdateSig(void)
 	else
 		OLED_XYIntLen(SN_X, SN_Y, constrain(nSNR_Disp, -99, 127), 3); // Update S/N ratio in dB
 
-	nRSSI_Last = nRSSI_Disp;
-	nSNR_Last = nSNR_Disp;
+	//nRSSI_Last = nRSSI_Disp;
+	//nSNR_Last = nSNR_Disp;
 }
 
 
@@ -837,38 +821,44 @@ void CheckUpdateAlt(int8_t nShow)  // Check and update ALT area
 }  // void CheckUpdateAlt(int8_t nShow)  // Check and update ALT area
 
 
+
 void Menu_Squelch(uint8_t nIdx)
 {
-	int16_t i16 = nSquelch[nIdx];
-	uint8_t nKey, lp;
+    int16_t i16 = nSquelch[nIdx];
+    uint8_t nKey, lp;
+    bool bShowColon = true;  // 新增变量，用于跟踪冒号是否显示
 
-	// 0123456789012345
-	OLED_XYStr(0, 2, "SQUELCH1:       ");
-	if (nIdx)
-		OLED_XYChar(7, 2, '2');
+    // 0123456789012345
+    OLED_XYStr(0, 2, "SQUELCH1:       ");
+    if (nIdx)
+        OLED_XYChar(7, 2, '2');
 
-	for (lp = 0; ; lp++)
-	{
-		i16 += GetLRot() + GetRRot();
-		i16 = constrain(i16, -99, 99);
-		OLED_XYIntLen(10, 2, i16, 3);
+    for (lp = 0; ; lp++)
+    {
+        i16 += GetLRot() + GetRRot();
+        i16 = constrain(i16, -99, 99);
+        OLED_XYIntLen(10, 2, i16, 3);
 
-		if ((nKey = GetKey()) != false)
-		{
-			nSquelch[nIdx] = (int8_t)i16;
-			OLED_Clear2();
-			if (!(nKey & (KEY_LROT | KEY_RROT)))
-				bExitMenu = true;
-			NV_write_byte(NVMADDR_SQU1 + nIdx, nSquelch[nIdx]);
-			return;
-		}
+        if ((nKey = GetKey()) != false)
+        {
+            nSquelch[nIdx] = (int8_t)i16;
+            OLED_Clear2();
+            if (!(nKey & (KEY_LROT | KEY_RROT)))
+                bExitMenu = true;
+            NV_write_byte(NVMADDR_SQU1 + nIdx, nSquelch[nIdx]);
+            return;
+        }
 
-		if (!(lp % 16))
-			CheckUpdateSig();
-		HAL_Delay(64);
-		OLED_Refresh();
-	}
+        if (!(lp % 16)) {  // 每隔16次循环切换冒号显示状态
+            bShowColon = !bShowColon;  // 切换冒号显示状态
+            OLED_XYChar(8, 2, bShowColon ? ':' : ' ');  // 显示或隐藏冒号
+        }
+
+        HAL_Delay(64);
+        OLED_Refresh();
+    }
 }  // void Menu_Squelch(uint8_t nIdx)
+
 
 
 void Menu_FMDynamicBW(void)
@@ -946,37 +936,41 @@ void Menu_AGC(void)
 
 void Menu_Stereo(void)
 {
-	int8_t i8;
-	uint8_t nKey, lp;
+    int8_t i8;
+    uint8_t nKey, lp;
+    bool bShowColon = true;  // 新增变量，用于跟踪冒号是否显示
 
-	// 0123456789012345
-	OLED_XYStr(0, 2, ("FM STEREO:     "));
-	OLED_XYIntLen(15, 2, nStereo, 1);
+    // 0123456789012345
+    OLED_XYStr(0, 2, "FM STEREO:     ");
+    OLED_XYIntLen(15, 2, nStereo, 1);
 
-	for (lp = 0; ; lp++)
-	{
-		if ((i8 = GetLRot() + GetRRot()) != false)
-		{
-			i8 += nStereo;
-			nStereo = constrain(i8, 0, 9);
-			OLED_XYIntLen(15, 2, nStereo, 1);
-			SetRFCtrlReg();
-		}
+    for (lp = 0; ; lp++)
+    {
+        if ((i8 = GetLRot() + GetRRot()) != false)
+        {
+            i8 += nStereo;
+            nStereo = constrain(i8, 0, 9);
+            OLED_XYIntLen(15, 2, nStereo, 1);
+            SetRFCtrlReg();
+        }
 
-		if ((nKey = GetKey()) != false)
-		{
-			OLED_Clear2();
-			if (!(nKey & (KEY_LROT | KEY_RROT)))
-				bExitMenu = true;
-			AddSyncBits(NEEDSYNC_MISC3);
-			return;
-		}
+        if ((nKey = GetKey()) != false)
+        {
+            OLED_Clear2();
+            if (!(nKey & (KEY_LROT | KEY_RROT)))
+                bExitMenu = true;
+            AddSyncBits(NEEDSYNC_MISC3);
+            return;
+        }
 
-		if (!(lp % 16))
-			CheckUpdateSig();
-		HAL_Delay(64);
-		OLED_Refresh();
-	}
+        if (!(lp % 16)) {  // 每隔16次循环切换冒号显示状态
+            bShowColon = !bShowColon;  // 切换冒号显示状态
+            OLED_XYChar(13, 2, bShowColon ? ':' : ' ');  // 显示或隐藏冒号
+        }
+
+        HAL_Delay(64);
+        OLED_Refresh();
+    }
 }  // void Menu_Stereo(void)
 
 
@@ -1352,159 +1346,195 @@ void Menu_Stat(void)
 }  // void Menu_Stat(void)
 
 
+#include <stdbool.h>  // 引入 stdbool.h 头文件以使用 bool 类型
+
 void Menu_Tone(void)
 {
-	uint8_t nKey;
-	int8_t i8, nItem, nVal;
+    uint8_t nKey, lp;
+    int8_t i8, nItem, nVal;
+    bool bShowColon = true;  // 新增变量，用于跟踪冒号是否显示
 
-	// 01234567890123450123456789012345
-	OLED_FullStr("BASS:    MID    TREBLE");
-	OLED_XYIntLen(5, 1, nBass, 2);
-	OLED_XYIntLen(13, 1, nMiddle, 2);
-	OLED_XYIntLen(7, 2, nTreble, 2);
+    // 01234567890123450123456789012345
+    OLED_FullStr("BASS:    MID    TREBLE");
+    OLED_XYIntLen(5, 1, nBass, 2);
+    OLED_XYIntLen(13, 1, nMiddle, 2);
+    OLED_XYIntLen(7, 2, nTreble, 2);
 
-	nItem = 0;
-	nVal = nBass;
-	for (;;)
-	{
-		if ((nKey = GetKey()) != false)
-		{
-			if (!(nKey & (KEY_LROT | KEY_RROT)))
-			{
-				bExitMenu = true;
-				OLED_Clear1();
-				OLED_Clear2();
-				TuneFreqDisp();
-				LCDUpdate();
-				return;
-			}
+    nItem = 0;
+    nVal = nBass;
+    for (lp = 0; ; lp++)
+    {
+        if ((nKey = GetKey()) != false)
+        {
+            if (!(nKey & (KEY_LROT | KEY_RROT)))
+            {
+                bExitMenu = true;
+                OLED_Clear1();
+                OLED_Clear2();
+                TuneFreqDisp();
+                LCDUpdate();
+                return;
+            }
 
-			if (nItem == 0)
-			{
-				nItem = 1;
-				nVal = nMiddle;
-				OLED_XYChar(4, 1, ' ');
-				OLED_XYChar(12, 1, ':');
-			}
+            if (nItem == 0)
+            {
+                nItem = 1;
+                nVal = nMiddle;
+                OLED_XYChar(4, 1, ' ');
+                OLED_XYChar(12, 1, ':');
+            }
 
-			else if (nItem == 1)
-			{
-				nItem = 2;
-				nVal = nTreble;
-				OLED_XYChar(12, 1, ' ');
-				OLED_XYChar(6, 2, ':');
-			}
+            else if (nItem == 1)
+            {
+                nItem = 2;
+                nVal = nTreble;
+                OLED_XYChar(12, 1, ' ');
+                OLED_XYChar(6, 2, ':');
+            }
 
-			else
-			{
-				nItem = 0;
-				nVal = nBass;
-				OLED_XYChar(6, 2, ' ');
-				OLED_XYChar(4, 1, ':');
-			}
-		}
+            else
+            {
+                nItem = 0;
+                nVal = nBass;
+                OLED_XYChar(6, 2, ' ');
+                OLED_XYChar(4, 1, ':');
+            }
+        }
 
-		if ((i8 = GetLRot() + GetRRot()) != false)
-		{
-			nVal = nVal + i8;
-			nVal = constrain(nVal, -9, 9);
+        if ((i8 = GetLRot() + GetRRot()) != false)
+        {
+            nVal = nVal + i8;
+            nVal = constrain(nVal, -9, 9);
 
-			if (nItem == 0)
-			{  // Bass
-				nBass = nVal;
-				OLED_XYIntLen(5, 1, nBass, 2);
-			}
+            if (nItem == 0)
+            {  // Bass
+                nBass = nVal;
+                OLED_XYIntLen(5, 1, nBass, 2);
+            }
 
-			else if (nItem == 1)
-			{  // Middle
-				nMiddle = nVal;
-				OLED_XYIntLen(13, 1, nMiddle, 2);
-			}
+            else if (nItem == 1)
+            {  // Middle
+                nMiddle = nVal;
+                OLED_XYIntLen(13, 1, nMiddle, 2);
+            }
 
-			else
-			{  // Treble
-				nTreble = nVal;
-				OLED_XYIntLen(7, 2, nTreble, 2);
-			}
+            else
+            {  // Treble
+                nTreble = nVal;
+                OLED_XYIntLen(7, 2, nTreble, 2);
+            }
 
-			SetTone();
-			AddSyncBits(NEEDSYNC_TONE);
-		}
+            SetTone();
+            AddSyncBits(NEEDSYNC_TONE);
+        }
 
-		HAL_Delay(50);
-		OLED_Refresh();
-	}  // for(;;)
+        if (!(lp % 16)) {  // 每隔16次循环切换冒号显示状态
+            bShowColon = !bShowColon;  // 切换冒号显示状态
+            if (nItem == 0)
+            {
+                OLED_XYChar(4, 1, bShowColon ? ':' : ' ');  // 显示或隐藏冒号
+            }
+            else if (nItem == 1)
+            {
+                OLED_XYChar(12, 1, bShowColon ? ':' : ' ');  // 显示或隐藏冒号
+            }
+            else
+            {
+                OLED_XYChar(6, 2, bShowColon ? ':' : ' ');  // 显示或隐藏冒号
+            }
+        }
+
+        HAL_Delay(50);
+        OLED_Refresh();
+    }  // for(;;)
 }  // void Menu_Tone(void)
+
+
+
 
 
 void Menu_BalFader(void)
 {
-	uint8_t nKey;
-	int8_t i8, nItem, nVal;
+    uint8_t nKey,lp;
+    int8_t i8, nItem, nVal;
+    bool bShowColon = true;  // 新增变量，用于跟踪冒号是否显示
 
-	// 01234567890123450123456789012345
-	OLED_FullStr("BALANCE:        FADER");
-	OLED_XYIntLen(9, 1, nBalance, 3);
-	OLED_XYIntLen(9, 2, nFader, 3);
+    // 01234567890123450123456789012345
+    OLED_FullStr("BALANCE:        FADER");
+    OLED_XYIntLen(9, 1, nBalance, 3);
+    OLED_XYIntLen(9, 2, nFader, 3);
 
-	nItem = 0;
-	nVal = nBalance;
-	for (;;)
-	{
-		if ((nKey = GetKey()) != false)
-		{
-			if (!(nKey & (KEY_LROT | KEY_RROT)))
-			{
-				bExitMenu = true;
-				OLED_Clear1();
-				OLED_Clear2();
-				TuneFreqDisp();
-				LCDUpdate();
-				return;
-			}
+    nItem = 0;
+    nVal = nBalance;
+    for (lp = 0; ; lp++)
+    {
+        if ((nKey = GetKey()) != false)
+        {
+            if (!(nKey & (KEY_LROT | KEY_RROT)))
+            {
+                bExitMenu = true;
+                OLED_Clear1();
+                OLED_Clear2();
+                TuneFreqDisp();
+                LCDUpdate();
+                return;
+            }
 
-			if (nItem == 0)
-			{
-				nItem = 1;
-				nVal = nFader;
-				OLED_XYChar(7, 1, ' ');
-				OLED_XYChar(5, 2, ':');
-			}
+            if (nItem == 0)
+            {
+                nItem = 1;
+                nVal = nFader;
+                OLED_XYChar(7, 1, ' ');
+                OLED_XYChar(5, 2, ':');
+            }
 
-			else
-			{
-				nItem = 0;
-				nVal = nBalance;
-				OLED_XYChar(5, 2, ' ');
-				OLED_XYChar(7, 1, ':');
-			}
-		}
+            else
+            {
+                nItem = 0;
+                nVal = nBalance;
+                OLED_XYChar(5, 2, ' ');
+                OLED_XYChar(7, 1, ':');
+            }
+        }
 
-		if ((i8 = GetLRot() + GetRRot()) != false)
-		{
-			nVal = nVal + i8;
-			nVal = constrain(nVal, -15, 15);
+        if ((i8 = GetLRot() + GetRRot()) != false)
+        {
+            nVal = nVal + i8;
+            nVal = constrain(nVal, -15, 15);
 
-			if (nItem == 0)
-			{  // Balance
-				nBalance = nVal;
-				OLED_XYIntLen(9, 1, nBalance, 3);
-			}
+            if (nItem == 0)
+            {  // Balance
+                nBalance = nVal;
+                OLED_XYIntLen(9, 1, nBalance, 3);
+            }
 
-			else
-			{  // Fader
-				nFader = nVal;
-				OLED_XYIntLen(9, 2, nFader, 3);
-			}
+            else
+            {  // Fader
+                nFader = nVal;
+                OLED_XYIntLen(9, 2, nFader, 3);
+            }
 
-			SetBalFader();
-			AddSyncBits(NEEDSYNC_BALFADER);
-		}
+            SetBalFader();
+            AddSyncBits(NEEDSYNC_BALFADER);
+        }
 
-		HAL_Delay(50);
-		OLED_Refresh();
-	}  // for(;;)
+        if (!(lp % 16)) {  // 每隔16次循环切换冒号显示状态
+            bShowColon = !bShowColon;  // 切换冒号显示状态
+            if (nItem == 0)
+            {
+                OLED_XYChar(7, 1, bShowColon ? ':' : ' ');  // 显示或隐藏冒号
+            }
+            else
+            {
+                OLED_XYChar(5, 2, bShowColon ? ':' : ' ');  // 显示或隐藏冒号
+            }
+        }
+
+        HAL_Delay(50);
+        OLED_Refresh();
+    }  // for(;;)
 }  // void Menu_BalFader(void)
+
 
 
 bool YesNo(bool bChkSig)
@@ -1783,8 +1813,8 @@ void Menu_Help(void)
 
 	OLED_Clear1();
 	OLED_Clear2();
-	TuneFreqDisp();
-	OLED_XYStr(0, 3,"*Powered by ADM*");//fix message
+	//TuneFreqDisp();
+	//OLED_XYStr(0, 3,"*Powered by ADM*");//fix message
 	LCDUpdate();
 }  // void Menu_Help(void)
 
@@ -2012,12 +2042,25 @@ bool IsMenuVisible(uint8_t nMenuID)
 	}
 	return true;
 }
+// 函数定义
+char *create_repeated_string(char ch, int n) {
+    char *str = (char *)malloc((n + 1) * sizeof(char)); // 分配足够大小的内存，包括结束符'\0'
+    if (str == NULL) {
+        printf("内存分配失败!\n");
+        return NULL;
+    }
 
+    memset(str, ch, n); // 填充字符
+    str[n] = '\0';      // 添加字符串结束符
+
+    return str;
+}
 void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 {
 	int8_t i8;
 	uint8_t u8_data, lp, nHit;
 	int8_t nFirst = 0;
+	int8_t nCursor = 0;
 	uint8_t textlen = 0;
 
 	while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
@@ -2034,8 +2077,14 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 		}
 		else
 		{
-			for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
+			for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++) {
 				OLED_XYStrLen(1 + i8 * 5, 2, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
+				if(i8 == (nCursor-nFirst)) {
+					char* result = create_repeated_string('-', strlen((pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt));
+					OLED_XYStrLen(1 + i8 * 5, 3, "_/\\_", 4, 1);		
+				}
+			}
+			
 		}
 
 		// Display special indicator char for selected item
@@ -2116,10 +2165,15 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 			{
 				if (i8 & (KEY_LROT | KEY_RROT))
 				{  // Item selected
+					OLED_Clear3();
 					if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
+					{
 						u8_data = (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID;
-					else
-						u8_data = (pSubMenu->pMItem + ((nFirst + 1) % pSubMenu->nItemCount))->nMID;
+					}
+					else {
+						u8_data = (pSubMenu->pMItem + nCursor)->nMID;
+					}
+					
 					if (u8_data == MID_RET)
 						return;
 
@@ -2140,20 +2194,45 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 			// Process rotary encoder, adjust nFirst
 			if ((i8 = (GetLRot() + GetRRot())) != false)
 			{
-				nFirst = (nFirst + i8 + pSubMenu->nItemCount) % pSubMenu->nItemCount;
-				if (i8 > 0)
+				OLED_Clear3();
+				if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
+				{
+					nFirst = (nFirst + i8 + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+					if (i8 > 0)
 					while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
 						nFirst++;
-				else
-					while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
-						nFirst--;
-				nFirst = (nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+					else
+						while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
+							nFirst--;
+					nFirst = (nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+					
+				}
+				else {
+					nCursor += i8;
+					if(nCursor <0) {
+						nCursor = 0;
+					}
+					else if(nCursor > pSubMenu->nItemCount-1) {
+						nCursor = pSubMenu->nItemCount-1;
+					}					
+					int min = nFirst;
+					int max = nFirst+2;
+					if(nCursor>max) {
+						nFirst ++;
+					}
+					if(nCursor < min) {
+						nFirst --;
+					}
+				}
+				
+				
+				
 				break;
 			}
 
 			// Update sig
-			if (!(lp % 16))
-				CheckUpdateSig();
+			//if (!(lp % 16))
+			//	CheckUpdateSig();
 			HAL_Delay(64);
 			OLED_Refresh();
 		}

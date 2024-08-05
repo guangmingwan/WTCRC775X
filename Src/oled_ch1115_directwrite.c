@@ -279,6 +279,10 @@ void OLED_Clear2(void)
 {
 	OLED_XYStr(0, 2, "                ");  // Clear LCD's 2nd row
 }
+void OLED_Clear3(void)
+{
+	OLED_XYStr(0, 3, "                ");  // Clear LCD's 2nd row
+}
 void OLED_XYChar(uint8_t x, uint8_t y, const char c)  // Display char at x:0-15, y:0-1
 {
 	
