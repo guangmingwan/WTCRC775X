@@ -2074,191 +2074,202 @@ char *create_repeated_string(char ch, int n) {
 
     return str;
 }
+// 处理子菜单的函数
+// 参数 pSubMenu: 指向子菜单结构的指针
 void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 {
-	int8_t i8;
-	uint8_t u8_data, lp, nHit;
-	int8_t nFirst = 0;
-	int8_t nCursor = 0;
-	uint8_t textlen = 0;
+    // 定义变量
+    int8_t i8;
+    uint8_t u8_data, lp, nHit;
+    int8_t nFirst = 0; // 初始化第一个显示项的索引
+    int8_t nCursor = 0; // 初始化光标位置的索引
+    uint8_t textlen = 0; // 初始化文本长度变量
 
-	while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
-		nFirst++;
+    // 循环找到第一个可见的菜单项
+    while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
+        nFirst++;
 
-	for (;;)
-	{
-		OLED_Clear2();
-		if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
-		{
-			textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
-			OLED_Clear2();
-			OLED_XYStrLen(8 - textlen / 2, 2, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
-		}
-		else
-		{
-			for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++) {
-				OLED_XYStrLen(1 + i8 * 5, 2, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
-				if(i8 == (nCursor-nFirst)) {
-					char* result = create_repeated_string('-', strlen((pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt));
-					OLED_XYStrLen(1 + i8 * 5, 3, "_/\\_", 4, 1);		
-				}
-			}
-			
-		}
+    // 无限循环，处理菜单显示和选择
+    for (;;)
+    {
+        // 清除OLED屏幕
+        OLED_Clear2();
+        // 判断菜单ID，以决定如何显示
+        if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
+        {
+            // 获取当前显示项的文本长度，并显示文本
+            textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
+            OLED_Clear2();
+            OLED_XYStrLen(8 - textlen / 2, 2, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
+        }
+        else
+        {
+            // 循环显示最多三个菜单项
+            for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
+            {
+                // 显示菜单项文本
+                OLED_XYStrLen(1 + i8 * 5, 2, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
+                // 如果是光标所在位置，显示特殊标记
+                if (i8 == (nCursor - nFirst))
+                {
+                    char* result = create_repeated_string('-', strlen((pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt));
+                    OLED_XYStrLen(1 + i8 * 5, 3, "_/\\_", 4, 1);
+                }
+            }
+        }
 
-		// Display special indicator char for selected item
-		switch (pSubMenu->nMID)
-		{
-		case MID_LSIG:
-			nHit = nLowerSig;
-			break;
+        // 根据菜单ID选择特定的指示字符
+        switch (pSubMenu->nMID)
+        {
+            // 处理各种菜单ID，设置对应的指示字符
+            case MID_LSIG:
+                nHit = nLowerSig;
+                break;
+            case MID_FMAT:
+                nHit = nFMAT;
+                break;
+            case MID_FMSI:
+                nHit = nFMSI;
+                break;
+            case MID_FMCE:
+                nHit = nFMCEQ;
+                break;
+            case MID_FIRM:
+                nHit = nFirm;
+                break;
+            case MID_FMMP:
+                nHit = nFMEMS;
+                break;
+            case MID_FMNS:
+                nHit = nFMCNS;
+                break;
+            case MID_INCA:
+                nHit = nINCA;
+                break;
+            case MID_DEEM:
+                nHit = nDeemphasis;
+                break;
+            case MID_MODE:
+                nHit = nMode;
+                break;
+            case MID_TUNE:
+                nHit = nTuneType;
+                break;
+            case MID_BAND:
+                nHit = nBand;
+                break;
+            case MID_FILT:
+                // 根据RF模式选择适当的滤波器指示字符
+                if (nRFMode == RFMODE_FM)
+                    nHit = nFMFilter;
+                else
+                    nHit = nAMFilter;
+                break;
+            default:
+                nHit = MID_NONE; // 没有选择任何项
+                break;
+        }
 
-		case MID_FMAT:
-			nHit = nFMAT;
-			break;
+        // 如果有有效的指示字符，显示在OLED上
+        if (nHit != MID_NONE)
+        {
+            nHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+            if (nHit <= 2)
+                OLED_XYChar(nHit * 5, 2, CHAR_SEL);
+        }
 
-		case MID_FMSI:
-			nHit = nFMSI;
-			break;
+        // 处理按键和旋转编码器的输入
+        for (lp = 0; ; lp++)
+        {
+            // 处理按键输入
+            if ((i8 = GetKey()) != false)
+            {
+                // 如果按下的是左旋或右旋按钮，选择当前项
+                if (i8 & (KEY_LROT | KEY_RROT))
+                {
+                    OLED_Clear3();
+                    // 根据菜单ID获取选择的数据
+                    if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
+                    {
+                        u8_data = (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID;
+                    }
+                    else
+                    {
+                        u8_data = (pSubMenu->pMItem + nCursor)->nMID;
+                    }
 
-		case MID_FMCE:
-			nHit = nFMCEQ;
-			break;
+                    // 如果选择的是返回项，退出函数
+                    if (u8_data == MID_RET)
+                        return;
 
-		case MID_FIRM:
-			nHit = nFirm;
-			break;
+                    // 处理选择的菜单项
+                    ProcMenuItem(u8_data);
 
-		case MID_FMMP:
-			nHit = nFMEMS;
-			break;
+                    // 根据情况决定是否自动返回子菜单或继续处理
+                    if ((pSubMenu->nMID >= MID_MIN_AUTORET) || bExitMenu)
+                        return;
+                    else
+                        break;
+                }
+                else
+                {
+                    // 其他按键处理：设置退出标志并返回
+                    bExitMenu = 1;
+                    return;
+                }
+            }
 
-		case MID_FMNS:
-			nHit = nFMCNS;
-			break;
+            // 处理旋转编码器的输入，调整nFirst
+            if ((i8 = (GetLRot() + GetRRot())) != false)
+            {
+                OLED_Clear3();
+                // 根据菜单ID调整第一个显示项的索引
+                if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
+                {
+                    nFirst = (nFirst + i8 + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+                    if (i8 > 0)
+                        while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
+                            nFirst++;
+                    else
+                        while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
+                            nFirst--;
+                    nFirst = (nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+                }
+                else
+                {
+                    // 调整光标位置
+                    nCursor += i8;
+                    if (nCursor < 0)
+                    {
+                        nCursor = 0;
+                    }
+                    else if (nCursor > pSubMenu->nItemCount - 1)
+                    {
+                        nCursor = pSubMenu->nItemCount - 1;
+                    }
+                    int min = nFirst;
+                    int max = nFirst + 2;
+                    if (nCursor > max)
+                    {
+                        nFirst++;
+                    }
+                    if (nCursor < min)
+                    {
+                        nFirst--;
+                    }
+                }
+                break;
+            }
 
-		case MID_INCA:
-			nHit = nINCA;
-			break;
-
-		case MID_DEEM:
-			nHit = nDeemphasis;
-			break;
-
-		case MID_MODE:
-			nHit = nMode;
-			break;
-
-		case MID_TUNE:
-			nHit = nTuneType;
-			break;
-
-		case MID_BAND:
-			nHit = nBand;
-			break;
-
-		case MID_FILT:
-			if (nRFMode == RFMODE_FM)
-				nHit = nFMFilter;
-			else
-				nHit = nAMFilter;
-			break;
-
-		default:
-			nHit = MID_NONE;  // Magic number, no item selected
-			break;
-		}
-
-		if (nHit != MID_NONE)
-		{
-			nHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
-			if (nHit <= 2)
-				OLED_XYChar(nHit * 5, 2, CHAR_SEL);
-		}
-
-
-		for (lp = 0; ; lp++)
-		{
-			// Process key
-			if ((i8 = GetKey()) != false)
-			{
-				if (i8 & (KEY_LROT | KEY_RROT))
-				{  // Item selected
-					OLED_Clear3();
-					if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
-					{
-						u8_data = (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID;
-					}
-					else {
-						u8_data = (pSubMenu->pMItem + nCursor)->nMID;
-					}
-					
-					if (u8_data == MID_RET)
-						return;
-
-					ProcMenuItem(u8_data);
-
-					if ((pSubMenu->nMID >= MID_MIN_AUTORET) || bExitMenu)
-						return;  // Auto return sub menu, or none left/right key pressed in sub menu
-					else
-						break;   // Redraw sub menu items
-				}
-				else
-				{
-					bExitMenu = 1;  // None left/right key pressed, exit
-					return;
-				}
-			}
-
-			// Process rotary encoder, adjust nFirst
-			if ((i8 = (GetLRot() + GetRRot())) != false)
-			{
-				OLED_Clear3();
-				if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
-				{
-					nFirst = (nFirst + i8 + pSubMenu->nItemCount) % pSubMenu->nItemCount;
-					if (i8 > 0)
-					while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
-						nFirst++;
-					else
-						while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
-							nFirst--;
-					nFirst = (nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
-					
-				}
-				else {
-					nCursor += i8;
-					if(nCursor <0) {
-						nCursor = 0;
-					}
-					else if(nCursor > pSubMenu->nItemCount-1) {
-						nCursor = pSubMenu->nItemCount-1;
-					}					
-					int min = nFirst;
-					int max = nFirst+2;
-					if(nCursor>max) {
-						nFirst ++;
-					}
-					if(nCursor < min) {
-						nFirst --;
-					}
-				}
-				
-				
-				
-				break;
-			}
-
-			// Update sig
-			//if (!(lp % 16))
-			//	CheckUpdateSig();
-			HAL_Delay(64);
-			OLED_Refresh();
-		}
-		OLED_Refresh();
-	}
-}  // void ProcSubMenu(struct M_SUBMENU *pSubMenu)
-
+            // 延时并刷新OLED屏幕
+            //if (!(lp % 16))
+            //    CheckUpdateSig();
+            HAL_Delay(64);
+            OLED_Refresh();
+        }
+        OLED_Refresh();
+    } // void ProcSubMenu(struct M_SUBMENU *pSubMenu)
+}
 void ProcMenuItem(uint8_t nMenuID)
 {
 	if (bExitMenu)
