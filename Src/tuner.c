@@ -1196,6 +1196,7 @@ uint8_t ScanAny()
 				if ((HAL_GetTick() - nBacklightTimer) >= (uint32_t)nBacklightKeep * 1000)
 				{
 					OLED_SetBackLight(0);
+					OLED_Display_Off();
 					bLCDOff = true;
 				}
 			}
@@ -1368,14 +1369,14 @@ void TunerLoop(void)
 	//	}
 	//}
 
-	if (bHAL_DelayedCheck && HAL_GetTick() >= nHAL_DelayedTimer)
+	if (!bLCDOff && bHAL_DelayedCheck && HAL_GetTick() >= nHAL_DelayedTimer)
 	{
 		bHAL_DelayedCheck = false;
 		CheckUpdateSig();  // Update RSSI, SNR & FM stereo indicator
 		OLED_Refresh();
 		timer = HAL_GetTick() - (TIMER_INTERVAL >> 2);
 	}
-	else if ((HAL_GetTick() - timer) >= TIMER_INTERVAL)
+	else if (!bLCDOff && (HAL_GetTick() - timer) >= TIMER_INTERVAL)
 	{  // Check every TIMER_INTERVAL ms
 		CheckUpdateSig();  // Update RSSI, SNR & FM stereo indicator
 		OLED_Refresh();
@@ -1396,6 +1397,7 @@ void TunerLoop(void)
 			if ((timer - nBacklightTimer) >= (uint32_t)nBacklightKeep * 1000)
 			{
 				OLED_SetBackLight(0);
+				OLED_Display_Off();
 				bLCDOff = true;
 			}
 		}

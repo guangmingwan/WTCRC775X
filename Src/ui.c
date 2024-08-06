@@ -668,7 +668,9 @@ void LCDUpdate(void)
 {
 	int8_t i8;
 	const char *p;
-
+	if(bLCDOff) {
+		return;
+	}
 	// Update band: LW/MW/SW/FL/FM, FL=FM Low
 	OLED_XYStr(BAND_X, BAND_Y, (char *)pszBands[nBand]);
 
@@ -703,6 +705,9 @@ void CheckUpdateSig(void)
 {
 	char c;
 	float fv;
+	if(bLCDOff) {
+		return;
+	}
 	if (nRFMode == RFMODE_FM && nFMAT == 2)
 	{
 		dsp_start_subaddr(0x00);
@@ -1396,6 +1401,13 @@ void Menu_Tone(void)
     {
         if ((nKey = GetKey()) != false)
         {
+						// 如果长按左编码器或者右编码器，返回
+						if(nKey && ( ((uint8_t)nKey) == (KEY_LROT | KEY_LONGPRESS) || ((uint8_t)nKey) == (KEY_RROT | KEY_LONGPRESS))) {
+							//bExitMenu = 1;
+							OLED_Clear1();
+							OLED_Clear3();
+							return;
+						}				
             if (!(nKey & (KEY_LROT | KEY_RROT)))
             {
                 bExitMenu = true;
@@ -1500,6 +1512,13 @@ void Menu_BalFader(void)
     {
         if ((nKey = GetKey()) != false)
         {
+						// 如果长按左编码器或者右编码器，返回
+						if(nKey && ( ((uint8_t)nKey) == (KEY_LROT | KEY_LONGPRESS) || ((uint8_t)nKey) == (KEY_RROT | KEY_LONGPRESS))) {
+							//bExitMenu = 1;
+							OLED_Clear1();
+							OLED_Clear3();
+							return;
+						}				
             if (!(nKey & (KEY_LROT | KEY_RROT)))
             {
                 bExitMenu = true;
@@ -2199,6 +2218,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
         else
         {
             // 循环显示最多三个菜单项
+						OLED_Clear2();
             for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
             {
                 // 显示菜单项文本
