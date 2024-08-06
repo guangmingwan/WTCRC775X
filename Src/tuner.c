@@ -12,8 +12,11 @@
 extern volatile int8_t nLRot;
 extern volatile int8_t nRRot;
 
-extern struct M_ITEM M_FMFilter[NUM_FILTERS + 1];
-extern struct M_ITEM M_AMFilter[NUM_FILTERS + 1];
+extern struct M_ITEM M_FMFilter[]; 
+extern size_t M_FMFilter_Len;
+extern struct M_ITEM M_AMFilter[];
+extern size_t M_AMFilter_Len;
+
 extern struct M_ITEM M_Frequency[];
 extern struct M_SUBMENU SM_List[];
 
@@ -670,9 +673,9 @@ void dsp_set_filter(int8_t f)
 void NextFilter(void)
 {
 	if (nRFMode == RFMODE_FM)
-		nFMFilter = (nFMFilter + 1) % (NUM_FILTERS + 1);
+		nFMFilter = (nFMFilter + 1) % (NUM_FM_FILTERS);
 	else  // RFMODE_AM
-		nAMFilter = (nAMFilter + 1) % (NUM_FILTERS + 1);
+		nAMFilter = (nAMFilter + 1) % (NUM_AM_FILTERS);
 }
 
 
@@ -1211,13 +1214,13 @@ void SetRFMode(void)
 	{
 		nRFMode = RFMODE_FM;
 		SM_List[MID_FILT].pMItem = M_FMFilter;
-		SM_List[MID_FILT].nItemCount = sizeof(M_FMFilter) / sizeof(struct M_ITEM);
+		SM_List[MID_FILT].nItemCount = M_FMFilter_Len;
 	}
 	else
 	{
 		nRFMode = RFMODE_AM;
 		SM_List[MID_FILT].pMItem = M_AMFilter;
-		SM_List[MID_FILT].nItemCount = sizeof(M_AMFilter) / sizeof(struct M_ITEM);
+		SM_List[MID_FILT].nItemCount = M_AMFilter_Len;
 	}
 
 	AddSyncBits(NEEDSYNC_RFMODE);

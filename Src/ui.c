@@ -119,7 +119,8 @@ const char MT_LSIGLOW[] = "LOW";
 struct M_ITEM M_LSIG[] =
 {
 	{MID_LSIGNORM, MT_LSIGNORM},
-	{MID_LSIGLOW, MT_LSIGLOW}
+	{MID_LSIGLOW, MT_LSIGLOW},
+	{MID_RET,  MT_RET}
 };
 
 // Menu Option->FIRM
@@ -131,7 +132,8 @@ struct M_ITEM M_FIRM[] =
 {
 	{ MID_FIRM1, MT_FIRM1 },
 	{ MID_FIRM2, MT_FIRM2 },
-	{ MID_FIRM3, MT_FIRM3 }
+	{ MID_FIRM3, MT_FIRM3 },
+	{ MID_RET,   MT_RET}
 };
 
 // Menu Option->FMAT
@@ -143,7 +145,8 @@ struct M_ITEM M_FMAT[] =
 {
 	{ MID_FMAT1, MT_FMAT1 },
 	{ MID_FMAT2, MT_FMAT2 },
-	{ MID_FMAT3, MT_FMAT3 }
+	{ MID_FMAT3, MT_FMAT3 },
+	{ MID_RET,   MT_RET}
 };
 
 // Menu Option->FMSI
@@ -153,7 +156,8 @@ const char MT_FMSION[] = "ON";
 struct M_ITEM M_FMSI[] =
 {
 	{ MID_FMSIOFF, MT_FMSIOFF },
-	{ MID_FMSION, MT_FMSION }
+	{ MID_FMSION, MT_FMSION },
+	{ MID_RET,    MT_RET}
 };
 
 // Menu Option->FMCE
@@ -163,7 +167,8 @@ const char MT_FMCEON[] = "ON";
 struct M_ITEM M_FMCE[] =
 {
 	{MID_FMCEOFF, MT_FMCEOFF},
-	{MID_FMCEON, MT_FMCEON}
+	{MID_FMCEON,  MT_FMCEON},
+	{MID_RET,     MT_RET}
 };
 
 
@@ -174,7 +179,8 @@ const char MT_FMMPON[] = "ON";
 struct M_ITEM M_FMMP[] =
 {
 	{MID_FMMPOFF, MT_FMMPOFF},
-	{MID_FMMPON, MT_FMMPON}
+	{MID_FMMPON,  MT_FMMPON},
+	{MID_RET,     MT_RET}
 };
 
 
@@ -185,7 +191,8 @@ const char MT_FMNSON[] = "ON";
 struct M_ITEM M_FMNS[] =
 {
 	{MID_FMNSOFF, MT_FMNSOFF},
-	{MID_FMNSON, MT_FMNSON}
+	{MID_FMNSON,  MT_FMNSON},
+	{MID_RET,     MT_RET}
 };
 
 // Menu Option->INCA
@@ -195,7 +202,8 @@ const char MT_INCAON[] = "ON";
 struct M_ITEM M_INCA[] =
 {
 	{MID_INCAOFF, MT_INCAOFF},
-	{MID_INCAON, MT_INCAON}
+	{MID_INCAON,  MT_INCAON},
+	{MID_RET,     MT_RET}
 };
 
 
@@ -206,9 +214,10 @@ const char MT_DEEM75[] = "75US";
 
 struct M_ITEM M_Deem[] =
 {
-	{MID_DEEM0, MT_DEEM0},
+	{MID_DEEM0,  MT_DEEM0},
 	{MID_DEEM50, MT_DEEM50},
-	{MID_DEEM75, MT_DEEM75}
+	{MID_DEEM75, MT_DEEM75},
+	{MID_RET,    MT_RET}
 };
 
 
@@ -269,11 +278,11 @@ struct M_ITEM M_Tune[] =
 {
 	{MID_FREQ, MT_FREQ},
 	{MID_SEEK, MT_SEEK},
-	{MID_CH, MT_CH},
+	{MID_CH,   MT_CH},
 	{MID_SCAN, MT_SCAN},
-	{MID_ANY, MT_ANY},
+	{MID_ANY,  MT_ANY},
 	{MID_SCSV, MT_SCSV},
-	{MID_RET, MT_RET}
+	{MID_RET,  MT_RET}
 };
 
 
@@ -286,11 +295,11 @@ const char MT_FM[] = "FM";
 
 struct M_ITEM M_Band[] =
 {
-	{MID_LW, MT_LW},
-	{MID_MW, MT_MW},
-	{MID_SW, MT_SW},
-	{MID_FL, MT_FL},
-	{MID_FM, MT_FM},
+	{MID_LW,  MT_LW},
+	{MID_MW,  MT_MW},
+	{MID_SW,  MT_SW},
+	{MID_FL,  MT_FL},
+	{MID_FM,  MT_FM},
 	{MID_RET, MT_RET}
 };
 
@@ -350,8 +359,10 @@ struct M_ITEM M_FMFilter[] =
 	{MID_FTFM14, MT_FTFM14},
 	{MID_FTFM15, MT_FTFM15},
 	{MID_FTFM16, MT_FTFM16},
+	{MID_RET,    MT_RET}
+	
 };
-
+size_t M_FMFilter_Len = sizeof(M_FMFilter) / sizeof(struct M_ITEM);
 struct M_ITEM M_AMFilter[] =
 {
 	{MID_FTAM00, MT_FTAM00},
@@ -369,9 +380,10 @@ struct M_ITEM M_AMFilter[] =
 	{MID_FTAM12, MT_FTAM12},
 	{MID_FTAM13, MT_FTAM13},
 	{MID_FTAM14, MT_FTAM14},
-	{MID_FTAM15, MT_FTAM15}
+	{MID_FTAM15, MT_FTAM15},
+	{MID_RET,    MT_RET}
 };
-
+size_t M_AMFilter_Len = sizeof(M_AMFilter) / sizeof(struct M_ITEM);
 
 struct M_SUBMENU SM_List[] =
 {
@@ -1572,8 +1584,8 @@ bool YesNo(bool bChkSig)
 				return false;
 		}
 
-		if (bChkSig && !(lp % 16))
-			CheckUpdateSig();
+		//if (bChkSig && !(lp % 16))
+		//	CheckUpdateSig();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1587,6 +1599,7 @@ void Menu_SCSV(void)
 	bool bReturn = false;
 
 	// 0123456789012345
+	OLED_XYStr(0, 1, ("L is Yes,R is NO"));
 	OLED_XYStr(0, 2, ("Overwrite?   "));  // Confirm overwrite currrent band ch data
 	OLED_Refresh();
 	if (!YesNo(true))
@@ -1607,7 +1620,10 @@ void Menu_SCSV(void)
 	}
 
 	nBandCh[nBand] = 0;
+	OLED_Clear0();
 	OLED_Clear1();
+	OLED_Clear2();
+	OLED_Clear3();
 	LCDUpdate();
 	for (i = 0; i <= ((nBandFMax[nBand] - nBandFMin[nBand]) / nBandStep[nBand][0]); i++)
 	{
@@ -1780,7 +1796,7 @@ void Menu_Help(void)
 		("SEEK:TUNING TO  NEXT STATION"),
 		("CH:TUNING BY    CHANNEL No."),
 		("SCAN:TUNING TO  EVERY STATION & KEEP A WHILE"),
-		("ANY:TUNING TO   ANY STATION.KEEPTILL LOST SIGNAL"),
+		("ANY:TUNING TO ANY,KEEP IT UNTIL LOST SIGNAL"),
 		("S&S:SCAN & SAVE STATIONS IN BAND"),
 		("FM-L:BAND BELOW FM BAND"),
 		("SINE:SINE WAVE  GENERATOR"),
@@ -1788,7 +1804,7 @@ void Menu_Help(void)
 
 	nItems = sizeof(s) / sizeof(const char *);
 	// 01234567890123450123456789012345
-	OLED_FullStr(("TURN ENCODERS TOSHOW HELP INFO"));
+	OLED_FullStr(("TURN ENCODERS TOSHOW HELP INFO, PUSH IT TO EXIT"));
 
 	for (nItem = -1;;)
 	{
@@ -2080,9 +2096,9 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 {
     // 定义变量
     int8_t i8;
-    uint8_t u8_data, lp, nHit;
+    uint8_t u8_data, lp, nHit, mHit;
     int8_t nFirst = 0; // 初始化第一个显示项的索引
-    int8_t nCursor = 0; // 初始化光标位置的索引
+    int8_t nCursor = -1; // 初始化光标位置的索引
     uint8_t textlen = 0; // 初始化文本长度变量
 
     // 循环找到第一个可见的菜单项
@@ -2092,8 +2108,86 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
     // 无限循环，处理菜单显示和选择
     for (;;)
     {
-        // 清除OLED屏幕
-        OLED_Clear2();
+				if(nCursor == -1) {
+					// 清除OLED屏幕
+					OLED_Clear1();
+					OLED_Clear2();
+				
+					// 根据菜单ID选择特定的指示字符
+					switch (pSubMenu->nMID)
+					{
+							// 处理各种菜单ID，设置对应的指示字符
+							case MID_LSIG:
+									nHit = nLowerSig;
+									break;
+							case MID_FMAT:
+									nHit = nFMAT;
+									break;
+							case MID_FMSI:
+									nHit = nFMSI;
+									break;
+							case MID_FMCE:
+									nHit = nFMCEQ;
+									break;
+							case MID_FIRM:
+									nHit = nFirm;
+									break;
+							case MID_FMMP:
+									nHit = nFMEMS;
+									break;
+							case MID_FMNS:
+									nHit = nFMCNS;
+									break;
+							case MID_INCA:
+									nHit = nINCA;
+									break;
+							case MID_DEEM:
+									nHit = nDeemphasis;
+									break;
+							case MID_MODE:
+									nHit = nMode;
+									break;
+							case MID_TUNE:
+									nHit = nTuneType;
+									break;
+							case MID_BAND:
+									nHit = nBand;
+									break;
+							case MID_FILT:
+									// 根据RF模式选择适当的滤波器指示字符
+									if (nRFMode == RFMODE_FM)
+											nHit = nFMFilter;
+									else
+											nHit = nAMFilter;
+									break;
+							default:
+									nHit = MID_NONE; // 没有选择任何项
+									break;
+					}
+
+					// 如果有有效的指示字符，显示在OLED上
+					if (nHit != MID_NONE)
+					{
+							mHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+							if (mHit <= 2){
+									
+									nCursor = mHit;
+							}
+							else {
+								nCursor = 0;
+							}
+					}
+					else {
+						nCursor = 0;
+					}
+				}
+				if( nHit != MID_NONE) {
+						mHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+						if (mHit <= 2){
+							OLED_XYChar(mHit * 5+1, 1, CHAR_SEL);
+						}
+				}
+				
         // 判断菜单ID，以决定如何显示
         if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
         {
@@ -2118,75 +2212,23 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
             }
         }
 
-        // 根据菜单ID选择特定的指示字符
-        switch (pSubMenu->nMID)
-        {
-            // 处理各种菜单ID，设置对应的指示字符
-            case MID_LSIG:
-                nHit = nLowerSig;
-                break;
-            case MID_FMAT:
-                nHit = nFMAT;
-                break;
-            case MID_FMSI:
-                nHit = nFMSI;
-                break;
-            case MID_FMCE:
-                nHit = nFMCEQ;
-                break;
-            case MID_FIRM:
-                nHit = nFirm;
-                break;
-            case MID_FMMP:
-                nHit = nFMEMS;
-                break;
-            case MID_FMNS:
-                nHit = nFMCNS;
-                break;
-            case MID_INCA:
-                nHit = nINCA;
-                break;
-            case MID_DEEM:
-                nHit = nDeemphasis;
-                break;
-            case MID_MODE:
-                nHit = nMode;
-                break;
-            case MID_TUNE:
-                nHit = nTuneType;
-                break;
-            case MID_BAND:
-                nHit = nBand;
-                break;
-            case MID_FILT:
-                // 根据RF模式选择适当的滤波器指示字符
-                if (nRFMode == RFMODE_FM)
-                    nHit = nFMFilter;
-                else
-                    nHit = nAMFilter;
-                break;
-            default:
-                nHit = MID_NONE; // 没有选择任何项
-                break;
-        }
-
-        // 如果有有效的指示字符，显示在OLED上
-        if (nHit != MID_NONE)
-        {
-            nHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
-            if (nHit <= 2)
-                OLED_XYChar(nHit * 5, 2, CHAR_SEL);
-        }
-
         // 处理按键和旋转编码器的输入
         for (lp = 0; ; lp++)
         {
             // 处理按键输入
             if ((i8 = GetKey()) != false)
             {
+								// 如果长按左编码器或者右编码器，返回
+								if(i8 && ( ((uint8_t)i8) == (KEY_LROT | KEY_LONGPRESS) || ((uint8_t)i8) == (KEY_RROT | KEY_LONGPRESS))) {
+									//bExitMenu = 1;
+									OLED_Clear1();
+                  OLED_Clear3();
+                  return;
+								}									
                 // 如果按下的是左旋或右旋按钮，选择当前项
                 if (i8 & (KEY_LROT | KEY_RROT))
                 {
+										OLED_Clear1();
                     OLED_Clear3();
                     // 根据菜单ID获取选择的数据
                     if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
@@ -2218,7 +2260,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
                     return;
                 }
             }
-
+						
             // 处理旋转编码器的输入，调整nFirst
             if ((i8 = (GetLRot() + GetRRot())) != false)
             {
@@ -2251,11 +2293,13 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
                     int max = nFirst + 2;
                     if (nCursor > max)
                     {
-                        nFirst++;
+                      nFirst++;
+											OLED_Clear1();
                     }
                     if (nCursor < min)
                     {
-                        nFirst--;
+                      nFirst--;
+											OLED_Clear1();
                     }
                 }
                 break;
@@ -2283,7 +2327,7 @@ void ProcMenuItem(uint8_t nMenuID)
 	}
 
 	// Leaf menu items(w/o sub menu)
-	if ((nMenuID >= MID_FTFM00) && (nMenuID <= MID_FTFM15))
+	if ((nMenuID >= MID_FTFM00) && (nMenuID <= MID_FTFM16))
 	{
 		nFMFilter = nMenuID - MID_FTFM00;
 		SetFilter(1);  // Set FIR filter for FM
@@ -2487,10 +2531,10 @@ void Menu(uint8_t nMenuID)
 {
 	bExitMenu = 0;
 	if(nMenuID == MID_OPTION) {
-		OLED_XYStr(0, 0,">Options:");
+		OLED_XYStr(0, 0,"[Options]");
 	}
 	else if(nMenuID == MID_FREQUENCY) {
-		OLED_XYStr(0, 0,">Frequency:");
+		OLED_XYStr(0, 0,"[Frequency]");
 	}
 	ProcMenuItem(nMenuID);
 	OLED_Clear2();

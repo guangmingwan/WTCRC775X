@@ -1,6 +1,8 @@
 #include "eeprom.h"
 #include "soft_i2c.h"
-
+void eeprom_init() {
+	I2C_Stop();
+}
 uint8_t eeprom_read_byte(uint16_t p)
 {
 	I2C_Start(EEPROM_ADDR | ((p & 0x700) >> 7) | I2C_WRITE);

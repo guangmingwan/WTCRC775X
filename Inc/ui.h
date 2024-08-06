@@ -22,7 +22,7 @@
 
 
 // Char display on LCD for selected item
-#define CHAR_SEL    '>'//0x7e  // Right arrow
+#define CHAR_SEL    '*'//0x7e  // Right arrow
 
 
 // LCD locations
@@ -144,22 +144,22 @@
 #define MID_FL          0x63
 #define MID_FM          0x64
 
-#define MID_FTFM00      0x70
-#define MID_FTFM01      0x71
-#define MID_FTFM02      0x72
-#define MID_FTFM03      0x73
-#define MID_FTFM04      0x74
-#define MID_FTFM05      0x75
-#define MID_FTFM06      0x76
-#define MID_FTFM07      0x77
-#define MID_FTFM08      0x78
-#define MID_FTFM09      0x79
-#define MID_FTFM10      0x7a
-#define MID_FTFM11      0x7b
-#define MID_FTFM12      0x7c
-#define MID_FTFM13      0x7d
-#define MID_FTFM14      0x7e
-#define MID_FTFM15      0x7f
+#define MID_FTFM00      0x6F
+#define MID_FTFM01      0x70
+#define MID_FTFM02      0x71
+#define MID_FTFM03      0x72
+#define MID_FTFM04      0x73
+#define MID_FTFM05      0x74
+#define MID_FTFM06      0x75
+#define MID_FTFM07      0x76
+#define MID_FTFM08      0x77
+#define MID_FTFM09      0x78
+#define MID_FTFM10      0x79
+#define MID_FTFM11      0x7a
+#define MID_FTFM12      0x7b
+#define MID_FTFM13      0x7c
+#define MID_FTFM14      0x7d
+#define MID_FTFM15      0x7e
 #define MID_FTFM16      0x7f
 
 

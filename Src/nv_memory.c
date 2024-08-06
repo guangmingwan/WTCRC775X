@@ -81,7 +81,9 @@ void NVMGetArgs(void)
 {
 	uint8_t u8, i;
 	uint16_t u16;
-
+	//eeprom_read_word(NVMADDR_SIGSTATION);//preRead?
+	
+	eeprom_init();
 	if (eeprom_read_word(NVMADDR_SIGSTATION) != NVMSIGSTATION )
 		NVMInitStation();
 
@@ -124,11 +126,11 @@ void NVMGetArgs(void)
 		nStepIdx = 0;
 
 	nFMFilter = NV_read_byte(NVMADDR_FMFILTER);
-	if (nFMFilter > NUM_FILTERS)
+	if (nFMFilter >= NUM_FM_FILTERS)
 		nFMFilter = DEF_FM_FILTER;
 
 	nAMFilter = NV_read_byte(NVMADDR_AMFILTER);
-	if (nAMFilter > NUM_FILTERS)
+	if (nAMFilter >= NUM_AM_FILTERS)
 		nAMFilter = DEF_AM_FILTER;
 
 	u8 = NV_read_byte(NVMADDR_MISC1);

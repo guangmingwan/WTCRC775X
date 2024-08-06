@@ -58,7 +58,8 @@
 
 
 // Filters
-#define NUM_FILTERS     16  // Auto + 15 fixed bandwidth filters
+#define NUM_FM_FILTERS     17  // Auto + 15 fixed bandwidth filters + Off
+#define NUM_AM_FILTERS     16  // Auto + 15 fixed bandwidth filters
 #define DEF_FM_FILTER    0
 #define DEF_FM_FILTER2   8
 #define SEEK_FM_FILTER   1
