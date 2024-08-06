@@ -425,52 +425,70 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			++nRRot;
 	}
 }
-////////////////////////////////////////////////////////////
-// Rotary encoder & key utility
 
+/**
+ * @brief GPIO外部中断回调函数
+ * 
+ * 该函数用于处理旋转编码器的外部中断，通过检测SH1A和SH2A引脚的电平变化来计算旋转编码器的旋转量。
+ * 
+ * @param GPIO_Pin 触发中断的GPIO引脚编号
+ */
 void HAL_GPIO_EXTI_Callback_adv(uint16_t GPIO_Pin)
 {
-	if (GPIO_Pin == SH1A_Pin)
-	{
-		if(nIntSeqs[0] ==0 && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_RESET) { //�½�
-			nFlags[0] = 0;
-			if( HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_SET ) {
-				nFlags[0] = 1;
-			}
-			nIntSeqs[0] = 1;
-			
-		}
-		if(nIntSeqs[0] && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_SET){ //�ڶ����жϣ�����A����������
-			if( HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_RESET && nFlags[0] == 1 ) {
-				++nLRot;
-			}
-			if( HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_SET && nFlags[0] == 0 ) {
-				--nLRot;
-			}
-			nIntSeqs[0] = 0;
-		}			
-		
-	}
-	else if (GPIO_Pin == SH2A_Pin)
-	{
-		if(nIntSeqs[1] ==0 && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_RESET) { //�½�
-			nFlags[1] = 0;
-			if( HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_SET ) {
-				nFlags[1] = 1;//��ת
-			}
-			nIntSeqs[1] = 1;
-			
-		}
-		if(nIntSeqs[1] && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_SET){ //�ڶ����жϣ�����A����������
-			if( HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_RESET && nFlags[1] == 1 ) {
-				++nRRot;
-			}
-			if( HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_SET && nFlags[1] == 0 ) {
-				--nRRot;
-			}
-			nIntSeqs[1] = 0;
-		}	
-	}
+    // 处理左旋转编码器A相引脚触发的中断
+    if (GPIO_Pin == SH1A_Pin)
+    {
+        // 中断序列开始，读取SH1A引脚电平
+        if (nIntSeqs[0] == 0 && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_RESET)
+        {
+            nFlags[0] = 0;
+            // 检测B相引脚电平，用于确定旋转方向
+            if (HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_SET)
+            {
+                nFlags[0] = 1;
+            }
+            nIntSeqs[0] = 1;
+        }
+        // 中断序列中，检测A相引脚电平变化，计算旋转量
+        if (nIntSeqs[0] && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_SET)
+        {
+            // 根据B相引脚电平和标志位判断旋转方向，更新旋转量
+            if (HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_RESET && nFlags[0] == 1)
+            {
+                ++nLRot;
+            }
+            if (HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_SET && nFlags[0] == 0)
+            {
+                --nLRot;
+            }
+            nIntSeqs[0] = 0;
+        }
+    }
+    // 处理右旋转编码器A相引脚触发的中断，逻辑同左旋转编码器
+    else if (GPIO_Pin == SH2A_Pin)
+    {
+        if (nIntSeqs[1] == 0 && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_RESET)
+        {
+            nFlags[1] = 0;
+            if (HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_SET)
+            {
+                nFlags[1] = 1;
+            }
+            nIntSeqs[1] = 1;
+        }
+        if (nIntSeqs[1] && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_SET)
+        {
+            if (HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_RESET && nFlags[1] == 1)
+            {
+                ++nRRot;
+            }
+            if (HAL_GPIO_ReadPin(SH2B_GPIO_Port, SH2B_Pin) == GPIO_PIN_SET && nFlags[1] == 0)
+            {
+                --nRRot;
+            }
+            nIntSeqs[1] = 0;
+        }
+    }
 }
 
 int8_t GetLRot(void)
@@ -965,7 +983,7 @@ void Menu_Stereo(void)
 
         if (!(lp % 16)) {  // 每隔16次循环切换冒号显示状态
             bShowColon = !bShowColon;  // 切换冒号显示状态
-            OLED_XYChar(13, 2, bShowColon ? ':' : ' ');  // 显示或隐藏冒号
+            OLED_XYChar(9, 2, bShowColon ? ':' : ' ');  // 显示或隐藏冒号
         }
 
         HAL_Delay(64);
