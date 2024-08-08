@@ -596,9 +596,13 @@ uint8_t GetKey(void)
 	{
 		if ((nKey = PeekKey()) == 0)
 		{
-			OLED_Display_On();
-			bLCDOff = false;
-			nBacklightTimer = HAL_GetTick();			
+			if(bLCDOff) {
+				OLED_Display_On();
+				bLCDOff = false;
+				nBacklightTimer = HAL_GetTick();		
+				return 0;
+			}
+				
 			return nKey0;  // Key up
 		}
 
@@ -612,9 +616,14 @@ uint8_t GetKey(void)
 
 	tKeyWaitUp = HAL_GetTick();
 	nKeyWaitUp = nKey0;
-	OLED_Display_On();
-	bLCDOff = false;
-	nBacklightTimer = HAL_GetTick();
+	
+	if(bLCDOff) {
+		OLED_Display_On();
+		bLCDOff = false;
+		nBacklightTimer = HAL_GetTick();
+		return 0;
+	}
+	
 	return nKey0 | KEY_LONGPRESS;
 }  // uint8_t GetKey(void)
 

@@ -167,6 +167,7 @@ int main(void)
 	HAL_Delay(500);
 	OLED_Refresh();
 	TunerInit();
+	
 	//TuneFreq(101700);//fm 101.7
 	//TuneFreq(88000);//fm 88.0
 		

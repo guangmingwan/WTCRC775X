@@ -87,13 +87,16 @@ void NVMGetArgs(void)
 	if (eeprom_read_word(NVMADDR_SIGSTATION) != NVMSIGSTATION )
 		NVMInitStation();
 	OLED_XYStr(0, 2, "O");
+	HAL_Delay(80);
 	if (eeprom_read_word(NVMADDR_SIG) != NVMSIG)
 		NVMInitSetting();
 	OLED_XYStr(1, 2, "O");
+	HAL_Delay(50);
 	nBand = NV_read_byte(NVMADDR_BAND);
 	if (nBand >= NUM_BANDS)
 		nBand = BAND_FM;
 	OLED_XYStr(2, 2, "O");
+	HAL_Delay(50);
 	nVolume = NV_read_byte(NVMADDR_VOL);
 	if (nVolume > MAX_VOL)
 		nVolume = 10;
@@ -101,42 +104,52 @@ void NVMGetArgs(void)
 	nBass = NV_read_byte(NVMADDR_BASS);
 	nBass = constrain(nBass, -9, 9);
 	OLED_XYStr(3, 2, "O");
+	HAL_Delay(50);
 	nMiddle = NV_read_byte(NVMADDR_MIDDLE);
 	nMiddle = constrain(nMiddle, -9, 9);
 	OLED_XYStr(4, 2, "O");
+	HAL_Delay(50);
 	nTreble = NV_read_byte(NVMADDR_TREBLE);
 	nTreble = constrain(nTreble, -9, 9);
 	OLED_XYStr(5, 2, "O");
+	HAL_Delay(50);
 	nBalance = NV_read_byte(NVMADDR_BALANCE);
 	nBalance = constrain(nBalance, -15, 15);
 	OLED_XYStr(6, 2, "O");
+	HAL_Delay(50);
 	nFader = NV_read_byte(NVMADDR_FADER);
 	nFader = constrain(nFader, -15, 15);
 	OLED_XYStr(7, 2, "O");
+	HAL_Delay(50);
 	nMode = NV_read_byte(NVMADDR_MODE);
 	if (nMode >= NUM_MODES)
 		nMode = MODE_RF;
 	OLED_XYStr(8, 2, "O");
+	HAL_Delay(50);
 	nRFMode = NV_read_byte(NVMADDR_RFMODE);
 	if (nRFMode >= NUM_RFMODES)
 		nRFMode = RFMODE_FM;
 	OLED_XYStr(9, 2, "O");
+	HAL_Delay(50);
 	nTuneType = NV_read_byte(NVMADDR_TUNE);
 	if (nTuneType >= NUM_TYPES)
 		nTuneType = TYPE_FREQ;
 	OLED_XYStr(10, 2, "O");
+	HAL_Delay(50);
 	nStepIdx = NV_read_byte(NVMADDR_STEPIDX);
 	if (nStepIdx >= NUM_STEPS)
 		nStepIdx = 0;
 	OLED_XYStr(11, 2, "O");
+	HAL_Delay(50);
 	nFMFilter = NV_read_byte(NVMADDR_FMFILTER);
 	if (nFMFilter >= NUM_FM_FILTERS)
 		nFMFilter = DEF_FM_FILTER;
-	OLED_XYStr(12, 2, "O");
+	
 	nAMFilter = NV_read_byte(NVMADDR_AMFILTER);
 	if (nAMFilter >= NUM_AM_FILTERS)
 		nAMFilter = DEF_AM_FILTER;
-	OLED_XYStr(13, 2, "O");
+	OLED_XYStr(12, 2, "O");
+	HAL_Delay(50);
 	u8 = NV_read_byte(NVMADDR_MISC1);
 	nDeemphasis = u8 >> 6;            // FM de-emphasis, 0=off, 1=50us, 2=75us
 	if (nDeemphasis > 2)
@@ -144,7 +157,8 @@ void NVMGetArgs(void)
 	nLowerSig = (u8 >> 4) & 1;        // Reduce signal quality for seek/scan/any, 0=normal, 1=lower
 	nFMDynamicBW = (u8 >> 2) & 0x03;  // FM dynamic bandwidth, 0 to 3 = narrow bandwidth to wide bandwidth
 	nAGC = u8 & 0x03;                 // RFAGC wideband threshold, 0 to 3 = lowest to highest start level
-	OLED_XYStr(14, 2, "O");
+	OLED_XYStr(13, 2, "O");
+	HAL_Delay(50);
 	u8 = NV_read_byte(NVMADDR_MISC2);
 	nFMEMS = (u8 >> 7) & 1;           // FM enhanced multipath suppression, 0=off, 1=on
 	nFMCNS = (u8 >> 6) & 1;           // FM click noise suppression, 0=off, 1=on
@@ -161,7 +175,8 @@ void NVMGetArgs(void)
 		nStereo = 5;
 	nINCA = (u8 >> 4) & 1;            // FM AM improvec noise canceller, 0=off, 1=on
 	nFirm = (u8 >> 5) & 0x03;
-	OLED_XYStr(15, 2, "O");
+	OLED_XYStr(14, 2, "O");
+	HAL_Delay(50);
 	nSquelch[0] = NV_read_byte(NVMADDR_SQU1);
 	nSquelch[0] = constrain(nSquelch[0], -99, 99);
 	nSquelch[1] = NV_read_byte(NVMADDR_SQU2);
@@ -187,6 +202,7 @@ void NVMGetArgs(void)
 		nBandFreq[i] = constrain(nBandFreq[i], nBandFMin[i], nBandFMax[i]);
 	}
 	OLED_XYStr(15, 2, "O");
+	HAL_Delay(50);
 }  // void NVMGetArgs(void)
 
 

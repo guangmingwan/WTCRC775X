@@ -3,7 +3,7 @@
 <title>Static Call Graph - [wtcrc103rgt6\wtcrc103rgt6.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image wtcrc103rgt6\wtcrc103rgt6.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6160001: Last Updated: Fri Aug  9 02:22:06 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6160001: Last Updated: Fri Aug  9 03:33:09 2024
 <BR><P>
 <H3>Maximum Stack Usage =        448 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -734,8 +734,8 @@ Global Symbols
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_SPI1_Init
 </UL>
 
-<P><STRONG><a name="[6b]"></a>GetKey</STRONG> (Thumb, 298 bytes, Stack size 16 bytes, ui.o(.text.GetKey))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = GetKey &rArr; OLED_Display_On &rArr; OLED_SOFT_WR_Byte &rArr; HAL_GPIO_WritePin &rArr; assert_failed
+<P><STRONG><a name="[6b]"></a>GetKey</STRONG> (Thumb, 354 bytes, Stack size 24 bytes, ui.o(.text.GetKey))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = GetKey &rArr; OLED_Display_On &rArr; OLED_SOFT_WR_Byte &rArr; HAL_GPIO_WritePin &rArr; assert_failed
 </UL>
 <BR>[Calls]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PeekKey
 <LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Display_On
@@ -872,6 +872,7 @@ Global Symbols
 <LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IsSigOK
 <LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BootDirana3
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AddDelCh
+<LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVMGetArgs
 <LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eeprom_write_word
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eeprom_write_byte
 <LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eeprom_erase_full_chip
@@ -1448,11 +1449,11 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = Menu_BalFader &rArr; LCDUpdate &rArr; OLED_XYStr &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; OLED_Set_Pos &rArr; OLED_SOFT_WR_Byte &rArr; HAL_GPIO_WritePin &rArr; assert_failed
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_FullStr
-<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TuneFreqDisp
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetBalFader
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_XYIntLen
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_XYChar
+<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear2
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear1
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCDUpdate
@@ -1524,7 +1525,6 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 232<LI>Call Chain = Menu_SCSV &rArr; SeekCh &rArr; LCDUpdate &rArr; OLED_XYStr &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; OLED_Set_Pos &rArr; OLED_SOFT_WR_Byte &rArr; HAL_GPIO_WritePin &rArr; assert_failed
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;YesNo
-<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear0
 <LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dsp_set_filter
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WriteChFreq
@@ -1532,6 +1532,7 @@ Global Symbols
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetVolume
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetFilter
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SeekCh
+<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear2
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear1
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCDUpdate
@@ -1674,11 +1675,11 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = Menu_Tone &rArr; LCDUpdate &rArr; OLED_XYStr &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; OLED_Set_Pos &rArr; OLED_SOFT_WR_Byte &rArr; HAL_GPIO_WritePin &rArr; assert_failed
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_FullStr
-<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TuneFreqDisp
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetTone
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_XYIntLen
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_XYChar
+<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear2
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear1
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCDUpdate
@@ -1696,7 +1697,7 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f1xx_it.o(.text.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f103xg.o(RESET)
 </UL>
-<P><STRONG><a name="[e6]"></a>NVMGetArgs</STRONG> (Thumb, 1628 bytes, Stack size 80 bytes, nv_memory.o(.text.NVMGetArgs))
+<P><STRONG><a name="[e6]"></a>NVMGetArgs</STRONG> (Thumb, 1710 bytes, Stack size 80 bytes, nv_memory.o(.text.NVMGetArgs))
 <BR><BR>[Stack]<UL><LI>Max Depth = 240<LI>Call Chain = NVMGetArgs &rArr; NVMInitStation &rArr; OLED_XYStr &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; OLED_Set_Pos &rArr; OLED_SOFT_WR_Byte &rArr; HAL_GPIO_WritePin &rArr; assert_failed
 </UL>
 <BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;constrain
@@ -1706,6 +1707,7 @@ Global Symbols
 <LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eeprom_read_word
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eeprom_read_byte
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eeprom_init
+<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
 </UL>
 <BR>[Called By]<UL><LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TunerInit
 </UL>
@@ -1815,6 +1817,7 @@ Global Symbols
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Menu_SCSV
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Menu_Help
 <LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Menu_BalFader
+<LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;displayStrings
 </UL>
 
 <P><STRONG><a name="[f2]"></a>OLED_Display_Off</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, oled_ch1115_directwrite.o(.text.OLED_Display_Off))
@@ -1998,7 +2001,6 @@ Global Symbols
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;YesNo
 <LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ShowVol
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ShowMisc
-<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear0
 <LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Menu_Time
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Menu_Stereo
@@ -2015,6 +2017,7 @@ Global Symbols
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Menu_AGC
 <LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;displayStrings
 <LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TunerInit
+<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear2
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear1
 <LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Menu
@@ -2127,8 +2130,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcMenuItem
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_XYStrLen
-<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_XYChar
+<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear2
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear1
 <LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IsMenuVisible
@@ -2595,10 +2598,11 @@ Global Symbols
 <LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVMGetArgs
 </UL>
 
-<P><STRONG><a name="[10d]"></a>displayStrings</STRONG> (Thumb, 362 bytes, Stack size 32 bytes, tuner.o(.text.displayStrings))
-<BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = displayStrings &rArr; OLED_XYStr &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; OLED_Set_Pos &rArr; OLED_SOFT_WR_Byte &rArr; HAL_GPIO_WritePin &rArr; assert_failed
+<P><STRONG><a name="[10d]"></a>displayStrings</STRONG> (Thumb, 406 bytes, Stack size 32 bytes, tuner.o(.text.displayStrings))
+<BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = displayStrings &rArr; OLED_Clear3 &rArr; OLED_XYStr &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; OLED_Set_Pos &rArr; OLED_SOFT_WR_Byte &rArr; HAL_GPIO_WritePin &rArr; assert_failed
 </UL>
-<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
+<BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear3
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_XYStr
 <LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
 </UL>

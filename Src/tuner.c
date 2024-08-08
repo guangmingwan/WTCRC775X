@@ -119,8 +119,8 @@ const char* buttomTips[] = {
 	"Welcome to use NXP7751 Multi Band Radio Receiver",
 	"Press left or right encoder to enter the menu",
 	"Long press the encoder to return up menu",
-	"Rotary encoder to selection menu item"
-	"Press left encoder 4 times to Search and Save Channel"
+	"Rotary encoder to selection menu item",
+	"Press left encoder 4 times to Search and Save Channel",
 	"Enjoy it"
 };
 const uint8_t DSP_FIRM1_PRODUCTION[] =
@@ -638,16 +638,20 @@ void displayStrings(void) {
             // 在 OLED 上显示子字符串
 						//OLED_XYStr(15, 3, " ");
 						//OLED_Clear3();
+						if(strlen(subStr)>0 && strlen(subStr)<16) {
+							OLED_Clear3();
+						}
             OLED_XYStr(0, 3, subStr);
-						
+										
             // 更新偏移量，准备下一次显示
             currentOffset=currentOffset+16;
-            if (currentOffset + 16 > length) {
+            if (currentOffset > (length-1)) {
                 currentOffset = 0; // 重置偏移量，从头开始显示
                 displayTimer = 1000; // 开始计时器，等待0.5秒后显示下一个字符串
             }
         } else {
             // 如果当前字符串长度不超过16个字符，直接显示
+						OLED_Clear3();
             OLED_XYStr(0, 3, currentString);
             currentOffset = 0; // 重置偏移量
             displayTimer = 1000; // 开始计时器，等待0.5秒后显示下一个字符串
@@ -661,6 +665,7 @@ void displayStrings(void) {
 
         if (displayTimer <= 0) {
             currentIndex++; // 切换到下一个字符串
+						currentOffset = 0;
             if (currentIndex >= (int)(sizeof(buttomTips) / sizeof(buttomTips[0]))) {
 								
                 currentIndex = 0; // 循环到数组末尾后回到开始
@@ -1342,14 +1347,14 @@ void TunerInit(void)
 	OLED_XYStr(0, 3, buttomTips[0]);
 	OLED_Refresh();
 	HAL_Delay(2800);
-	NVMGetArgs();
+	
+	
 	if (!IsMenuVisible(MID_INCA)) //��INCA֧�ֵ��ͺ��Ͻ���INCA������R7.1�̼�������������
 		nINCA = 0;
 	HAL_Delay(500);	
 	OLED_XYStr(0, 1, "Booting Dirana3");
 	HAL_Delay(500);	
-	//HAL_Delay(1000);	
-	//HAL_Delay(1000);	
+	
 	BootDirana3();
 	OLED_Clear1();
 	OLED_Clear2();
@@ -1358,7 +1363,11 @@ void TunerInit(void)
 	nBootMode = nMode;
 	SetMode_RF();           // Set to RF mode
 	OLED_XYStr(0, 1, "Setting RFMODE");
-	HAL_Delay(800);
+	NVMGetArgs();
+	//HAL_Delay(800); // load for getargs
+	OLED_Clear1();
+	OLED_Clear2();
+	
 	if (nTuneType == TYPE_CH)
 		SeekCh(0);          // Tune to current ch
 	else
@@ -1373,12 +1382,14 @@ void TunerInit(void)
 	//memset(cRadioText, 0, sizeof(cRadioText));
 	OLED_SetBackLight(nBacklightAdj);
 	nBacklightTimer = HAL_GetTick();
-	LCDUpdate();
+	
 
 	nAutoSyncBits = 0;
 	nAutoSyncChs = 0;
 	nAutoSyncFreqs = 0;
 	nAutoSyncTimer = 1000L * 3600 * 24;  // Auto sync to NV memory timer
+	
+	LCDUpdate();
 }  // void TunerInit(void)
 
 
