@@ -22,6 +22,7 @@ void BootDirana3(void);
 
 void SetVolume(uint8_t);
 void CheckVolume(void);
+void displayStrings(void);
 void SetTone(void);
 void SetBalFader(void);
 void dsp_set_filter(int8_t);

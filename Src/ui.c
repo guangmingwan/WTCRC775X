@@ -37,6 +37,7 @@ const uint8_t SINE_GEN_VOL[] =
 
 // Special menu strings
 const char MT_RET[] = "RET";
+const char MT_RETURN[] = "RETURN";
 const char MT_EXIT[] = "EXIT";
 
 const char MT_RADI[] = "RADI";
@@ -52,6 +53,7 @@ struct M_ITEM M_Option[] =
 };
 
 // Menu Option(Left encoder)
+const char MT_SCS[]  = "Search Channel";
 const char MT_SQU1[] = "Mute Threshold";
 const char MT_SQU2[] = "Search Threshold";
 const char MT_LSIG[] = "Low Signal Thre";  // Normal/reduced signal quality for seek/scan/any
@@ -77,6 +79,7 @@ const char MT_TIME[] = "Time Set";
 
 struct M_ITEM M_Radio[] =
 {
+	{MID_SCSV,MT_SCS},
 	{MID_SQUELCH1, MT_SQU1},
 	{MID_SQUELCH2, MT_SQU2},
 	{MID_LSIG, MT_LSIG},
@@ -92,14 +95,14 @@ struct M_ITEM M_Radio[] =
 	{MID_DEEM, MT_DEEM},
 	{MID_AGC,  MT_AGC},
 	{MID_NB,   MT_NB},
-	{MID_RET,  MT_RET}
+	{MID_RET,  MT_RETURN}
 };
 
 struct M_ITEM M_Audio[] =
 {
 	{MID_TONE, MT_TONE},
 	{MID_BAL,  MT_BAL},
-	{MID_RET,  MT_RET}
+	{MID_RET,  MT_RETURN}
 };
 
 struct M_ITEM M_Appli[] =
@@ -108,7 +111,7 @@ struct M_ITEM M_Appli[] =
 	{MID_TSCN, MT_TSCN},
 	{MID_TANY, MT_TANY},
 	{MID_TIME, MT_TIME},
-	{MID_RET,  MT_RET}
+	{MID_RET,  MT_RETURN}
 };
 
 
@@ -229,7 +232,7 @@ struct M_ITEM M_BkLt[] =
 {
 	{MID_BKKEEP, MT_BKKEEP},
 	{MID_BKADJ, MT_BKADJ},
-	{MID_RET, MT_RET}
+	{MID_RET, MT_RETURN}
 };
 
 // Menu Frequency(Right encoder)
@@ -281,7 +284,6 @@ struct M_ITEM M_Tune[] =
 	{MID_CH,   MT_CH},
 	{MID_SCAN, MT_SCAN},
 	{MID_ANY,  MT_ANY},
-	{MID_SCSV, MT_SCSV},
 	{MID_RET,  MT_RET}
 };
 
@@ -1621,8 +1623,10 @@ void Menu_SCSV(void)
 	OLED_XYStr(0, 1, ("L is Yes,R is NO"));
 	OLED_XYStr(0, 2, ("Overwrite?   "));  // Confirm overwrite currrent band ch data
 	OLED_Refresh();
-	if (!YesNo(true))
+	if (!YesNo(true)){
+		OLED_Clear1();
 		return;
+	}
 
 	nTuneType = TYPE_SCSV;
 	if (nMode != MODE_AUX)
@@ -1684,6 +1688,7 @@ void Menu_SCSV(void)
 	AddSyncBits(NEEDSYNC_TUNE);
 	if (nMode != MODE_AUX)
 		SetVolume(nVolume);  // Unmute
+	bExitMenu = 1;
 }  // void Menu_SCSV(void)
 
 
@@ -1868,7 +1873,6 @@ void Menu_Help(void)
 	OLED_Clear2();
 	OLED_Clear3();
 	//TuneFreqDisp();
-	//OLED_XYStr(0, 3,"*Powered by ADM*");//fix message
 	//LCDUpdate();
 }  // void Menu_Help(void)
 
@@ -2097,18 +2101,6 @@ bool IsMenuVisible(uint8_t nMenuID)
 	return true;
 }
 // 函数定义
-char *create_repeated_string(char ch, int n) {
-    char *str = (char *)malloc((n + 1) * sizeof(char)); // 分配足够大小的内存，包括结束符'\0'
-    if (str == NULL) {
-        printf("内存分配失败!\n");
-        return NULL;
-    }
-
-    memset(str, ch, n); // 填充字符
-    str[n] = '\0';      // 添加字符串结束符
-
-    return str;
-}
 // 处理子菜单的函数
 // 参数 pSubMenu: 指向子菜单结构的指针
 void ProcSubMenu(struct M_SUBMENU *pSubMenu)
@@ -2226,7 +2218,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
                 // 如果是光标所在位置，显示特殊标记
                 if (i8 == (nCursor - nFirst))
                 {
-                    char* result = create_repeated_string('-', strlen((pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt));
+                    
                     OLED_XYStrLen(1 + i8 * 5, 3, "_/\\_", 4, 1);
                 }
             }
@@ -2463,7 +2455,6 @@ void ProcMenuItem(uint8_t nMenuID)
 
 	case MID_RET:
 		return;
-
 	case MID_SQUELCH1:
 		Menu_Squelch(0);
 		break;
@@ -2532,7 +2523,7 @@ void ProcMenuItem(uint8_t nMenuID)
 
 	case MID_SCSV:
 		Menu_SCSV();
-		bExitMenu = 1;
+		
 		break;
 
 	case MID_SINE:  // Sine wave generator
@@ -2551,7 +2542,7 @@ void Menu(uint8_t nMenuID)
 {
 	bExitMenu = 0;
 	if(nMenuID == MID_OPTION) {
-		OLED_XYStr(0, 0,"[Options]");
+		OLED_XYStr(0, 0,"[Main Menu]");
 	}
 	else if(nMenuID == MID_FREQUENCY) {
 		OLED_XYStr(0, 0,"[Frequency]");
@@ -2560,6 +2551,6 @@ void Menu(uint8_t nMenuID)
 	OLED_Clear2();
 	TuneFreqDisp();
 	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");
-	OLED_XYStr(0, 3,"*Powered by ADM*");//fix message
+	
 	LCDUpdate();
 }

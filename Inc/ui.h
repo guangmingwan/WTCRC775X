@@ -90,6 +90,7 @@
 
 
 // Menu IDs of leaves
+#define MID_SCS			0x19
 #define MID_SQUELCH1    0x20
 #define MID_SQUELCH2    0x21
 #define MID_LSIGNORM    0x22  // Normal signal quality for seek/scan/any

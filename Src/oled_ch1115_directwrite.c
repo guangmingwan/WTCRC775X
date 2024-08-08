@@ -296,8 +296,11 @@ void OLED_XYStr(uint8_t x, uint8_t y, const char *str)  // Display string at x:0
 {
 	uint8_t rx = x * 8;
 	uint8_t page = (y*16) / 8; 
-	
-	OLED_ShowString(rx,page,(u8*)str);
+	char truncatedStr[17];
+	strncpy(truncatedStr, str, 16);
+	truncatedStr[16] = '\0'; // end for str
+
+	OLED_ShowString(rx,page,(u8*)truncatedStr);
 }
 void OLED_FullStr(const char *str)  // Display string to full(2x16 chars) LCD, fill with blank if string is less than 32 chars
 {

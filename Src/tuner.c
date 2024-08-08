@@ -8,7 +8,7 @@
 #endif
 #include "soft_i2c.h"
 #include "nv_memory.h"
-
+#include <string.h>
 extern volatile int8_t nLRot;
 extern volatile int8_t nRRot;
 
@@ -114,7 +114,15 @@ const uint8_t DSP_FIRM0_PRODUCTION[] =
 	0x81,0x2C,
 	0
 };
-
+const char* buttomTips[] = {
+	"*Powered by ADM*",
+	"*Powered by ADM* Welcome to use NXP7751 Multi Band Radio Receiver                ",
+	"        Press left or right encoder to enter the menu                ",
+	"        Long press the encoder to return up menu                ",
+	"        Rotary encoder to selection menu item                "
+	"        Press left encoder 4 times to Search and Save Channel                "
+	"        Enjoy it"
+};
 const uint8_t DSP_FIRM1_PRODUCTION[] =
 {
 	//Load Firmware Version 7.1
@@ -597,6 +605,70 @@ void CheckVolume(void)
 		AddSyncBits(NEEDSYNC_VOL);
 		CheckUpdateAlt(ALT_VOL);  // Show volume for a period
 	}
+}
+// 显示字符串数组中的内容，每行最多显示16个字符
+void displayStrings(void) {
+    static int currentIndex = 0; // 当前显示的字符串索引
+    static int currentOffset = 0; // 当前显示的偏移量
+    static uint32_t lastUpdateTick = 0; // 上次更新的时间戳
+    static int displayTimer = 0; // 显示计时器
+
+    const char *currentString = buttomTips[currentIndex];
+    int length = strlen(currentString);
+
+    // 获取当前时间
+    uint32_t currentTick = HAL_GetTick();
+
+    // 检查是否需要更新显示
+    if (currentTick - lastUpdateTick >= 1000/3 ) { // 每秒滚动3个字符
+        lastUpdateTick = currentTick;
+
+        // 如果当前字符串长度超过16个字符，则使用跑马灯模式
+        if (length > 16) {
+            // 计算要显示的子字符串
+            const char *subStr = &currentString[currentOffset];
+            int subLength = length - currentOffset;
+
+            // 如果子字符串长度超过16个字符，只显示前16个字符
+            if (subLength > 16) {
+                subStr = &currentString[currentOffset]; // 重新计算子字符串的起始位置
+                subLength = 16; // 限制子字符串长度为16
+            }
+
+            // 在 OLED 上显示子字符串
+						//OLED_XYStr(15, 3, " ");
+						//OLED_Clear3();
+            OLED_XYStr(0, 3, subStr);
+						
+            // 更新偏移量，准备下一次显示
+            currentOffset++;
+            if (currentOffset + 16 > length) {
+                currentOffset = 0; // 重置偏移量，从头开始显示
+                displayTimer = 1000; // 开始计时器，等待0.5秒后显示下一个字符串
+            }
+        } else {
+            // 如果当前字符串长度不超过16个字符，直接显示
+            OLED_XYStr(0, 3, currentString);
+            currentOffset = 0; // 重置偏移量
+            displayTimer = 1000; // 开始计时器，等待0.5秒后显示下一个字符串
+        }
+    }
+
+    // 检查是否需要切换到下一个字符串
+    if (displayTimer > 0) {
+        displayTimer -= (currentTick - lastUpdateTick);
+        lastUpdateTick = currentTick;
+
+        if (displayTimer <= 0) {
+            currentIndex++; // 切换到下一个字符串
+            if (currentIndex >= (int)(sizeof(buttomTips) / sizeof(buttomTips[0]))) {
+								
+                currentIndex = 0; // 循环到数组末尾后回到开始
+            }
+            displayTimer = 0; // 重置计时器
+						//OLED_Clear3();
+        }
+    }
 }
 
 
@@ -1264,16 +1336,18 @@ void TunerInit(void)
 	HAL_Delay(35);
 	
 	OLED_Clear2();
-	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");//ÏÔÊ¾×Ö·û
+	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");//top title
 	OLED_XYStr(3, 1, "WTCRC7751");
 	OLED_XYStr(3, 2, "V20240806");
-	OLED_XYStr(0, 3,"*Powered by ADM*");
+	OLED_XYStr(0, 3, buttomTips[0]);
 	OLED_Refresh();
 	HAL_Delay(2800);
 	NVMGetArgs();
 	if (!IsMenuVisible(MID_INCA)) //��INCA֧�ֵ��ͺ��Ͻ���INCA������R7.1�̼�������������
 		nINCA = 0;
-	HAL_Delay(1000);	
+	HAL_Delay(500);	
+	OLED_XYStr(0, 1, "Booting Dirana3");
+	HAL_Delay(500);	
 	//HAL_Delay(1000);	
 	//HAL_Delay(1000);	
 	BootDirana3();
@@ -1283,6 +1357,7 @@ void TunerInit(void)
 	nRRot = 0;
 	nBootMode = nMode;
 	SetMode_RF();           // Set to RF mode
+	OLED_XYStr(0, 1, "Setting RFMODE");
 	HAL_Delay(800);
 	if (nTuneType == TYPE_CH)
 		SeekCh(0);          // Tune to current ch
@@ -1487,7 +1562,7 @@ void TunerLoop(void)
 
 
 	CheckVolume();
-
+	displayStrings();
 
 	if ((i8 = GetRRot()) != false)
 	{
