@@ -1574,31 +1574,31 @@ void TunerLoop(void)
 	if(!bLCDOff) {
 		CheckVolume();
 		displayStrings();
-	}
+	
 
-	if ((i8 = GetRRot()) != false)
-	{
-		switch (nTuneType)
+		if ((i8 = GetRRot()) != false)
 		{
-		case TYPE_FREQ:
-			nBandFreq[nBand] += i8 * nBandStep[nBand][nStepIdx];
-			AdjFreq(true);
-			TuneFreqDisp();
-			break;
+			switch (nTuneType)
+			{
+			case TYPE_FREQ:
+				nBandFreq[nBand] += i8 * nBandStep[nBand][nStepIdx];
+				AdjFreq(true);
+				TuneFreqDisp();
+				break;
 
-		case TYPE_SEEK:
-			Seek(constrain(i8, -1, 1));
-			break;
+			case TYPE_SEEK:
+				Seek(constrain(i8, -1, 1));
+				break;
 
-		case TYPE_CH:
-			if (i8 < 0)
-				SeekCh(-1);
-			else
-				SeekCh(1);
-			break;
+			case TYPE_CH:
+				if (i8 < 0)
+					SeekCh(-1);
+				else
+					SeekCh(1);
+				break;
+			}
 		}
-	}
-
+  }
 
 	if ((nKey = GetKey()) != false)
 	{
