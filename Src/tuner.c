@@ -1560,9 +1560,10 @@ void TunerLoop(void)
 		}
 	}
 
-
-	CheckVolume();
-	displayStrings();
+	if(!bLCDOff) {
+		CheckVolume();
+		displayStrings();
+	}
 
 	if ((i8 = GetRRot()) != false)
 	{
