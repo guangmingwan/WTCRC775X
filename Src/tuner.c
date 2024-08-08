@@ -116,12 +116,12 @@ const uint8_t DSP_FIRM0_PRODUCTION[] =
 };
 const char* buttomTips[] = {
 	"*Powered by ADM*",
-	"*Powered by ADM* Welcome to use NXP7751 Multi Band Radio Receiver                ",
-	"        Press left or right encoder to enter the menu                ",
-	"        Long press the encoder to return up menu                ",
-	"        Rotary encoder to selection menu item                "
-	"        Press left encoder 4 times to Search and Save Channel                "
-	"        Enjoy it"
+	"Welcome to use NXP7751 Multi Band Radio Receiver",
+	"Press left or right encoder to enter the menu",
+	"Long press the encoder to return up menu",
+	"Rotary encoder to selection menu item"
+	"Press left encoder 4 times to Search and Save Channel"
+	"Enjoy it"
 };
 const uint8_t DSP_FIRM1_PRODUCTION[] =
 {
@@ -620,7 +620,7 @@ void displayStrings(void) {
     uint32_t currentTick = HAL_GetTick();
 
     // 检查是否需要更新显示
-    if (currentTick - lastUpdateTick >= 1000/3 ) { // 每秒滚动3个字符
+    if (currentTick - lastUpdateTick >= 1000*4 ) { // 每秒滚动3个字符
         lastUpdateTick = currentTick;
 
         // 如果当前字符串长度超过16个字符，则使用跑马灯模式
@@ -641,7 +641,7 @@ void displayStrings(void) {
             OLED_XYStr(0, 3, subStr);
 						
             // 更新偏移量，准备下一次显示
-            currentOffset++;
+            currentOffset=currentOffset+16;
             if (currentOffset + 16 > length) {
                 currentOffset = 0; // 重置偏移量，从头开始显示
                 displayTimer = 1000; // 开始计时器，等待0.5秒后显示下一个字符串
