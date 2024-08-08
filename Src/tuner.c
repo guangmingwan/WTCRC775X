@@ -1212,8 +1212,9 @@ int8_t Seek(int8_t nDir)
 				return 0;
 			}
 		}
-
-		CheckVolume();
+		if(!bLCDOff) {
+			CheckVolume();
+		}
 		CheckUpdateAlt(ALT_AUTO);
 	}
 }  // int8_t Seek(int8_t nDir)
@@ -1277,8 +1278,9 @@ uint8_t ScanAny()
 					bLCDOff = true;
 				}
 			}
-
-			CheckVolume();  // Check volume adjustment
+			if(!bLCDOff) {
+				CheckVolume();  // Check volume adjustment
+			}
 			CheckUpdateAlt(ALT_AUTO);
 			HAL_Delay(64);
 		}
