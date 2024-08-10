@@ -9,7 +9,13 @@
 
 #ifndef __TUNER_H
 #define __TUNER_H
-
+// Define enumeration for FM antenna selection  
+  
+typedef enum {  
+    FM_ANT1 = 0,  // ANT1  
+    FM_ANT2 = 1,  // ANT2  
+    FM_PHASE_DIVERSITY = 2  // phase diversity  
+} FM_ANT_SEL;  
 void dsp_start_subaddr(uint8_t);
 void dsp_start_subaddr3(uint32_t subaddr);
 uint8_t dsp_query1(uint8_t);

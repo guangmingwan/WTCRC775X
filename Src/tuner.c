@@ -30,7 +30,9 @@ uint16_t REG_FREQ;
 uint8_t REG_USN;
 
 uint8_t nStereo = 9;        // FM stereo, 0=off, 5=default, 9=strongest
-uint8_t nFMAT;          // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
+
+
+FM_ANT_SEL nFMAT;          // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
 uint8_t nFMSI;          // FM stereo improvement, 0=off, 1=on
 uint8_t nFMCEQ;         // FM channel equalizer, 0=off, 1=on
 uint8_t nFirm;          // Firmware Version,0,1,2
@@ -43,8 +45,8 @@ uint8_t nAGC;           // RFAGC wideband threshold, 0 to 3 = lowest to highest 
 uint8_t nNBSens;        // Noise blanker sensitivity,  0 to 3 = lowest to highest sensitivity
 uint8_t nLowerSig;      // Normal/reduced signal quality for seek/scan/any, 0=normal, 1=lower
 
-int8_t nRSSI, nRSSI_Last, nRSSI_Disp;  // Received signal strength, in dBuv
-int8_t nSNR, nSNR_Last, nSNR_Disp;     // Signal noise ratio, in dB
+int8_t nRSSI, nRSSI_Disp;  // Received signal strength, in dBuv
+int8_t nSNR, nSNR_Disp;     // Signal noise ratio, in dB
 bool bSTIN;                            // FM stereo indicator
 
 // Modes
@@ -785,7 +787,7 @@ void SetRFCtrlReg(void)
 	dsp_write1(0x03, u8);  // RFAGC wideband threshold & IF bandwidth
 	if (nRFMode == RFMODE_FM)
 	{
-		if (nFMAT == 0)
+		if (nFMAT == FM_ANT1)
 		{
 			u8 = 0x00;
 			//			if(uIPDEnabled == 1)
@@ -803,7 +805,7 @@ void SetRFCtrlReg(void)
 			//			}
 			//			uIPDEnabled = 0;
 		}
-		else if (nFMAT == 1)
+		else if (nFMAT == FM_ANT2)
 		{
 			u8 = 0x04;
 			//			if(uIPDEnabled == 1)
@@ -821,7 +823,7 @@ void SetRFCtrlReg(void)
 			//			}
 			//			uIPDEnabled = 0;
 		}
-		else if (nFMAT == 2)
+		else if (nFMAT == FM_PHASE_DIVERSITY)
 		{
 			u8 = 0x01;
 			//			if(uIPDEnabled == 0)

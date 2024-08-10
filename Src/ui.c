@@ -719,7 +719,7 @@ void CheckUpdateSig(void)
 	if(bLCDOff) {
 		return;
 	}
-	if (nRFMode == RFMODE_FM && nFMAT == 2)
+	if (nRFMode == RFMODE_FM && nFMAT == FM_PHASE_DIVERSITY)
 	{
 		dsp_start_subaddr(0x00);
 		I2C_Restart(DSP_I2C | I2C_READ);
