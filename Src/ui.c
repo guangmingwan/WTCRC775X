@@ -23,10 +23,11 @@ const char *pszTuneTypes[] = { "FS", "SK", "CH", "SC", "AN", "SS" };
 const char *pszBands[] = { "LW", "MW", "SW", "FL", "FM" };  // Band name to display
 
 extern uint8_t bDisp_USN;
+void switchAnt();
 
 uint8_t bExitMenu;
-uint8_t nSNRAnt = 0;
-
+FM_ANT_SEL nSNRAnt = FM_ANT1;
+FM_ANT_SEL mainFMAT = FM_ANT1;
 // SineGen volume
 const uint8_t SINE_GEN_VOL[] =
 {
@@ -712,13 +713,15 @@ void LCDUpdate(void)
 }
 
 
-void CheckUpdateSig(void)
+void CheckUpdateSig(UI_STAGE stage)
 {
+	
 	char c;
 	float fv;
-	if(bLCDOff) {
-		return;
-	}
+	static int8_t times = 1;
+	//if(bLCDOff) {
+	//	return;
+	//}
 	if (nRFMode == RFMODE_FM && nFMAT == FM_PHASE_DIVERSITY)
 	{
 		dsp_start_subaddr(0x00);
@@ -727,20 +730,38 @@ void CheckUpdateSig(void)
 		I2C_Stop();
 
 		uint8_t addr;
-		if (nSNRAnt == 0)
+		FM_ANT_SEL tmpAnt = nSNRAnt;
+		if (nSNRAnt == FM_ANT1)
 		{
-			nSNRAnt = 1;
+			nSNRAnt = FM_ANT2;
 			addr = 0x74;
 		}
 		else
 		{
-			nSNRAnt = 0;
+			nSNRAnt = FM_ANT1;
 			addr = 0x75;
 		}
 
 		dsp_start_subaddr(addr);
 		I2C_Restart(DSP_I2C | I2C_READ);
 		nRSSI = (int8_t)(I2C_ReadByte(false) >> 1) - 8;
+		int8_t nCRSSI = constrain(nRSSI, -9, 99);
+		//save ssi to main 
+		if(tmpAnt == mainFMAT) {
+			nMainRSSI = nCRSSI;
+		}
+		//else {
+		//	if(nMainRSSI >0 && nCRSSI > nMainRSSI) {
+		//		//main ant switch the better ant
+		//		switchAnt();
+		//	}
+		//}
+		if(nCRSSI <0 ) { //main ant signal is lost,switch to another ant
+			if( tmpAnt == mainFMAT) {
+				switchAnt();
+			}
+		}
+		
 		I2C_ReadByte(false);
 		REG_USN = I2C_ReadByte(true);
 		I2C_Stop();
@@ -749,9 +770,31 @@ void CheckUpdateSig(void)
 			nSNR = (int)(0.46222375 * (float)nRSSI - 0.082495118 * (float)REG_USN) + 10;  // Emprical formula
 		else  // AM
 			nSNR = -((int8_t)REG_USN);
+		if(!bLCDOff) {
+			if(tmpAnt == FM_ANT1) {
+				OLED_XYStrLen(0, 0, ">-", 2, false);
+				OLED_XYStrLen(14, 0, "--", 2, false);
+			}
+			else if(tmpAnt == FM_ANT2) {
+				OLED_XYStrLen(0, 0, "--", 2, false);
+				OLED_XYStrLen(14, 0, "-<", 2, false);
+			}
+		}
 	}
-	else
+	else {
+		times++;
+		if(!bLCDOff) {
+			if(nFMAT == FM_ANT1) {
+				OLED_XYStrLen(0, 0, times%2==0 ? "--": ">-", 2, false);
+				OLED_XYStrLen(14, 0, "--", 2, false);
+			}
+			else if(nFMAT == FM_ANT2) {
+				OLED_XYStrLen(0, 0, "--", 2, false);
+				OLED_XYStrLen(14, 0, times%2==0 ? "--": "-<", 2, false);
+			}
+		}
 		GetRFStatReg();
+	}
 
 	// FM stereo indicator. 'S' for FM stereo, ' ' for FM mono or AM mode,  'M' for FM forced mono
 	c = ' ';  // AM mode or FM mono
@@ -768,19 +811,38 @@ void CheckUpdateSig(void)
 	nSNR_Disp = nSNR;
 		
 
-
-	OLED_XYIntLen(RSSI_X, RSSI_Y, constrain(nRSSI_Disp, -9, 99), 2);  // Update RF signal level in dBuv
-	OLED_XYChar(STEREO_X, STEREO_Y, c);                               // Update FM stereo indicator
-	if (bDisp_USN && nRFMode == RFMODE_FM)
-		OLED_XYIntLen(SN_X, SN_Y, REG_USN, 3);                        // Update FM USN reg
-	else
-		OLED_XYIntLen(SN_X, SN_Y, constrain(nSNR_Disp, -99, 127), 3); // Update S/N ratio in dB
-
+	if(!bLCDOff) {
+		OLED_XYIntLen(RSSI_X, RSSI_Y, constrain(nRSSI_Disp, -9, 99), 2);  // Update RF signal level in dBuv
+		OLED_XYChar(STEREO_X, STEREO_Y, c);                               // Update FM stereo indicator
+		if (bDisp_USN && nRFMode == RFMODE_FM)
+			OLED_XYIntLen(SN_X, SN_Y, REG_USN, 3);                        // Update FM USN reg
+		else
+			OLED_XYIntLen(SN_X, SN_Y, constrain(nSNR_Disp, -99, 127), 3); // Update S/N ratio in dB
+	}
 	//nRSSI_Last = nRSSI_Disp;
 	//nSNR_Last = nSNR_Disp;
 }
 
-
+void switchAnt() {
+	if(mainFMAT == FM_ANT1) {
+					
+	nFMAT = FM_ANT2;
+	SetRFCtrlReg();
+	HAL_Delay(500);
+	nFMAT = FM_PHASE_DIVERSITY;
+	SetRFCtrlReg();
+	mainFMAT = FM_ANT2;
+}
+else {
+	
+	nFMAT = FM_ANT1;
+	SetRFCtrlReg();
+	HAL_Delay(500);
+	nFMAT = FM_PHASE_DIVERSITY;
+	SetRFCtrlReg();
+	mainFMAT = FM_ANT1;
+}
+}
 void ShowMisc(void)
 {
 	char s[] = "3e- A";
@@ -1678,7 +1740,7 @@ void Menu_SCSV(void)
 			}
 		}
 
-		CheckUpdateSig();
+		CheckUpdateSig(STAGE_SUBMENU);
 		CheckUpdateAlt(ALT_AUTO);
 		HAL_Delay(5);
 		OLED_Refresh();
@@ -1780,7 +1842,7 @@ void AddDelCh(void)
 		}
 
 		if (!(lp % 16))
-			CheckUpdateSig();
+			CheckUpdateSig(STAGE_MAIN);
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -2118,7 +2180,9 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
     int8_t i8;
     uint8_t u8_data, lp, nHit, mHit;
     int8_t nFirst = 0; // 初始化第一个显示项的索引
+		int8_t nLastFirst = -1; // 上一个nFirst
     int8_t nCursor = -1; // 初始化光标位置的索引
+		int8_t nLastCursor = -2; //上一个nCursor
     uint8_t textlen = 0; // 初始化文本长度变量
 
     // 循环找到第一个可见的菜单项
@@ -2129,9 +2193,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
     for (;;)
     {
 				if(nCursor == -1) {
-					// 清除OLED屏幕
-					OLED_Clear1();
-					OLED_Clear2();
+					
 				
 					// 根据菜单ID选择特定的指示字符
 					switch (pSubMenu->nMID)
@@ -2212,25 +2274,51 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
         if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
         {
             // 获取当前显示项的文本长度，并显示文本
-            textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
-            OLED_Clear2();
-            OLED_XYStrLen(8 - textlen / 2, 2, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
+						if(nLastFirst != nFirst) {
+							nLastFirst = nFirst;
+							textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
+							OLED_Clear2();
+							OLED_XYStrLen(8 - textlen / 2, 2, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
+						}
         }
         else
         {
             // 循环显示最多三个菜单项
-						OLED_Clear2();
-            for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
-            {
-                // 显示菜单项文本
-                OLED_XYStrLen(1 + i8 * 5, 2, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
-                // 如果是光标所在位置，显示特殊标记
-                if (i8 == (nCursor - nFirst))
-                {
-                    
-                    OLED_XYStrLen(1 + i8 * 5, 3, "_/\\_", 4, 1);
-                }
-            }
+						if(nLastCursor != nCursor) {
+							nLastCursor = nCursor;
+							//OLED_Clear2();
+							OLED_Clear3();
+							if(nFirst != nLastFirst ) { //drop menu item once
+								// 清除OLED屏幕
+								if(nLastFirst != -1) { //重新绘制选择的项目的*符号
+									OLED_Clear1();
+									mHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+									if (mHit <= 2){
+										OLED_XYChar(mHit * 5+1, 1, CHAR_SEL);
+									}
+								}
+								OLED_Clear2();
+								nLastFirst = nFirst;
+								
+								for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
+								{
+										// 显示菜单项文本
+										OLED_XYStrLen(1 + i8 * 5, 2, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
+										
+								}
+							}
+							for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
+							{
+									
+									// 如果是光标所在位置，显示特殊标记
+									if (i8 == (nCursor - nFirst))
+									{
+											
+											OLED_XYStrLen(1 + i8 * 5, 3, "_/\\_", 4, 1);
+									}
+							}
+							
+						}
         }
 
         // 处理按键和旋转编码器的输入
@@ -2244,6 +2332,9 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 									//bExitMenu = 1;
 									OLED_Clear1();
                   OLED_Clear3();
+									nLastFirst = -1;
+									nLastCursor = -2;
+									
                   return;
 								}									
                 // 如果按下的是左旋或右旋按钮，选择当前项
@@ -2251,6 +2342,9 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
                 {
 										OLED_Clear1();
                     OLED_Clear3();
+										nLastFirst = -1;
+										nLastCursor = -2;
+									
                     // 根据菜单ID获取选择的数据
                     if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
                     {
@@ -2285,21 +2379,27 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
             // 处理旋转编码器的输入，调整nFirst
             if ((i8 = (GetLRot() + GetRRot())) != false)
             {
-                OLED_Clear3();
+                
                 // 根据菜单ID调整第一个显示项的索引
-                if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
+                if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)//一行一个菜单项
                 {
+									if((nFirst + i8) >=0 && (nFirst + i8) < (pSubMenu->nItemCount) ) { //前后边界检测
                     nFirst = (nFirst + i8 + pSubMenu->nItemCount) % pSubMenu->nItemCount;
                     if (i8 > 0)
-                        while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
+                        while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID)) {
                             nFirst++;
+												}
                     else
-                        while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
+                        while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID)) {
                             nFirst--;
+												}
                     nFirst = (nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
+										
+									}
                 }
-                else
+                else //一行多个菜单项
                 {
+										//OLED_Clear3();
                     // 调整光标位置
                     nCursor += i8;
                     if (nCursor < 0)
@@ -2315,12 +2415,14 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
                     if (nCursor > max)
                     {
                       nFirst++;
-											OLED_Clear1();
+											//OLED_Clear1();
+											OLED_Clear3();
                     }
                     if (nCursor < min)
                     {
                       nFirst--;
-											OLED_Clear1();
+											//OLED_Clear1();
+											OLED_Clear3();
                     }
                 }
                 break;
@@ -2402,7 +2504,22 @@ void ProcMenuItem(uint8_t nMenuID)
 
 	if ((nMenuID >= MID_FMAT1) && (nMenuID <= MID_FMAT3))
 	{
-		nFMAT = nMenuID - MID_FMAT1;  // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
+		uint8_t u8 = nMenuID - MID_FMAT1;
+		switch(u8) {
+			case 0:
+				nFMAT = FM_ANT1;
+				mainFMAT = FM_ANT1;
+				break;
+			case 1:
+				nFMAT = FM_ANT2;
+				mainFMAT = FM_ANT2;
+				break;
+			case 2:
+				nFMAT = FM_PHASE_DIVERSITY;
+				break;
+				
+		}
+		//nFMAT = nMenuID - MID_FMAT1;  // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC2);
 		return;
@@ -2559,7 +2676,7 @@ void Menu(uint8_t nMenuID)
 	ProcMenuItem(nMenuID);
 	OLED_Clear2();
 	TuneFreqDisp();
-	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");
+	OLED_XYStr(0, 0,"--SAF7751HV20X--");
 	
 	LCDUpdate();
 }

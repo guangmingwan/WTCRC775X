@@ -45,7 +45,7 @@ uint8_t nAGC;           // RFAGC wideband threshold, 0 to 3 = lowest to highest 
 uint8_t nNBSens;        // Noise blanker sensitivity,  0 to 3 = lowest to highest sensitivity
 uint8_t nLowerSig;      // Normal/reduced signal quality for seek/scan/any, 0=normal, 1=lower
 
-int8_t nRSSI, nRSSI_Disp;  // Received signal strength, in dBuv
+int8_t nMainRSSI,nRSSI, nRSSI_Disp;  // Received signal strength, in dBuv
 int8_t nSNR, nSNR_Disp;     // Signal noise ratio, in dB
 bool bSTIN;                            // FM stereo indicator
 
@@ -1205,7 +1205,7 @@ int8_t Seek(int8_t nDir)
 
 			HAL_Delay(5);
 			GetRFStatReg();
-			CheckUpdateSig();
+			CheckUpdateSig(STAGE_SUBMENU);
 			HAL_Delay(5);
 			if (IsSigOK())
 			{  // Find one signal
@@ -1247,7 +1247,7 @@ uint8_t ScanAny()
 		for (lp = 0; ; lp++)
 		{
 			if (!(lp % 16)) {
-				CheckUpdateSig();
+				CheckUpdateSig(STAGE_SUBMENU);
 				HAL_Delay(5);
 			}
 			
@@ -1376,7 +1376,22 @@ void TunerInit(void)
 		SeekCh(0);          // Tune to current ch
 	else
 		TuneFreqDisp();     // Tune to default frequency and display
-	SetRFCtrlReg();         // Set RF mode related regs
+	//hack , if nFMAT is FM_PHASE_DIVERSITY, need open each fm first;
+	if(nFMAT == FM_PHASE_DIVERSITY) {
+			nFMAT = FM_ANT2;
+			SetRFCtrlReg();
+			HAL_Delay(50);
+		
+			nFMAT = FM_ANT1;
+			SetRFCtrlReg();
+			HAL_Delay(50);
+			
+			nFMAT = FM_PHASE_DIVERSITY;
+			SetRFCtrlReg();
+	}
+	else {
+		SetRFCtrlReg();         // Set RF mode related regs
+	}
 	if (nBootMode == MODE_AUX)
 		SetMode_AUX();
 	SetVolume(nVolume);     // Set audio volume
@@ -1459,16 +1474,16 @@ void TunerLoop(void)
 	//	}
 	//}
 
-	if (!bLCDOff && bHAL_DelayedCheck && HAL_GetTick() >= nHAL_DelayedTimer)
+	if (bHAL_DelayedCheck && HAL_GetTick() >= nHAL_DelayedTimer)
 	{
 		bHAL_DelayedCheck = false;
-		CheckUpdateSig();  // Update RSSI, SNR & FM stereo indicator
+		CheckUpdateSig(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
 		OLED_Refresh();
 		timer = HAL_GetTick() - (TIMER_INTERVAL >> 2);
 	}
-	else if (!bLCDOff && (HAL_GetTick() - timer) >= TIMER_INTERVAL)
+	else if ((HAL_GetTick() - timer) >= TIMER_INTERVAL)
 	{  // Check every TIMER_INTERVAL ms
-		CheckUpdateSig();  // Update RSSI, SNR & FM stereo indicator
+		CheckUpdateSig(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
 		OLED_Refresh();
 		timer = HAL_GetTick();
 
@@ -1524,7 +1539,7 @@ void TunerLoop(void)
 					NV_write_byte(NVMADDR_MISC1, (nDeemphasis << 6) | (nLowerSig << 4) | (nFMDynamicBW << 2) | nAGC);
 
 				if (nAutoSyncBits & NEEDSYNC_MISC2)
-					NV_write_byte(NVMADDR_MISC2, nNBSens | (nFMSI << 4) | (nFMAT << 2) | (nFMCEQ << 5) | (nFMCNS << 6) | (nFMEMS << 7) | nNBSens);
+					NV_write_byte(NVMADDR_MISC2, nNBSens | (nFMSI << 4) | ((uint8_t)nFMAT << 2) | (nFMCEQ << 5) | (nFMCNS << 6) | (nFMEMS << 7) | nNBSens);
 
 				if (nAutoSyncBits & NEEDSYNC_MISC3)
 					NV_write_byte(NVMADDR_MISC3, nStereo | (nINCA << 4) | (nFirm << 5));
@@ -1604,6 +1619,11 @@ void TunerLoop(void)
 		}
   }
 
+	if(bLCDOff) {
+		if(GetRRot() || GetLRot()) { //wake up
+			return;
+		}
+	}
 	if ((nKey = GetKey()) != false)
 	{
 		switch (nKey)
