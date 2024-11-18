@@ -98,8 +98,8 @@ void Error_Handler(void);
 #define LED_2_GPIO_Port GPIOC
 #define RS_Pin GPIO_PIN_0
 #define RS_GPIO_Port GPIOB
-#define D3BUSY_READ_Pin GPIO_PIN_1
-#define D3BUSY_READ_GPIO_Port GPIOB
+#define PWR_CTRL_Pin GPIO_PIN_1
+#define PWR_CTRL_GPIO_Port GPIOB
 #define D3_CS_Pin GPIO_PIN_2
 #define D3_CS_GPIO_Port GPIOB
 #define OLED_SCLK_Pin GPIO_PIN_13
@@ -125,6 +125,8 @@ void Error_Handler(void);
 #define SH1A_Pin GPIO_PIN_11
 #define SH1A_GPIO_Port GPIOC
 #define SH1A_EXTI_IRQn EXTI15_10_IRQn
+#define REMOTE_IN_Pin GPIO_PIN_3
+#define REMOTE_IN_GPIO_Port GPIOB
 #define BK_LED_Pin GPIO_PIN_4
 #define BK_LED_GPIO_Port GPIOB
 #define SH2B_Pin GPIO_PIN_5

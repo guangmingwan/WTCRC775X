@@ -107,6 +107,7 @@ int fgetc(FILE *f)
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 	
 
@@ -133,6 +134,7 @@ int main(void)
   MX_SPI1_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	
 		
@@ -158,6 +160,8 @@ int main(void)
 	HAL_Delay(100);
 	HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,GPIO_PIN_RESET);
 	HAL_Delay(500);
+	
+	HAL_GPIO_WritePin(PWR_CTRL_GPIO_Port, PWR_CTRL_Pin, GPIO_PIN_SET);//open power
 		
 	OLED_XYStr(2,2,"Initializing");
 	HAL_GPIO_WritePin(LED_2_GPIO_Port,LED_2_Pin,GPIO_PIN_SET);

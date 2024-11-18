@@ -5,7 +5,7 @@
 <h2>Tool Versions:</h2>
 IDE-Version: ¦ÌVision V5.34.0.0
 Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: wgm Administrator, ty, LIC=LJWP0-B5YUB-24ZSS-LSLTN-8DHA8-R4KFY
+License Information: wgm Administrator, ty, LIC=0VRJ7-E0PY4-9Z2WW-QVWVI-W7ZGI-QTR5N
  
 Tool Versions:
 Toolchain:       MDK-ARM Professional  Version: 5.34.0.0
@@ -21,17 +21,53 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.8.0
 Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
-D:\myprojects\WTCRC775X-f103-soft-spi\MDK-ARM\wtcrc103rgt6.uvprojx
-Project File Date:  08/04/2024
+D:\myprojects\WTCRC775X-f103-SOFT-SPI\MDK-ARM\wtcrc103rgt6.uvprojx
+Project File Date:  11/18/2024
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.16', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'wtcrc103rgt6'
+compiling eeprom.c...
+compiling gpio.c...
+compiling soft_i2c.c...
+compiling main.c...
+../Src/oled_ch1115_directwrite.c(42): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                OLED_SCL_Clr();
+                ^~~~~~~~~~~~~~
+../Inc\oled.h(39): note: expanded from macro 'OLED_SCL_Clr'
+#define OLED_SCL_Clr() HAL_GPIO_WritePin(OLED_SCLK_GPIO_Port, OLED_SCLK_Pin, RESET)//CLK
+                       ~~~~~~~~~~~~~~~~~                                     ^~~~~
+../Src/oled_ch1115_directwrite.c(44): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                   OLED_SDA_Set();
+                   ^~~~~~~~~~~~~~
+../Inc\oled.h(46): note: expanded from macro 'OLED_SDA_Set'
+#define OLED_SDA_Set() HAL_GPIO_WritePin(OLED_SDOUT_GPIO_Port, OLED_SDOUT_Pin, SET)
+                       ~~~~~~~~~~~~~~~~~                                       ^~~
+../Src/oled_ch1115_directwrite.c(46): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                   OLED_SDA_Clr();
+                   ^~~~~~~~~~~~~~
+../Inc\oled.h(45): note: expanded from macro 'OLED_SDA_Clr'
+#define OLED_SDA_Clr() HAL_GPIO_WritePin(OLED_SDOUT_GPIO_Port, OLED_SDOUT_Pin, RESET)//SDA
+                       ~~~~~~~~~~~~~~~~~                                       ^~~~~
+../Src/oled_ch1115_directwrite.c(47): warning: implicit conversion from enumeration type 'FlagStatus' to different enumeration type 'GPIO_PinState' [-Wenum-conversion]
+                OLED_SCL_Set();
+                ^~~~~~~~~~~~~~
+../Inc\oled.h(40): note: expanded from macro 'OLED_SCL_Set'
+#define OLED_SCL_Set() HAL_GPIO_WritePin(OLED_SCLK_GPIO_Port, OLED_SCLK_Pin, SET)
+                       ~~~~~~~~~~~~~~~~~                                     ^~~
+4 warnings generated.
+compiling oled_ch1115_directwrite.c...
+compiling tuner.c...
 compiling ui.c...
+compiling usart.c...
+compiling tim.c...
+compiling spi.c...
+compiling stm32f1xx_it.c...
+compiling stm32f1xx_hal_msp.c...
 linking...
-Program Size: Code=51880 RO-data=7208 RW-data=1304 ZI-data=1400  
+Program Size: Code=56240 RO-data=7208 RW-data=1304 ZI-data=1480  
 FromELF: creating hex file...
-"wtcrc103rgt6\wtcrc103rgt6.axf" - 0 Error(s), 0 Warning(s).
+"wtcrc103rgt6\wtcrc103rgt6.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -54,7 +90,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.4.0
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>
