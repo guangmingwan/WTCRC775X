@@ -1347,7 +1347,7 @@ void TunerInit(void)
 	OLED_Clear2();
 	OLED_XYStr(0, 0,"-=SAF7751HV20X=-");//top title
 	OLED_XYStr(3, 1, "WTCRC7751");
-	OLED_XYStr(3, 2, "V20240806");
+	OLED_XYStr(3, 2, "V20241122");
 	OLED_XYStr(0, 3, buttomTips[0]);
 	OLED_Refresh();
 	HAL_Delay(2800);
