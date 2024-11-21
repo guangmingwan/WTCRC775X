@@ -55,11 +55,12 @@
 #endif
 #include "bmp.h"
 #include "tuner.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+extern void IR_Check();
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -133,8 +134,8 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_USART1_UART_Init();
-  MX_TIM3_Init();
-  MX_TIM2_Init();
+  //MX_TIM3_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 	
 		
@@ -180,6 +181,7 @@ int main(void)
 		//disp_256x96(1,1,bmp1);
 
 		TunerLoop();
+		IR_Check();
 		OLED_Refresh();
     /* USER CODE END WHILE */
 

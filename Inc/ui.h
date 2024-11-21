@@ -59,6 +59,7 @@
 #define ALT_MISC    1
 #define ALT_TIME    2
 #define ALT_VOL     3
+#define ALT_IR	    4
 
 
 // Menu IDs with sub menus, not auto return

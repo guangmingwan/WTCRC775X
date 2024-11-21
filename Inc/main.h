@@ -125,8 +125,9 @@ void Error_Handler(void);
 #define SH1A_Pin GPIO_PIN_11
 #define SH1A_GPIO_Port GPIOC
 #define SH1A_EXTI_IRQn EXTI15_10_IRQn
-#define REMOTE_IN_Pin GPIO_PIN_3
-#define REMOTE_IN_GPIO_Port GPIOB
+#define REMOTE_IR_Pin GPIO_PIN_3
+#define REMOTE_IR_GPIO_Port GPIOB
+#define REMOTE_IR_EXTI_IRQn EXTI3_IRQn
 #define BK_LED_Pin GPIO_PIN_4
 #define BK_LED_GPIO_Port GPIOB
 #define SH2B_Pin GPIO_PIN_5

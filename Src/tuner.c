@@ -1411,7 +1411,13 @@ void TunerInit(void)
 	LCDUpdate();
 }  // void TunerInit(void)
 
-
+void toggleMute() {
+	if (bMuted)
+				SetVolume(nVolume);  // Unmute
+			else
+				SetVolume(0);  // Mute
+			bMuted = !bMuted;
+}
 void TunerLoop(void)
 {
 	int8_t i8;
@@ -1634,11 +1640,8 @@ void TunerLoop(void)
 			break;
 
 		case KEY_LROT | KEY_LONGPRESS:  // Toggle mute/unmute
-			if (bMuted)
-				SetVolume(nVolume);  // Unmute
-			else
-				SetVolume(0);  // Mute
-			bMuted = !bMuted;
+			toggleMute();
+			CheckUpdateAlt(ALT_VOL);
 			break;
 
 		case KEY_RROT:

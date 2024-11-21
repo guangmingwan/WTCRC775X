@@ -24,6 +24,12 @@ const char *pszBands[] = { "LW", "MW", "SW", "FL", "FM" };  // Band name to disp
 
 extern uint8_t bDisp_USN;
 void switchAnt();
+extern uint8_t IR_Flag;
+extern uint32_t IRCode;
+
+extern void toggleMute();
+extern bool bMuted;
+uint8_t irKey = 0;
 
 uint8_t bExitMenu;
 FM_ANT_SEL nSNRAnt = FM_ANT1;
@@ -410,6 +416,42 @@ struct M_SUBMENU SM_List[] =
 	{MID_BAND, M_Band, sizeof(M_Band) / sizeof(struct M_ITEM)},                 // Menu Frequency->BAND
 	{MID_FILT, M_FMFilter, sizeof(M_FMFilter) / sizeof(struct M_ITEM)}          // Menu Frequency->FILT, toggle AM/FM by nRFMode
 };
+// Define IR code map to channel
+uint32_t irCodeMap[] = {
+    0x00FF6897, // map to "0"
+    0x00FF30cf, // map to "1"
+    0x00FF18e7, // map to "2"
+    0x00FF7a85, // map to "3"
+    0x00FF10ef, // map to "4"
+    0x00FF38c7, // map to "5"
+    0x00FF5aa5, // map to "6"
+    0x00FF42bd, // map to "7"
+    0x00FF4ab5, // map to "8"
+    0x00FF52ad, // map to "9"
+    0x00FF9867, // map to "."
+    0x00FFB04F, // map to "#"
+    0x00FF629d, // reset
+};
+
+char channelMap[][10] = {
+    "0", // channel for "0"
+    "1", // channel for "1"
+    "2", // channel for "2"
+    "3", // channel for "3"
+    "4", // channel for "4"
+    "5", // channel for "5"
+    "6", // channel for "6"
+    "7", // channel for "7"
+    "8", // channel for "8"
+    "9", // channel for "9"
+    ".", // channel for "."
+    "#",  // channel for "#"
+    "*"
+};
+
+static char input[10] = "";
+static int inputIndex = 0;
+static uint32_t lastInputTime = 0;
 
 ////////////////////////////////////////////////////////////
 // LCD utility
@@ -421,8 +463,240 @@ void Delay(uint16_t time)
 		for (int i = 0; i < 10; i++);
 	}
 }
+void switchFMChannel(float channel)
+{
 
 
+	int fmChannel = channel * 1000;
+	
+	//printf("ÇÐ»»µ½FMÆµµÀ %.1f\n", channel);
+	fflush(stdout);
+	nBand = BAND_FM;
+	nBandFreq[nBand] = fmChannel;
+
+	TuneFreqDisp();
+
+	ProcBand(BAND_FM);
+	LCDUpdate();
+	// currentFMChannel = channel;
+}
+
+
+void switchAMChannel(int channel, uint8_t band_type)
+{
+	
+	fflush(stdout);
+	nBand = band_type;
+	nBandFreq[nBand] = channel;
+
+	TuneFreqDisp();
+
+	ProcBand(band_type);
+	LCDUpdate();
+	// currentAMChannel = channel;
+}
+// Function to handle the timeout and execute the input complete action
+void handleTimeout(void)
+{
+    if (inputIndex > 0)
+    {
+        int channel = atoi(input);
+        if (channel >= 88 && channel <= 108)
+        {
+            float fchanel = atof(input);
+            switchFMChannel(fchanel);
+        }
+        else if (channel >= 153 && channel <= 279)
+        {
+            switchAMChannel(channel, BAND_LW);
+        }
+        else if (channel >= 520 && channel <= 1710)
+        {
+            switchAMChannel(channel, BAND_MW);
+        }
+        else if (channel >= 2300 && channel <= 26100)
+        {
+            switchAMChannel(channel, BAND_SW);
+        }
+        else
+        {
+            printf("input unknown%s\n", input);
+        }
+    }
+    else
+    {
+        printf("input unknown%s\n", input);
+    }
+
+    // Clear input
+    memset(input, 0, sizeof(input));
+    inputIndex = 0;
+}
+// 安全地将 channel 追加到 input 中
+void safe_strcat(char *src, const char *channel)
+{
+		size_t max_size = sizeof(input);
+    size_t input_len = strlen(src);
+    size_t channel_len = strlen(channel);
+
+    // 检查是否有足够的空间来追加 channel
+    if (input_len + channel_len <= max_size)
+    {
+        strncat(input, channel, max_size - input_len);
+        inputIndex += channel_len;
+    }
+    else
+    {
+        printf("Buffer overflow prevented: input is too long.\n");
+    }
+}
+// Process remote input
+void processRemoteInput(uint32_t irCode)
+{
+    int mapSize = sizeof(irCodeMap) / sizeof(irCodeMap[0]);
+    static char *channel = NULL;
+    int lasti = 0;
+
+    // Find channel
+    for (int i = 0; i < mapSize; i++)
+    {
+        if (irCode == irCodeMap[i])
+        {
+            lasti = i;
+            channel = channelMap[i];
+            break;
+        }
+    }
+
+    if (channel != NULL)
+    {
+        // Save to character array
+        safe_strcat(input, channel);
+        if (strcmp(channel, "*") == 0)
+        {
+            printf("<Z>0");
+        }
+        else if (strcmp(channel, ".") == 0)
+        {
+            printf(".");
+        }
+        else
+        {
+            printf("%s\n", channel);
+        }
+        fflush(stdout);
+
+        // Reset timeout counter
+        lastInputTime = HAL_GetTick();
+
+        if (strcmp(channel, "#") == 0)
+        {
+            // Execute command
+            input[inputIndex] = '\0'; // Clear last character #
+            if (inputIndex > 0)
+            {
+                // Perform some action
+                if (strcmp(input, "**********") == 0)
+                {
+                    // Reset all parameters
+                    NVMInitStation();
+                    NVMInitSetting();
+                    NVIC_SystemReset();
+                }
+                else
+                {
+                    handleTimeout();
+                }
+            }
+            else
+            {
+                printf("input unknown%s\n", input);
+            }
+            // Clear input
+            memset(input, 0, sizeof(input));
+            inputIndex = 0;
+        }
+        else
+        {
+            inputIndex++;
+        }
+    }
+    else
+    {
+        printf("unknown ir code\n");
+    }
+}
+
+// Timer callback function to check for timeout
+void checkTimeout(void)
+{
+    if (HAL_GetTick() - lastInputTime >= 3000)  // 3 seconds
+    {
+        handleTimeout();
+    }
+}
+void IR_Check()
+{
+	if (IR_Flag == 1)
+	{
+		// printf("%08x\r\n",IRCode);
+		OLED_Display_On();
+		bLCDOff = false;
+		nBacklightTimer = HAL_GetTick();
+		switch (IRCode)
+		{
+			case 0x00FF629D:
+				irKey = KEY_TUNE | KEY_LONGPRESS;
+				break;
+		case 0x00FFC23D://mute or (lrot and rrot)
+		
+				irKey = KEY_LROT | KEY_LONGPRESS;
+			
+			break;
+		case 0x00FF22DD: // tune -
+			--nRRot;
+			break;
+		case 0x00FF02FD: // tune +
+			++nRRot;
+			break;
+		//case 0x00FF9867: // volume -
+		case 0x00FFe01f:
+			nVolume--;
+			AddSyncBits(NEEDSYNC_VOL);
+			CheckUpdateAlt(ALT_VOL); // Show volume for a period
+
+			break;
+		//case 0x00FF02FD: // volume +
+		case 0x00FFA857:
+			nVolume++;
+			AddSyncBits(NEEDSYNC_VOL);
+			CheckUpdateAlt(ALT_VOL); // Show volume for a period
+		
+
+			break;
+		case 0x00FFa25d: // ch-
+			irKey = KEY_LROT;
+			break;
+		case 0x00FFe21d: // ch+
+			
+			irKey = KEY_RROT;
+			break;
+		//case 0x00FF22dd: // band
+		//	irKey = KEY_BAND;
+		//	break;
+		//case 0x00FFc23d: // filter
+		//	irKey = KEY_FILTER;
+		//	break;
+		default:
+			processRemoteInput(IRCode);
+			CheckUpdateAlt(ALT_IR); // Show volume for a period
+			break;
+		}
+		IR_Flag = 0;
+	}
+	checkTimeout();//check ir input timeout
+}
+extern void IR_HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (GPIO_Pin == SH1A_Pin)
@@ -439,6 +713,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		else
 			++nRRot;
 	}
+	IR_HAL_GPIO_EXTI_Callback(GPIO_Pin);
 }
 
 /**
@@ -582,7 +857,14 @@ uint8_t GetKey(void)
 	uint32_t timer1;  // Long press timer
 	static uint8_t nKeyWaitUp = 0;
 	static uint32_t tKeyWaitUp;
-
+	IR_Check();
+	// ir key
+	if (irKey > 0)
+	{
+		uint8_t tmpKey = irKey;
+		irKey = 0;
+		return tmpKey;
+	}
 	if (nKeyWaitUp && (HAL_GetTick() - tKeyWaitUp) < TIMER_LAST_LP)
 		while ((nKey0 = PeekKey()) == nKeyWaitUp);
 	else
@@ -875,12 +1157,43 @@ void ShowTime(void)
 	OLED_XYChar(ALT_X + 2, ALT_Y, ':');
 	OLED_XYUIntLenZP(ALT_X + 3, ALT_Y, nMinutes % 60, 2);  // Minute
 }
+// 辅助函数：获取字符串的最后5位，并用空格补齐
+void get_last_5_chars(const char *input, char *output)
+{
+    int len = strlen(input);
+    int start_index = (len > 5) ? (len - 5) : 0;
 
+    // 复制最后5个字符
+    for (int i = 0; i < 5; i++)
+    {
+        if (start_index + i < len)
+        {
+            output[i] = input[start_index + i];
+        }
+        else
+        {
+            output[i] = ' ';  // 用空格补齐
+        }
+    }
+    output[5] = '\0';  // 确保字符串以 null 结尾
+}
+void ShowIR(void) {
+	//OLED_XYStr(ALT_X, ALT_Y, "IR ");
+	char display[6]="";  // 用于存储最后5个字符和空格
+	// 获取 input 的最后5位，并用空格补齐
+  get_last_5_chars(input, display);
+	OLED_XYStr(ALT_X, ALT_Y, display);
+}
 
 void ShowVol(void)
 {
-	OLED_XYStr(ALT_X, ALT_Y, "VOL");
-	OLED_XYIntLen(ALT_X + 3, ALT_Y, nVolume, 2);  // Volume
+	if(bMuted) {
+		OLED_XYStr(ALT_X, ALT_Y, "MUTED");
+	}
+	else {
+		OLED_XYStr(ALT_X, ALT_Y, "VOL ");
+		OLED_XYIntLen(ALT_X + 3, ALT_Y, nVolume, 2);  // Volume
+	}
 }
 
 
@@ -909,6 +1222,9 @@ void CheckUpdateAlt(int8_t nShow)  // Check and update ALT area
 
 		case ALT_VOL:
 			ShowVol();
+			break;
+		case ALT_IR:
+			ShowIR();
 			break;
 		}
 	}
