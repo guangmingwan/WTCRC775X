@@ -48,7 +48,6 @@ extern void OLED_Refresh();
 extern enum {  
     FM_ANT1 = 0,  // ANT1  
     FM_ANT2 = 1,  // ANT2  
-    FM_PHASE_DIVERSITY = 2  // phase diversity  
 } FM_ANT_SEL;  
 // NV memory initialization data
 const uint8_t NVM_INIT[] =
@@ -168,23 +167,13 @@ void NVMGetArgs(void)
 	nFMCNS = (u8 >> 6) & 1;           // FM click noise suppression, 0=off, 1=on
 	nFMCEQ = (u8 >> 5) & 1;           // FM channel equalizer, 0=off, 1=on
 	nFMSI = (u8 >> 4) & 1;            // FM stereo improvement, 0=off, 1=on
-	uint8_t tmp_nFMAT = (u8 >> 2) & 0x03;         // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
-	if (tmp_nFMAT > 2)
+	uint8_t tmp_nFMAT = (u8 >> 2) & 0x03;         // FM antenna selection, 0=ANT1, 1=ANT2, >=2 phase diversity
+	if (tmp_nFMAT > 3)
 		tmp_nFMAT = 0;
-	switch (tmp_nFMAT) {  
-		case 0:  
-				nFMAT = FM_ANT1;  
-				break;  
-		case 1:  
-				nFMAT = FM_ANT2;  
-				break;  
-		case 2:  
-				nFMAT = FM_PHASE_DIVERSITY;  
-				break;  
-		default:
-				nFMAT = FM_ANT1;
-				break;  
-	}  
+	
+	
+		nFMAT = tmp_nFMAT;
+	
 	nNBSens = u8 & 0x03;              // Noise blanker sensitivity,  0 to 3 = lowest to highest sensitivity
   
 	u8 = NV_read_byte(NVMADDR_MISC3); // FM stereo, 0=off, 5=default, 9=strongest

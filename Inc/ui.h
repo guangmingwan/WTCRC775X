@@ -77,21 +77,22 @@
 #define MID_LSIG        0x06  // Normal/reduced signal quality for seek/scan/any
 #define MID_FIRM        0x07  // Firmware version
 #define MID_FMAT        0x08  // FM antenna selection
-#define MID_FMSI        0x09  // FM stereo improvement
-#define MID_FMCE        0x0A  // FM channel equalizer
-#define MID_FMMP        0x0B  // FM improved multipath suppression
-#define MID_FMNS        0x0C  // FM click noise suppression
-#define MID_INCA        0x0D  // FM/AM INCA
-#define MID_DEEM        0x0E  // FM de-emphasis
-#define MID_MODE        0x0F
-#define MID_TUNE        0x10
-#define MID_BAND        0x11
-#define MID_FILT        0x12
-#define MID_MAX_SUB     0x12  // Max ID number with sub menus
+#define MID_FMDUAL      0x09  // FM antenna selection
+#define MID_FMSI        0x0A  // FM stereo improvement
+#define MID_FMCE        0x0B  // FM channel equalizer
+#define MID_FMMP        0x0C  // FM improved multipath suppression
+#define MID_FMNS        0x0D  // FM click noise suppression
+#define MID_INCA        0x0E  // FM/AM INCA
+#define MID_DEEM        0x0F  // FM de-emphasis
+#define MID_MODE        0x10
+#define MID_TUNE        0x11
+#define MID_BAND        0x12
+#define MID_FILT        0x13
+#define MID_MAX_SUB     0x13  // Max ID number with sub menus
 
 
 // Menu IDs of leaves
-#define MID_SCS			0x19
+#define MID_SCS					0x19
 #define MID_SQUELCH1    0x20
 #define MID_SQUELCH2    0x21
 #define MID_LSIGNORM    0x22  // Normal signal quality for seek/scan/any
@@ -100,9 +101,13 @@
 #define MID_FIRM1       0x25
 #define MID_FIRM2       0x26
 #define MID_FIRM3       0x27
-#define MID_FMAT1       0x30
-#define MID_FMAT2       0x31
-#define MID_FMAT3       0x32
+#define MID_FMAT1       0x28
+#define MID_FMAT2       0x29
+#define MID_FMAT3       0x30
+
+#define MID_FMDUALOFF		0x31
+#define MID_FMDUALON		0x32
+
 #define MID_FMSIOFF     0x33
 #define MID_FMSION      0x34
 #define MID_FMCEOFF     0x35
@@ -269,6 +274,7 @@ void Menu(uint8_t nMenuID);
 
 extern uint8_t nStereo;        // FM stereo, 0=off, 5=default, 9=strongest
 extern uint8_t nFMAT;          // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
+extern uint8_t saveFMAT;
 extern uint8_t nFMSI;          // FM stereo improvement, 0=off, 1=on
 extern uint8_t nFMCEQ;         // FM channel equalizer, 0=off, 1=on
 extern uint8_t nFirm;          // Firmware Version,0,1,2

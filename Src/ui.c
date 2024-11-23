@@ -11,7 +11,7 @@
 #else
 #include "oled.h"
 #endif
-
+UI_STAGE stage;
 uint8_t nDelayedSmooth = 0;
 
 volatile int8_t nLRot;
@@ -67,6 +67,7 @@ const char MT_LSIG[] = "Low Signal Thre";  // Normal/reduced signal quality for 
 const char MT_FIRM[] = "Firmware Sel";  // Firmware
 const char MT_FMST[] = "FM Stereo";  // FM stereo
 const char MT_FMAT[] = "FM Antenna Sel";  // FM antenna selection
+const char MT_FMDUAL[]="FM iPD Dual Ant"; // FM iPD Dual Ant
 const char MT_FMSI[] = "FM StereoImprov";  // FM stereo improvement
 const char MT_FMCE[] = "FM ChannelEqu";  // FM channel equalizer
 const char MT_FMMP[] = "FM MultpathImprv";  // FM enhanced multipath suppression
@@ -93,6 +94,7 @@ struct M_ITEM M_Radio[] =
 	{MID_FIRM, MT_FIRM},
 	{MID_FMST, MT_FMST},
 	{MID_FMAT, MT_FMAT},
+	{MID_FMDUAL, MT_FMDUAL},
 	{MID_FMSI, MT_FMSI},
 	{MID_FMCE, MT_FMCE},
 	{MID_FMMP, MT_FMMP},
@@ -155,9 +157,18 @@ struct M_ITEM M_FMAT[] =
 {
 	{ MID_FMAT1, MT_FMAT1 },
 	{ MID_FMAT2, MT_FMAT2 },
-	{ MID_FMAT3, MT_FMAT3 },
 	{ MID_RET,   MT_RET}
 };
+// Menu Option->FMDual
+const char MT_FMDUALOFF[] = "OFF";
+const char MT_FMDUALON[] = "ON";
+struct M_ITEM M_FMDUAL[] =
+{
+	{ MID_FMDUALOFF, MT_FMDUALOFF },
+	{ MID_FMDUALON, MT_FMDUALON },
+	{ MID_RET,    MT_RET}
+};
+
 
 // Menu Option->FMSI
 const char MT_FMSIOFF[] = "OFF";
@@ -405,6 +416,7 @@ struct M_SUBMENU SM_List[] =
 	{MID_LSIG, M_LSIG, sizeof(M_LSIG) / sizeof(struct M_ITEM)},                 // Menu Option->LSIG
 	{MID_FIRM, M_FIRM, sizeof(M_FIRM) / sizeof(struct M_ITEM)},                 // Menu Option->FIRM
 	{MID_FMAT, M_FMAT, sizeof(M_FMAT) / sizeof(struct M_ITEM)},                 // Menu Option->FMAT
+	{MID_FMDUAL, M_FMDUAL, sizeof(M_FMDUAL) / sizeof(struct M_ITEM)},              // Menu Option->FMAT
 	{MID_FMSI, M_FMSI, sizeof(M_FMSI) / sizeof(struct M_ITEM)},                 // Menu Option->FMSI
 	{MID_FMCE, M_FMCE, sizeof(M_FMCE) / sizeof(struct M_ITEM)},                 // Menu Option->FMCE
 	{MID_FMMP, M_FMMP, sizeof(M_FMMP) / sizeof(struct M_ITEM)},                 // Menu Option->FMMP
@@ -661,17 +673,19 @@ void IR_Check()
 			break;
 		//case 0x00FF9867: // volume -
 		case 0x00FFe01f:
-			nVolume--;
+			--nLRot;
+			/*nVolume--;
 			AddSyncBits(NEEDSYNC_VOL);
 			CheckUpdateAlt(ALT_VOL); // Show volume for a period
-
+			*/
 			break;
 		//case 0x00FF02FD: // volume +
 		case 0x00FFA857:
-			nVolume++;
+			++nLRot;
+			/*nVolume++;
 			AddSyncBits(NEEDSYNC_VOL);
 			CheckUpdateAlt(ALT_VOL); // Show volume for a period
-		
+			*/
 
 			break;
 		case 0x00FFa25d: // ch-
@@ -688,8 +702,10 @@ void IR_Check()
 		//	irKey = KEY_FILTER;
 		//	break;
 		default:
-			processRemoteInput(IRCode);
-			CheckUpdateAlt(ALT_IR); // Show volume for a period
+			if(stage == STAGE_MAIN) { // input number only in main loop
+				processRemoteInput(IRCode);
+				CheckUpdateAlt(ALT_IR); // Show volume for a period
+			}
 			break;
 		}
 		IR_Flag = 0;
@@ -1004,8 +1020,10 @@ void CheckUpdateSig(UI_STAGE stage)
 	//if(bLCDOff) {
 	//	return;
 	//}
-	if (nRFMode == RFMODE_FM && nFMAT == FM_PHASE_DIVERSITY)
+	if (nRFMode == RFMODE_FM && IS_PHASE_DIVERSITY_ENABLED(nFMAT))
 	{
+		FM_ANT_SEL nPrimaryFMAT = nFMAT;
+		DISABLE_PHASE_DIVERSITY(nPrimaryFMAT); // primary radio using mat;
 		dsp_start_subaddr(0x00);
 		I2C_Restart(DSP_I2C | I2C_READ);
 		bSTIN = (I2C_ReadByte(true) >> 3) & 1;
@@ -1016,12 +1034,13 @@ void CheckUpdateSig(UI_STAGE stage)
 		if (nSNRAnt == FM_ANT1)
 		{
 			nSNRAnt = FM_ANT2;
-			addr = 0x74;
+			
+			addr = 0x01;
 		}
 		else
 		{
 			nSNRAnt = FM_ANT1;
-			addr = 0x75;
+			addr = 0x01;
 		}
 
 		dsp_start_subaddr(addr);
@@ -1038,11 +1057,12 @@ void CheckUpdateSig(UI_STAGE stage)
 		//		switchAnt();
 		//	}
 		//}
+		/*
 		if(nCRSSI <0 ) { //main ant signal is lost,switch to another ant
 			if( tmpAnt == mainFMAT) {
 				switchAnt();
 			}
-		}
+		}*/
 		
 		I2C_ReadByte(false);
 		REG_USN = I2C_ReadByte(true);
@@ -1106,7 +1126,8 @@ void CheckUpdateSig(UI_STAGE stage)
 }
 
 void switchAnt() {
-	if(mainFMAT == FM_ANT1) {
+
+if(mainFMAT == FM_ANT1) {
 					
 	nFMAT = FM_ANT2;
 	SetRFCtrlReg();
@@ -2512,6 +2533,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 					
 				
 					// 根据菜单ID选择特定的指示字符
+					FM_ANT_SEL mHit;
 					switch (pSubMenu->nMID)
 					{
 							// 处理各种菜单ID，设置对应的指示字符
@@ -2519,7 +2541,14 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 									nHit = nLowerSig;
 									break;
 							case MID_FMAT:
-									nHit = nFMAT;
+									mHit = nFMAT;
+									if(IS_PHASE_DIVERSITY_ENABLED(mHit)) {
+										DISABLE_PHASE_DIVERSITY(mHit);
+									}
+									nHit = mHit;
+									break;
+							case MID_FMDUAL:
+									nHit = (!IS_PHASE_DIVERSITY_ENABLED(nFMAT) ?  0 : 1);
 									break;
 							case MID_FMSI:
 									nHit = nFMSI;
@@ -2766,42 +2795,42 @@ void ProcMenuItem(uint8_t nMenuID)
 	}
 
 	// Leaf menu items(w/o sub menu)
-	if ((nMenuID >= MID_FTFM00) && (nMenuID <= MID_FTFM16))
+	else if ((nMenuID >= MID_FTFM00) && (nMenuID <= MID_FTFM16))
 	{
 		nFMFilter = nMenuID - MID_FTFM00;
 		SetFilter(1);  // Set FIR filter for FM
 		return;
 	}
 
-	if ((nMenuID >= MID_FTAM00) && (nMenuID <= MID_FTAM15))
+	else if ((nMenuID >= MID_FTAM00) && (nMenuID <= MID_FTAM15))
 	{
 		nAMFilter = nMenuID - MID_FTAM00;
 		SetFilter(1);  // Set FIR filter for AM
 		return;
 	}
 
-	if ((nMenuID >= MID_LW) && (nMenuID <= MID_FM))
+	else if ((nMenuID >= MID_LW) && (nMenuID <= MID_FM))
 	{
 		ProcBand(BAND_LW + (nMenuID - MID_LW));  // Set band
 		bExitMenu = 1;
 		return;
 	}
 
-	if ((nMenuID >= MID_FREQ) && (nMenuID <= MID_ANY))
+	else if ((nMenuID >= MID_FREQ) && (nMenuID <= MID_ANY))
 	{
 		nTuneType = TYPE_FREQ + (nMenuID - MID_FREQ);  // Set tune type
 		AddSyncBits(NEEDSYNC_TUNE);
 		return;
 	}
 
-	if ((nMenuID >= MID_LSIGNORM) && (nMenuID <= MID_LSIGLOW))
+	else if ((nMenuID >= MID_LSIGNORM) && (nMenuID <= MID_LSIGLOW))
 	{
 		nLowerSig = nMenuID - MID_LSIGNORM;  // Normal/reduced signal quality for seek/scan/any, 0=normal, 1=lower
 		AddSyncBits(NEEDSYNC_MISC1);
 		return;
 	}
 
-	if ((nMenuID >= MID_FIRM1) && (nMenuID <= MID_FIRM3))
+	else if ((nMenuID >= MID_FIRM1) && (nMenuID <= MID_FIRM3))
 	{
 		nFirm = nMenuID - MID_FIRM1;  // Firmware
 		BootDirana3();
@@ -2818,21 +2847,33 @@ void ProcMenuItem(uint8_t nMenuID)
 		return;
 	}
 
-	if ((nMenuID >= MID_FMAT1) && (nMenuID <= MID_FMAT3))
+	else if ((nMenuID >= MID_FMAT1) && (nMenuID <= MID_FMAT3))
 	{
 		uint8_t u8 = nMenuID - MID_FMAT1;
 		switch(u8) {
 			case 0:
-				nFMAT = FM_ANT1;
-				mainFMAT = FM_ANT1;
+				if(IS_PHASE_DIVERSITY_ENABLED(nFMAT)) {
+					nFMAT = FM_ANT1;
+					ENABLE_PHASE_DIVERSITY(nFMAT);
+				}
+				else {
+					nFMAT = FM_ANT1;
+					mainFMAT = FM_ANT1;
+				}
 				break;
 			case 1:
-				nFMAT = FM_ANT2;
-				mainFMAT = FM_ANT2;
+				if(IS_PHASE_DIVERSITY_ENABLED(nFMAT)) {
+					nFMAT = FM_ANT2;
+					ENABLE_PHASE_DIVERSITY(nFMAT);
+				}
+				else {
+					nFMAT = FM_ANT2;
+					mainFMAT = FM_ANT2;
+				}
 				break;
-			case 2:
-				nFMAT = FM_PHASE_DIVERSITY;
-				break;
+			//case 2:
+			//	nFMAT = FM_PHASE_DIVERSITY;
+			//	break;
 				
 		}
 		//nFMAT = nMenuID - MID_FMAT1;  // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
@@ -2841,7 +2882,26 @@ void ProcMenuItem(uint8_t nMenuID)
 		return;
 	}
 
-	if ((nMenuID >= MID_FMSIOFF) && (nMenuID <= MID_FMSION))
+	else if((nMenuID >= MID_FMDUALOFF) && (nMenuID <= MID_FMDUALON))
+	{
+		uint8_t u8 = nMenuID - MID_FMDUALOFF;
+		switch(u8) {
+			case 0:
+				if(IS_PHASE_DIVERSITY_ENABLED(nFMAT)) {
+					DISABLE_PHASE_DIVERSITY(nFMAT);
+				}
+				break;
+			case 1:
+				if(!IS_PHASE_DIVERSITY_ENABLED(nFMAT)) {
+					ENABLE_PHASE_DIVERSITY(nFMAT);
+				}
+				break;
+		}
+		SetRFCtrlReg();
+		AddSyncBits(NEEDSYNC_MISC2);
+		return;
+	}
+	else if ((nMenuID >= MID_FMSIOFF) && (nMenuID <= MID_FMSION))
 	{
 		nFMSI = nMenuID - MID_FMSIOFF;  // FM stereo improvement, 0=off, 1=on
 		SetRFCtrlReg();
@@ -2849,7 +2909,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		return;
 	}
 
-	if ((nMenuID >= MID_FMCEOFF) && (nMenuID <= MID_FMCEON))
+	else if ((nMenuID >= MID_FMCEOFF) && (nMenuID <= MID_FMCEON))
 	{
 		nFMCEQ = nMenuID - MID_FMCEOFF;  // FM channel equalizer, 0=off, 1=on
 		SetRFCtrlReg();
@@ -2857,7 +2917,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		return;
 	}
 
-	if ((nMenuID >= MID_FMMPOFF) && (nMenuID <= MID_FMMPON))
+	else if ((nMenuID >= MID_FMMPOFF) && (nMenuID <= MID_FMMPON))
 	{
 		nFMEMS = nMenuID - MID_FMMPOFF;  // FM enhanced multipath suppression, 0=off, 1=on
 		SetRFCtrlReg();
@@ -2865,7 +2925,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		return;
 	}
 
-	if ((nMenuID >= MID_FMNSOFF) && (nMenuID <= MID_FMNSON))
+	else if ((nMenuID >= MID_FMNSOFF) && (nMenuID <= MID_FMNSON))
 	{
 		nFMCNS = nMenuID - MID_FMNSOFF;  // FM click noise suppression, 0=off, 1=on
 		SetRFCtrlReg();
@@ -2873,7 +2933,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		return;
 	}
 
-	if ((nMenuID >= MID_INCAOFF) && (nMenuID <= MID_INCAON))
+	else if ((nMenuID >= MID_INCAOFF) && (nMenuID <= MID_INCAON))
 	{
 		nINCA = nMenuID - MID_INCAOFF;  // FM AM improvec noise canceller, 0=off, 1=on
 		SetRFCtrlReg();
@@ -2881,7 +2941,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		return;
 	}
 
-	if ((nMenuID >= MID_DEEM0) && (nMenuID <= MID_DEEM75))
+	else if ((nMenuID >= MID_DEEM0) && (nMenuID <= MID_DEEM75))
 	{
 		nDeemphasis = DEEMPHOFF + (nMenuID - MID_DEEM0);  // FM de-emphasis, 0=off, 1=50us, 2=75us
 		SetRFCtrlReg();
@@ -2982,6 +3042,7 @@ void ProcMenuItem(uint8_t nMenuID)
 
 void Menu(uint8_t nMenuID)
 {
+	stage = STAGE_SUBMENU;
 	bExitMenu = 0;
 	if(nMenuID == MID_OPTION) {
 		OLED_XYStr(0, 0,"[Main Menu]");

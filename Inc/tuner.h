@@ -10,12 +10,18 @@
 #ifndef __TUNER_H
 #define __TUNER_H
 // Define enumeration for FM antenna selection  
-  
+#define FM_PHASE_DIVERSITY 2  // phase diversity
 typedef enum {  
     FM_ANT1 = 0,  // ANT1  
     FM_ANT2 = 1,  // ANT2  
-    FM_PHASE_DIVERSITY = 2  // phase diversity  
-} FM_ANT_SEL;  
+} FM_ANT_SEL;
+// opt for nFMAT
+#define SET_ANTENNA(nFMAT, antenna) ((nFMAT) = (antenna))
+#define ENABLE_PHASE_DIVERSITY(nFMAT) ((nFMAT) |= FM_PHASE_DIVERSITY)
+#define DISABLE_PHASE_DIVERSITY(nFMAT) ((nFMAT) &= ~FM_PHASE_DIVERSITY)
+#define IS_PHASE_DIVERSITY_ENABLED(nFMAT) (((nFMAT) & FM_PHASE_DIVERSITY) != 0)
+#define GET_ANTENNA(nFMAT) ((nFMAT) & 1)
+
 void dsp_start_subaddr(uint8_t);
 void dsp_start_subaddr3(uint32_t subaddr);
 uint8_t dsp_query1(uint8_t);
