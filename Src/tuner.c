@@ -193,6 +193,7 @@ const uint8_t DSP_FIRM1_PRODUCTION[] =
 	0
 };
 
+
 const uint8_t DSP_FIRM2_PRODUCTION[] =
 {
 	//Load Firmware Version 8.0
@@ -239,6 +240,23 @@ const uint8_t DSP_KEYCODE_PRODUCTION[] =
 	25,0xE1,0xF7,0x7F,0xC4,0xE9,0xE8,0xBE,0x1B,0x94,0x98,0x0F,0xE3,0x1A,0xDD,0x72,0x34,0xB3,0x91,0x0A,0x59,0x3B,0x80,0xD4,0x1D,0xDE, // Demo Keycode for Production variants
 	0
 };
+const uint8_t DSP_INIT2[] =
+{
+	3,0xA9,0x28,0x01,                // Audio ADCs off
+	2,0x20,0x00,                     // Primary Audio Input:Primary Radio
+	2,0x04,0x00,                     // Primary Radio Select Antenna 0
+	2,0x64,0x04,                     // Secondary Radio Select Antenna 1
+//	4,0xC0,0x02,0x11,0x0E,           // GPIO2:ANT1 ExtAGC
+	4,0xC0,0x03,0x11,0x0D,           // GPIO3:ANT0 ExtAGC
+//	2,0xC9,0x0A,                     // Enable INCA
+	4,0x00,0x10,0x22,0x74,           // Dummy Tuning, Start Active Mode
+	2,0x3F,0x00,                     // Audio Power Control:System Power;Sample Rate Freq:44.1kHz
+	3,0xA9,0x32,0x00,                // Front DAC on
+	3,0xA9,0x33,0x00,                // Rear DAC on
+	6,0xF3,0x03,0x82,0x80,0x00,0x00, // Switch On Sample Rate Converter 0,Primary Channel
+	2,0x08,0x09,                     // Set 773X liked AACD Detection
+	0
+};
 
 const uint8_t DSP_INIT[] =
 {
@@ -246,6 +264,8 @@ const uint8_t DSP_INIT[] =
 	2,0x20,0x00,                     // Primary Audio Input:Primary Radio
 	2,0x04,0x00,                     // Primary Radio Select Antenna 0
 	2,0x64,0x04,                     // Secondary Radio Select Antenna 1
+	4,0xC0,0x02,0x11,0x0E,           // GPIO2:ANT1 ExtAGC
+	4,0xC0,0x03,0x11,0x0D,           // GPIO3:ANT0 ExtAGC
 	//2,0xC9,0x0A,                     // Enable INCA
 	4,0x00,0x10,0x22,0x74,           // Dummy Tuning, Start Active Mode
 	2,0x3F,0x00,                     // Audio Power Control:System Power;Sample Rate Freq:44.1kHz
@@ -1118,10 +1138,10 @@ void ProcStepFilter(uint8_t nKey)
 }  // void ProcStepFilter(uint8_t nKey)
 
 
-void GetRFStatReg(void)
+void GetRFStatReg(uint8_t addr)
 {
 	I2C_Stop();
-	dsp_start_subaddr(0x00);
+	dsp_start_subaddr(addr);
 	I2C_Restart(DSP_I2C | I2C_READ);
 	bSTIN = (I2C_ReadByte(false) >> 3) & 1;
 	nRSSI = (int8_t)(I2C_ReadByte(false) >> 1) - 8;
@@ -1146,7 +1166,7 @@ bool IsSigOK(void)
 		if (nRSSI >= (nSquelch[1] + 10 - nLow) && nSNR >= (10 - nLow) && REG_USN <= (50 + nLow))
 			return true;
 		HAL_Delay(5);
-		GetRFStatReg();
+		GetRFStatReg(0x00);
 		if (nRSSI >= (nSquelch[1] - nLow) && nSNR >= (5 - nLow) && REG_USN <= (90 + nLow))
 			return true;
 	}
@@ -1155,7 +1175,7 @@ bool IsSigOK(void)
 		if (nRSSI >= (nSquelch[1] + 15 - nLow) && nSNR >= (15 - nLow))
 			return true;
 		HAL_Delay(5);
-		GetRFStatReg();
+		GetRFStatReg(0x00);
 		if (nRSSI >= (nSquelch[1] + 5 - nLow) && nSNR >= (10 - nLow))
 			return true;
 	}
@@ -1208,8 +1228,8 @@ int8_t Seek(int8_t nDir)
 			}
 
 			HAL_Delay(5);
-			GetRFStatReg();
-			CheckUpdateSig(STAGE_SUBMENU);
+			GetRFStatReg(0x00);
+			GetStatus(STAGE_SUBMENU);
 			HAL_Delay(5);
 			if (IsSigOK())
 			{  // Find one signal
@@ -1251,7 +1271,7 @@ uint8_t ScanAny()
 		for (lp = 0; ; lp++)
 		{
 			if (!(lp % 16)) {
-				CheckUpdateSig(STAGE_SUBMENU);
+				GetStatus(STAGE_SUBMENU);
 				HAL_Delay(5);
 			}
 			
@@ -1357,7 +1377,7 @@ void TunerInit(void)
 	HAL_Delay(2800);
 	
 	
-	if (!IsMenuVisible(MID_INCA)) //��INCA֧�ֵ��ͺ��Ͻ���INCA������R7.1�̼�������������
+	if (!IsMenuVisible(MID_INCA)) //check nINCA 
 		nINCA = 0;
 	HAL_Delay(500);	
 	OLED_XYStr(0, 1, "Booting Dirana3");
@@ -1475,13 +1495,13 @@ void TunerLoop(void)
 	if (bHAL_DelayedCheck && HAL_GetTick() >= nHAL_DelayedTimer)
 	{
 		bHAL_DelayedCheck = false;
-		CheckUpdateSig(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
+		GetStatus(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
 		OLED_Refresh();
 		timer = HAL_GetTick() - (TIMER_INTERVAL >> 2);
 	}
 	else if ((HAL_GetTick() - timer) >= TIMER_INTERVAL)
 	{  // Check every TIMER_INTERVAL ms
-		CheckUpdateSig(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
+		GetStatus(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
 		OLED_Refresh();
 		timer = HAL_GetTick();
 

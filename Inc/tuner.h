@@ -50,7 +50,7 @@ void WriteChFreq(bool bAdd);
 void SeekCh(int8_t nDir);
 void ProcBand(uint8_t nBd);
 void ProcStepFilter(uint8_t nKey);
-void GetRFStatReg(void);
+void GetRFStatReg(uint8_t addr);
 bool IsSigOK(void);
 int8_t Seek(int8_t nDir);
 uint8_t ScanAny(void);

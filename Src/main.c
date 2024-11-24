@@ -140,20 +140,20 @@ int main(void)
 	
 		
 	OLED_Init();
-  clear_screen();//OLED����
+  clear_screen();//clear oled
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 		
-	//clear_screen();//OLED���� 
+	//clear_screen();//clear oled
 	
-	/*OLED_ShowCHinese(8,0,0);//��ʾ����(��)
-	OLED_ShowCHinese(26,0,1);//��ʾ����(��)
-	OLED_ShowCHinese(44,0,2);//��ʾ����(��)
-	OLED_ShowCHinese(62,0,3);//��ʾ����(��)
-	OLED_ShowCHinese(80,0,4);//��ʾ����(��)
-	OLED_ShowCHinese(98,0,5);//��ʾ����(��)
+	/*OLED_ShowCHinese(8,0,0);
+	OLED_ShowCHinese(26,0,1);
+	OLED_ShowCHinese(44,0,2);
+	OLED_ShowCHinese(62,0,3);
+	OLED_ShowCHinese(80,0,4);
+	OLED_ShowCHinese(98,0,5);
 	*/
 	//OLED_ShowPicture(0,0,128,64,BMP1,1);
 	//OLED_Refresh();

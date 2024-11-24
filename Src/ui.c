@@ -1011,7 +1011,7 @@ void LCDUpdate(void)
 }
 
 
-void CheckUpdateSig(UI_STAGE stage)
+void GetStatus(UI_STAGE stage)
 {
 	
 	char c;
@@ -1035,12 +1035,12 @@ void CheckUpdateSig(UI_STAGE stage)
 		{
 			nSNRAnt = FM_ANT2;
 			
-			addr = 0x01;
+			addr = 0x74;
 		}
 		else
 		{
 			nSNRAnt = FM_ANT1;
-			addr = 0x01;
+			addr = 0x74;
 		}
 
 		dsp_start_subaddr(addr);
@@ -1064,7 +1064,7 @@ void CheckUpdateSig(UI_STAGE stage)
 			}
 		}*/
 		
-		I2C_ReadByte(false);
+		I2C_ReadByte(false); //skip 1 bytes to 76h or 77h ,read USN
 		REG_USN = I2C_ReadByte(true);
 		I2C_Stop();
 
@@ -1072,6 +1072,8 @@ void CheckUpdateSig(UI_STAGE stage)
 			nSNR = (int)(0.46222375 * (float)nRSSI - 0.082495118 * (float)REG_USN) + 10;  // Emprical formula
 		else  // AM
 			nSNR = -((int8_t)REG_USN);
+		
+		
 		if(!bLCDOff) {
 			if(tmpAnt == FM_ANT1) {
 				OLED_XYStrLen(0, 0, ">-", 2, false);
@@ -1095,7 +1097,7 @@ void CheckUpdateSig(UI_STAGE stage)
 				OLED_XYStrLen(14, 0, times%2==0 ? "--": "-<", 2, false);
 			}
 		}
-		GetRFStatReg();
+		GetRFStatReg(0x0);
 	}
 
 	// FM stereo indicator. 'S' for FM stereo, ' ' for FM mono or AM mode,  'M' for FM forced mono
@@ -1121,8 +1123,7 @@ void CheckUpdateSig(UI_STAGE stage)
 		else
 			OLED_XYIntLen(SN_X, SN_Y, constrain(nSNR_Disp, -99, 127), 3); // Update S/N ratio in dB
 	}
-	//nRSSI_Last = nRSSI_Disp;
-	//nSNR_Last = nSNR_Disp;
+
 }
 
 void switchAnt() {
@@ -1336,7 +1337,7 @@ void Menu_FMDynamicBW(void)
 		}
 
 		//if (!(lp % 16))
-		//	CheckUpdateSig();
+		//	GetStatus();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1372,7 +1373,7 @@ void Menu_AGC(void)
 		}
 
 		//if (!(lp % 16))
-		//	CheckUpdateSig();
+		//	GetStatus();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1448,7 +1449,7 @@ void Menu_NoiseBlanker(void)
 		}
 
 		//if (!(lp % 16))
-		//	CheckUpdateSig();
+		//	GetStatus();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1479,7 +1480,7 @@ void Menu_BacklightAdj(void)
 		}
 
 		//if (!(lp % 16))
-		//	CheckUpdateSig();
+		//	GetStatus();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1510,7 +1511,7 @@ void Menu_BacklightKeep(void)
 		}
 
 		//if (!(lp % 16))
-		//	CheckUpdateSig();
+		//	GetStatus();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1542,7 +1543,7 @@ void Menu_ScanStayTime(void)
 		}
 
 		//if (!(lp % 16))
-		//	CheckUpdateSig();
+		//	GetStatus();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1574,7 +1575,7 @@ void Menu_AnyHoldTime(void)
 		}
 
 		//if (!(lp % 16))
-		//	CheckUpdateSig();
+		//	GetStatus();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1622,7 +1623,7 @@ void Menu_Time(void)
 		}
 
 		//if (!(lp % 16))
-		//	CheckUpdateSig();
+		//	GetStatus();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -1691,7 +1692,7 @@ void Menu_Stat(void)
 			continue;
 		}
 
-		//CheckUpdateSig();
+		//GetStatus();
 		int16_t iIFFreq1, iIFFreq2;
 		switch (nItem)
 		{
@@ -2014,7 +2015,7 @@ bool YesNo(bool bChkSig)
 		}
 
 		//if (bChkSig && !(lp % 16))
-		//	CheckUpdateSig();
+		//	GetStatus();
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -2066,7 +2067,7 @@ void Menu_SCSV(void)
 		for (j = 0; j < 10; j++)
 		{
 			HAL_Delay(5);
-			GetRFStatReg();
+			GetRFStatReg(0x00);
 			if (IsSigOK())
 			{  // Find one signal
 				WriteChFreq(true);
@@ -2077,7 +2078,7 @@ void Menu_SCSV(void)
 			}
 		}
 
-		CheckUpdateSig(STAGE_SUBMENU);
+		GetStatus(STAGE_SUBMENU);
 		CheckUpdateAlt(ALT_AUTO);
 		HAL_Delay(5);
 		OLED_Refresh();
@@ -2179,7 +2180,7 @@ void AddDelCh(void)
 		}
 
 		if (!(lp % 16))
-			CheckUpdateSig(STAGE_MAIN);
+			GetStatus(STAGE_MAIN);
 		HAL_Delay(64);
 		OLED_Refresh();
 	}
@@ -2775,7 +2776,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 
             // 延时并刷新OLED屏幕
             //if (!(lp % 16))
-            //    CheckUpdateSig();
+            //    GetStatus();
             HAL_Delay(64);
             OLED_Refresh();
         }
