@@ -442,7 +442,7 @@ uint32_t irCodeMap[] = {
     0x00FF52ad, // map to "9"
     0x00FF9867, // map to "."
     0x00FFB04F, // map to "#"
-    0x00FF629d, // reset
+    0x00FF906F, // map to "*" reset
 };
 
 char channelMap[][10] = {
@@ -512,6 +512,12 @@ void handleTimeout(void)
 {
     if (inputIndex > 0)
     {
+				if (strcmp(input, "*") == 0) {
+					bEMI = bEMI == 0 ? 1 : 0;
+					if(bEMI == 1) {
+						CheckUpdateAlt(ALT_EMI);
+					}
+				}
         int channel = atoi(input);
         if (channel >= 88 && channel <= 108)
         {
@@ -836,16 +842,17 @@ int8_t GetRRot(void)
 uint8_t PeekKey(void)
 {
 	int8_t i;
-	uint8_t nKey0 = 0xff, nKey;
+	uint8_t nKey0 = 0xff, nKey = 0;
 
 	for (i = 0; i < 30;)
 	{
 
 		if (HAL_GPIO_ReadPin(KS0_GPIO_Port, KS0_Pin) == GPIO_PIN_RESET)
-			nKey = KEY_LROT;
-		else if (HAL_GPIO_ReadPin(KS1_GPIO_Port, KS1_Pin) == GPIO_PIN_RESET)
-			nKey = KEY_RROT;
-		else if (HAL_GPIO_ReadPin(KS2_GPIO_Port, KS2_Pin) == GPIO_PIN_RESET)
+			nKey |= KEY_LROT;
+		if (HAL_GPIO_ReadPin(KS1_GPIO_Port, KS1_Pin) == GPIO_PIN_RESET)
+			nKey |= KEY_RROT;
+		
+		if (HAL_GPIO_ReadPin(KS2_GPIO_Port, KS2_Pin) == GPIO_PIN_RESET)
 			nKey = KEY_TUNE;
 		else if (HAL_GPIO_ReadPin(KS3_GPIO_Port, KS3_Pin) == GPIO_PIN_RESET)
 			nKey = KEY_STEP;
@@ -853,8 +860,7 @@ uint8_t PeekKey(void)
 			nKey = KEY_BAND;
 		else if (HAL_GPIO_ReadPin(KS5_GPIO_Port, KS5_Pin) == GPIO_PIN_RESET)
 			nKey = KEY_FILTER;
-		else
-			nKey = 0;
+
 		if (nKey == nKey0)
 			++i;
 		else
@@ -1022,59 +1028,74 @@ void GetStatus(UI_STAGE stage)
 	//}
 	if (nRFMode == RFMODE_FM && IS_PHASE_DIVERSITY_ENABLED(nFMAT))
 	{
-		FM_ANT_SEL nPrimaryFMAT = nFMAT;
-		DISABLE_PHASE_DIVERSITY(nPrimaryFMAT); // primary radio using mat;
-		dsp_start_subaddr(0x00);
-		I2C_Restart(DSP_I2C | I2C_READ);
-		bSTIN = (I2C_ReadByte(true) >> 3) & 1;
-		I2C_Stop();
-
-		uint8_t addr;
-		FM_ANT_SEL tmpAnt = nSNRAnt;
-		if (nSNRAnt == FM_ANT1)
-		{
-			nSNRAnt = FM_ANT2;
+		
+		if(!bLCDOff && bEMI !=2) {
 			
-			addr = 0x74;
-		}
-		else
-		{
-			nSNRAnt = FM_ANT1;
-			addr = 0x74;
-		}
+			FM_ANT_SEL nPrimaryFMAT = nFMAT;
+			DISABLE_PHASE_DIVERSITY(nPrimaryFMAT); // primary radio using mat;
+			dsp_start_subaddr(0x00);
+			I2C_Restart(DSP_I2C | I2C_READ);
+			bSTIN = (I2C_ReadByte(true) >> 3) & 1;
+			I2C_Stop();
 
-		dsp_start_subaddr(addr);
-		I2C_Restart(DSP_I2C | I2C_READ);
-		nRSSI = (int8_t)(I2C_ReadByte(false) >> 1) - 8;
-		int8_t nCRSSI = constrain(nRSSI, -9, 99);
-		//save ssi to main 
-		if(tmpAnt == mainFMAT) {
-			nMainRSSI = nCRSSI;
-		}
-		//else {
-		//	if(nMainRSSI >0 && nCRSSI > nMainRSSI) {
-		//		//main ant switch the better ant
-		//		switchAnt();
-		//	}
-		//}
-		/*
-		if(nCRSSI <0 ) { //main ant signal is lost,switch to another ant
-			if( tmpAnt == mainFMAT) {
-				switchAnt();
+			uint8_t addr;
+			FM_ANT_SEL tmpAnt = nSNRAnt;
+			if (nSNRAnt == FM_ANT1)
+			{
+				nSNRAnt = FM_ANT2;
+				if(nPrimaryFMAT == FM_ANT1) {
+					addr = 0x74;
+				}
+				else {
+					addr = 0x75;
+				}
 			}
-		}*/
-		
-		I2C_ReadByte(false); //skip 1 bytes to 76h or 77h ,read USN
-		REG_USN = I2C_ReadByte(true);
-		I2C_Stop();
+			else
+			{
+				nSNRAnt = FM_ANT1;
+				if(nPrimaryFMAT == FM_ANT1) {
+					addr = 0x74;
+				}
+				else {
+					addr = 0x75;
+				}
+			}
 
-		if (nRFMode == RFMODE_FM)  // In FM mode, SNR is NOT calibrated accurately. For reference only
-			nSNR = (int)(0.46222375 * (float)nRSSI - 0.082495118 * (float)REG_USN) + 10;  // Emprical formula
-		else  // AM
-			nSNR = -((int8_t)REG_USN);
-		
-		
-		if(!bLCDOff) {
+			dsp_start_subaddr(addr);
+			I2C_Restart(DSP_I2C | I2C_READ);
+			nRSSI = (int8_t)(I2C_ReadByte(false) >> 1) - 8;
+			int8_t nCRSSI = constrain(nRSSI, -9, 99);
+			//save ssi to main 
+			if(tmpAnt == mainFMAT) {
+				nMainRSSI = nCRSSI;
+			}
+			//else {
+			//	if(nMainRSSI >0 && nCRSSI > nMainRSSI) {
+			//		//main ant switch the better ant
+			//		switchAnt();
+			//	}
+			//}
+			/*
+			if(nCRSSI <0 ) { //main ant signal is lost,switch to another ant
+				if( tmpAnt == mainFMAT) {
+					switchAnt();
+				}
+			}*/
+			
+			I2C_ReadByte(false); //skip 1 bytes to 76h or 77h ,read USN
+			REG_USN = I2C_ReadByte(true);
+			I2C_Stop();
+
+			if (nRFMode == RFMODE_FM)  // In FM mode, SNR is NOT calibrated accurately. For reference only
+				nSNR = (int)(0.46222375 * (float)nRSSI - 0.082495118 * (float)REG_USN) + 10;  // Emprical formula
+			else  // AM
+				nSNR = -((int8_t)REG_USN);
+			
+			if(bEMI == 1) {
+				OLED_XYStrLen(0, 0, ">-", 2, false);
+				OLED_XYStrLen(14, 0, "-<", 2, false);
+				bEMI++;
+			}
 			if(tmpAnt == FM_ANT1) {
 				OLED_XYStrLen(0, 0, ">-", 2, false);
 				OLED_XYStrLen(14, 0, "--", 2, false);
@@ -1087,7 +1108,10 @@ void GetStatus(UI_STAGE stage)
 	}
 	else {
 		times++;
-		if(!bLCDOff) {
+		if(!bLCDOff && bEMI !=2) {
+			if(bEMI == 1) {
+				bEMI++;
+			}
 			if(nFMAT == FM_ANT1) {
 				OLED_XYStrLen(0, 0, times%2==0 ? "--": ">-", 2, false);
 				OLED_XYStrLen(14, 0, "--", 2, false);
@@ -1096,26 +1120,28 @@ void GetStatus(UI_STAGE stage)
 				OLED_XYStrLen(0, 0, "--", 2, false);
 				OLED_XYStrLen(14, 0, times%2==0 ? "--": "-<", 2, false);
 			}
+			GetRFStatReg(0x0);
 		}
-		GetRFStatReg(0x0);
+		
 	}
 
 	// FM stereo indicator. 'S' for FM stereo, ' ' for FM mono or AM mode,  'M' for FM forced mono
-	c = ' ';  // AM mode or FM mono
-	if (nRFMode == RFMODE_FM)
-	{
-		if (!nStereo)
-			c = 'M';  // FM forced mono
-		else if (bSTIN)
-			c = 'S';  // Stereo
-	}
-
 	
-	nRSSI_Disp = nRSSI;
-	nSNR_Disp = nSNR;
 		
 
-	if(!bLCDOff) {
+	if(!bLCDOff && bEMI !=2) {
+		c = ' ';  // AM mode or FM mono
+		if (nRFMode == RFMODE_FM)
+		{
+			if (!nStereo)
+				c = 'M';  // FM forced mono
+			else if (bSTIN)
+				c = 'S';  // Stereo
+		}
+
+		
+		nRSSI_Disp = nRSSI;
+		nSNR_Disp = nSNR;
 		OLED_XYIntLen(RSSI_X, RSSI_Y, constrain(nRSSI_Disp, -9, 99), 2);  // Update RF signal level in dBuv
 		OLED_XYChar(STEREO_X, STEREO_Y, c);                               // Update FM stereo indicator
 		if (bDisp_USN && nRFMode == RFMODE_FM)
@@ -1199,6 +1225,9 @@ void get_last_5_chars(const char *input, char *output)
     }
     output[5] = '\0';  // 确保字符串以 null 结尾
 }
+void ShowEMI(void) {
+	OLED_XYStr(ALT_X, ALT_Y, "*EMI*");
+}	
 void ShowIR(void) {
 	//OLED_XYStr(ALT_X, ALT_Y, "IR ");
 	char display[6]="";  // 用于存储最后5个字符和空格
@@ -1247,6 +1276,9 @@ void CheckUpdateAlt(int8_t nShow)  // Check and update ALT area
 			break;
 		case ALT_IR:
 			ShowIR();
+			break;
+		case ALT_EMI:
+			ShowEMI();
 			break;
 		}
 	}

@@ -60,6 +60,7 @@
 #define ALT_TIME    2
 #define ALT_VOL     3
 #define ALT_IR	    4
+#define ALT_EMI			5
 
 
 // Menu IDs with sub menus, not auto return
@@ -322,6 +323,7 @@ extern int8_t nSquelch[2];  // Signal squelch value in dBuv, -99~99
 extern uint8_t nBacklightAdj;     // LCD backlight value, 0-255
 extern uint8_t nBacklightKeep;    // LCD backlight auto keep seconds, 0-255, 0 for always on
 extern bool bLCDOff;              // true for LCD is off
+extern uint8_t bEMI;
 extern uint32_t nBacklightTimer;  // LCD backlight auto keep timer in ms
 extern int32_t nSecondsOffset;    // Seconds of real time offset, preset to 15 days
 

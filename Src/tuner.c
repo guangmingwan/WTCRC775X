@@ -91,6 +91,7 @@ int8_t nSquelch[2];  // Signal squelch value in dBuv, -99~99
 uint8_t nBacklightAdj;         // LCD backlight value, 0-255
 uint8_t nBacklightKeep;        // LCD backlight auto keep seconds, 0-255, 0 for always on
 bool bLCDOff = false;          // true for LCD is off
+uint8_t bEMI = 0;
 uint32_t nBacklightTimer;      // LCD backlight auto keep timer in ms
 
 uint32_t timer = 0;                        // RSSI, SNR & FM stereo indicator display timer
@@ -110,7 +111,6 @@ bool bDisp_USN = false;
 
 bool bHAL_DelayedCheck;
 uint32_t nHAL_DelayedTimer;
-uint8_t nHAL_DelayedSmooth;
 
 const uint8_t DSP_FIRM0_PRODUCTION[] =
 {
@@ -662,7 +662,7 @@ void CheckVolume(void)
 	}
 }
 // 显示字符串数组中的内容，每行最多显示16个字符
-void displayStrings(void) {
+void displayTips(void) {
     static int currentIndex = 0; // 当前显示的字符串索引
     static int currentOffset = 0; // 当前显示的偏移量
     static uint32_t lastUpdateTick = 0; // 上次更新的时间戳
@@ -863,7 +863,12 @@ void SetRFCtrlReg(void)
 				data2 |= 0x04;//100  sec SEL ant 1
 		
 		bFMiPD? (data |= 0x01) : (data &= 0xFE);// 1  , 11111110
-		
+		if(bFMiPD) {//active FMAT
+			
+				dsp_write1(0x04, data & 0xFE);
+				dsp_write1(0x64, data2 & 0xFE);
+			
+		}
 		dsp_write1(0x04, data);
 		dsp_write1(0x64, data2);
 	}
@@ -899,7 +904,6 @@ void TuneReg(void)
 
 	bHAL_DelayedCheck = true;
 	nHAL_DelayedTimer = HAL_GetTick() + 30;
-	nHAL_DelayedSmooth = 4;
 }
 
 
@@ -1436,86 +1440,36 @@ void TunerLoop(void)
 	uint8_t nKey;
 	uint16_t u16;
 	stage = STAGE_MAIN;
-	//if (HAL_GetTick() - timerRDS >= TIMER_RDSCHECK)
-	//{
-	//	timerRDS = HAL_GetTick();
-	//	for (uint8_t i = 0; i < 10; i++)
-	//	{
-	//		if (dsp_query1(0x00) & 0x10)
-	//		{
-	//			//RDAV == 1
-	//			//printf("RDS: %4X,%4X,%4X,%4X Error: %X\n", dsp_query2(0x08), dsp_query2(0x0A), dsp_query2(0x0C), dsp_query2(0x0E), dsp_query1(0x10));
-	//			uRDSErrorCode = dsp_query1(0x10);
-	//			uRDSBlockD = dsp_query2(0x0E);
-	//			uRDSBlockC = dsp_query2(0x0C);
-	//			uRDSBlockB.uRawDataB = dsp_query2(0x0A);
-	//			uRDSBlockA = dsp_query2(0x08);
-	//			if (uRDSBlockB.uDetailData.B0)
-	//			{
-	//				//B�汾��Block1��PI�����Block1��Block3
-	//			}
-	//			else
-	//			{
-	//				//A�汾��Block1��PI��ֻ���뵽Block1
-	//				//printf("�㲥���ͣ� %s \n", PTYASCIITable[uRDSBlockB.uDetailData.PTY]);
-	//				if (uRDSErrorCode == 0 && uRDSBlockB.uDetailData.GroupCode == 2)
-	//				{
-	//					//�㲥�ı�
-	//					//if(ABOld != uRDSBlockB.uDetailData.AB)
-	//					uRTSegmentAvailableBit |= (0x0001 << uRDSBlockB.uDetailData.ADDR);
-	//					cRadioText[uRDSBlockB.uDetailData.ADDR * 4] = (unsigned char)(uRDSBlockC >> 8);
-	//					cRadioText[uRDSBlockB.uDetailData.ADDR * 4 + 1] = (unsigned char)(uRDSBlockC & 0x00FF);
-	//					cRadioText[uRDSBlockB.uDetailData.ADDR * 4 + 2] = (unsigned char)(uRDSBlockD >> 8);
-	//					cRadioText[uRDSBlockB.uDetailData.ADDR * 4 + 3] = (unsigned char)(uRDSBlockD & 0x00FF);
-	//					//if (uRTSegmentAvailableBit == 0xFFFF) // get all 16 segments
-	//					{
-	//						cRadioText[64] = '\0';
-	//						printf("�㲥�ı��� %s \n", cRadioText);
-	//					}
-	//					//char ss[5] = { 0 };	
-	//					//ss[0] = uRDSBlockC >> 8;
-	//					//ss[1] = uRDSBlockC & 0x0F;
-	//					//ss[2] = uRDSBlockD >> 8;
-	//					//ss[3] = uRDSBlockD & 0x0F;
-	//					//printf("�㲥�ı��� %s \n", ss);
-	//				}
-	//			}
-	//			//printf("RDSB: %4X,%X,%X,%X,%X,%X,%X Error: %X\n", uRDSBlockB.uRawDataB
-	//			//	, uRDSBlockB.uDetailData.GroupCode
-	//			//	, uRDSBlockB.uDetailData.B0
-	//			//	, uRDSBlockB.uDetailData.TP
-	//			//	, uRDSBlockB.uDetailData.PTY
-	//			//	, uRDSBlockB.uDetailData.AB
-	//			//	, uRDSBlockB.uDetailData.ADDR
-	//			//	, uRDSErrorCode);
-	//		}
-	//	}
-	//}
+	
 
 	if (bHAL_DelayedCheck && HAL_GetTick() >= nHAL_DelayedTimer)
 	{
 		bHAL_DelayedCheck = false;
-		GetStatus(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
+		if(!bLCDOff && bEMI !=2) {
+			GetStatus(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
+		}
 		OLED_Refresh();
 		timer = HAL_GetTick() - (TIMER_INTERVAL >> 2);
 	}
 	else if ((HAL_GetTick() - timer) >= TIMER_INTERVAL)
 	{  // Check every TIMER_INTERVAL ms
-		GetStatus(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
+		if(!bLCDOff && bEMI !=2) {
+			GetStatus(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
+		}
 		OLED_Refresh();
 		timer = HAL_GetTick();
 
-		if (!bMuted && (nMode != MODE_AUX))
+		if (!bMuted && (nMode != MODE_AUX) && !bLCDOff && bEMI != 2)
 		{
 			if ((nRSSI_Disp < nSquelch[0]))
 				SetVolume(0);
 			else
 				SetVolume(nVolume);
 		}
-
-		CheckUpdateAlt(ALT_AUTO);
-
-		if (nBacklightKeep && !bLCDOff)
+		if(!bLCDOff && bEMI !=2) {
+			CheckUpdateAlt(ALT_AUTO);
+		}
+		if (nBacklightKeep && !bLCDOff && bEMI != 2)
 		{
 			if ((timer - nBacklightTimer) >= (uint32_t)nBacklightKeep * 1000)
 			{
@@ -1610,7 +1564,9 @@ void TunerLoop(void)
 
 	if(!bLCDOff) {
 		CheckVolume();
-		displayStrings();
+		if(bEMI != 2) {
+			displayTips();
+		}
 	
 
 		if ((i8 = GetRRot()) != false)
@@ -1646,6 +1602,13 @@ void TunerLoop(void)
 	{
 		switch (nKey)
 		{
+		case KEY_LROT | KEY_RROT:
+			bEMI = bEMI == 0 ? 1 : 0;
+			if(bEMI == 1) {
+				CheckUpdateAlt(ALT_EMI);
+			}
+			break;
+			
 		case KEY_LROT:
 			clear_screen();
 			Menu(MID_OPTION);
