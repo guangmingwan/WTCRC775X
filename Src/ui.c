@@ -1022,7 +1022,6 @@ void GetStatus(UI_STAGE stage)
 	
 	char c;
 	float fv;
-	static int8_t times = 1;
 	//if(bLCDOff) {
 	//	return;
 	//}
@@ -1043,6 +1042,8 @@ void GetStatus(UI_STAGE stage)
 			if (nSNRAnt == FM_ANT1)
 			{
 				nSNRAnt = FM_ANT2;
+				//addr = 0x74;
+				//get real fm1 rssi
 				if(nPrimaryFMAT == FM_ANT1) {
 					addr = 0x74;
 				}
@@ -1053,11 +1054,13 @@ void GetStatus(UI_STAGE stage)
 			else
 			{
 				nSNRAnt = FM_ANT1;
+				//addr = 0x75;
+				//get real fm2 rssi
 				if(nPrimaryFMAT == FM_ANT1) {
-					addr = 0x74;
+					addr = 0x75;
 				}
 				else {
-					addr = 0x75;
+					addr = 0x74;
 				}
 			}
 
@@ -1107,18 +1110,17 @@ void GetStatus(UI_STAGE stage)
 		}
 	}
 	else {
-		times++;
 		if(!bLCDOff && bEMI !=2) {
 			if(bEMI == 1) {
 				bEMI++;
 			}
 			if(nFMAT == FM_ANT1) {
-				OLED_XYStrLen(0, 0, times%2==0 ? "--": ">-", 2, false);
+				OLED_XYStrLen(0, 0, ">-", 2, false);
 				OLED_XYStrLen(14, 0, "--", 2, false);
 			}
 			else if(nFMAT == FM_ANT2) {
 				OLED_XYStrLen(0, 0, "--", 2, false);
-				OLED_XYStrLen(14, 0, times%2==0 ? "--": "-<", 2, false);
+				OLED_XYStrLen(14, 0, "-<", 2, false);
 			}
 			GetRFStatReg(0x0);
 		}

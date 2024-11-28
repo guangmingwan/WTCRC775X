@@ -9,6 +9,7 @@
 #include "soft_i2c.h"
 #include "nv_memory.h"
 #include <string.h>
+extern void HAL_Delay_us(uint32_t nus);
 extern UI_STAGE stage;
 extern volatile int8_t nLRot;
 extern volatile int8_t nRRot;
@@ -264,10 +265,11 @@ const uint8_t DSP_INIT[] =
 	2,0x20,0x00,                     // Primary Audio Input:Primary Radio
 	2,0x04,0x00,                     // Primary Radio Select Antenna 0
 	2,0x64,0x04,                     // Secondary Radio Select Antenna 1
-	4,0xC0,0x02,0x11,0x0E,           // GPIO2:ANT1 ExtAGC
-	4,0xC0,0x03,0x11,0x0D,           // GPIO3:ANT0 ExtAGC
+	//4,0xC0,0x02,0x11,0x0E,           // GPIO2:ANT1 ExtAGC
+	//4,0xC0,0x03,0x11,0x0D,           // GPIO3:ANT0 ExtAGC
 	//2,0xC9,0x0A,                     // Enable INCA
 	4,0x00,0x10,0x22,0x74,           // Dummy Tuning, Start Active Mode
+	4,0x60,0x10,0x22,0x74,           // Dummy Tuning, Start Active Mode
 	2,0x3F,0x00,                     // Audio Power Control:System Power;Sample Rate Freq:44.1kHz
 	3,0xA9,0x32,0x00,                // Front DAC on
 	3,0xA9,0x33,0x00,                // Rear DAC on. For portable radio w/o rear speakers, COMMENT this line to save battery power
@@ -619,6 +621,7 @@ void dsp_write_data(const uint8_t* data)
 			break;
 		if (len == 0xff)
 		{
+			HAL_Delay_us(150);
 			WaitEasyReady();
 			continue;
 		}
