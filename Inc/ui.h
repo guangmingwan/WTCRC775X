@@ -288,7 +288,7 @@ extern uint8_t nAGC;           // RFAGC wideband threshold, 0 to 3 = lowest to h
 extern uint8_t nNBSens;        // Noise blanker sensitivity,  0 to 3 = lowest to highest sensitivity
 extern uint8_t nLowerSig;      // Normal/reduced signal quality for seek/scan/any, 0=normal, 1=lower
 
-extern int8_t nMainRSSI, nRSSI, nRSSI_Disp;  // Received signal strength, in dBuv
+extern int8_t nRSSI, nRSSI_Disp;  // Received signal strength, in dBuv
 extern int8_t nSNR, nSNR_Last, nSNR_Disp;     // Signal noise ratio, in dB
 extern bool bSTIN;                            // FM stereo indicator
 extern uint8_t REG_USN;

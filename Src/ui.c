@@ -1042,26 +1042,27 @@ void GetStatus(UI_STAGE stage)
 			if (nSNRAnt == FM_ANT1)
 			{
 				nSNRAnt = FM_ANT2;
-				//addr = 0x74;
+				addr = 0x74;
 				//get real fm1 rssi
+				/*
 				if(nPrimaryFMAT == FM_ANT1) {
 					addr = 0x74;
 				}
 				else {
 					addr = 0x75;
-				}
+				}*/
 			}
 			else
 			{
 				nSNRAnt = FM_ANT1;
-				//addr = 0x75;
+				addr = 0x75;
 				//get real fm2 rssi
-				if(nPrimaryFMAT == FM_ANT1) {
+				/*if(nPrimaryFMAT == FM_ANT1) {
 					addr = 0x75;
 				}
 				else {
 					addr = 0x74;
-				}
+				}*/
 			}
 
 			dsp_start_subaddr(addr);
@@ -1069,9 +1070,9 @@ void GetStatus(UI_STAGE stage)
 			nRSSI = (int8_t)(I2C_ReadByte(false) >> 1) - 8;
 			int8_t nCRSSI = constrain(nRSSI, -9, 99);
 			//save ssi to main 
-			if(tmpAnt == mainFMAT) {
-				nMainRSSI = nCRSSI;
-			}
+			//if(tmpAnt == mainFMAT) {
+			//	nMainRSSI = nCRSSI;
+			//}
 			//else {
 			//	if(nMainRSSI >0 && nCRSSI > nMainRSSI) {
 			//		//main ant switch the better ant
