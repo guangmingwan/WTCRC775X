@@ -137,7 +137,11 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
+	//wait tts booted
+	HAL_Delay(3000);
 	
+  printf("欢迎使用7751收音机");
+  fflush(stdout);
 		
 	OLED_Init();
   clear_screen();//clear oled

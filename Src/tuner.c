@@ -1615,6 +1615,7 @@ void TunerLoop(void)
 		case KEY_LROT:
 			clear_screen();
 			Menu(MID_OPTION);
+		printf("<Z>3");
 			break;
 
 		case KEY_LROT | KEY_LONGPRESS:  // Toggle mute/unmute
@@ -1625,6 +1626,7 @@ void TunerLoop(void)
 		case KEY_RROT:
 			clear_screen();
 			Menu(MID_FREQUENCY);
+		printf("<Z>3");
 			break;
 
 		case KEY_RROT | KEY_LONGPRESS:

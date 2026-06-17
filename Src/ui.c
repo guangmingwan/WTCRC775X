@@ -481,7 +481,7 @@ void switchFMChannel(float channel)
 
 	int fmChannel = channel * 1000;
 	
-	//printf("Ã‡ÃÂ»Â»ÂµÂ½FMÃ†ÂµÂµÃ€ %.1f\n", channel);
+	//printf("??????FM???? %.1f\n", channel);
 	fflush(stdout);
 	nBand = BAND_FM;
 	nBandFreq[nBand] = fmChannel;
@@ -550,14 +550,14 @@ void handleTimeout(void)
     memset(input, 0, sizeof(input));
     inputIndex = 0;
 }
-// å®‰å…¨åœ°å°† channel è¿½åŠ åˆ° input ä¸­
+// °²È«µØ½« channel ×·¼Óµ½ input ÖĞ
 void safe_strcat(char *src, const char *channel)
 {
 		size_t max_size = sizeof(input);
     size_t input_len = strlen(src);
     size_t channel_len = strlen(channel);
 
-    // æ£€æŸ¥æ˜¯å¦æœ‰è¶³å¤Ÿçš„ç©ºé—´æ¥è¿½åŠ  channel
+    // ¼ì²éÊÇ·ñÓĞ×ã¹»µÄ¿Õ¼äÀ´×·¼Ó channel
     if (input_len + channel_len <= max_size)
     {
         strncat(input, channel, max_size - input_len);
@@ -684,6 +684,8 @@ void IR_Check()
 			AddSyncBits(NEEDSYNC_VOL);
 			CheckUpdateAlt(ALT_VOL); // Show volume for a period
 			*/
+			printf("ÒôÁ¿%d\n", nVolume);
+			fflush(stdout);
 			break;
 		//case 0x00FF02FD: // volume +
 		case 0x00FFA857:
@@ -692,7 +694,8 @@ void IR_Check()
 			AddSyncBits(NEEDSYNC_VOL);
 			CheckUpdateAlt(ALT_VOL); // Show volume for a period
 			*/
-
+			printf("ÒôÁ¿%d\n", nVolume);
+			fflush(stdout);
 			break;
 		case 0x00FFa25d: // ch-
 			irKey = KEY_LROT;
@@ -739,32 +742,32 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 }
 
 /**
- * @brief GPIOå¤–éƒ¨ä¸­æ–­å›è°ƒå‡½æ•°
+ * @brief GPIOÍâ²¿ÖĞ¶Ï»Øµ÷º¯Êı
  * 
- * è¯¥å‡½æ•°ç”¨äºå¤„ç†æ—‹è½¬ç¼–ç å™¨çš„å¤–éƒ¨ä¸­æ–­ï¼Œé€šè¿‡æ£€æµ‹SH1Aå’ŒSH2Aå¼•è„šçš„ç”µå¹³å˜åŒ–æ¥è®¡ç®—æ—‹è½¬ç¼–ç å™¨çš„æ—‹è½¬é‡ã€‚
+ * ¸Ãº¯ÊıÓÃÓÚ´¦ÀíĞı×ª±àÂëÆ÷µÄÍâ²¿ÖĞ¶Ï£¬Í¨¹ı¼ì²âSH1AºÍSH2AÒı½ÅµÄµçÆ½±ä»¯À´¼ÆËãĞı×ª±àÂëÆ÷µÄĞı×ªÁ¿¡£
  * 
- * @param GPIO_Pin è§¦å‘ä¸­æ–­çš„GPIOå¼•è„šç¼–å·
+ * @param GPIO_Pin ´¥·¢ÖĞ¶ÏµÄGPIOÒı½Å±àºÅ
  */
 void HAL_GPIO_EXTI_Callback_adv(uint16_t GPIO_Pin)
 {
-    // å¤„ç†å·¦æ—‹è½¬ç¼–ç å™¨Aç›¸å¼•è„šè§¦å‘çš„ä¸­æ–­
+    // ´¦Àí×óĞı×ª±àÂëÆ÷AÏàÒı½Å´¥·¢µÄÖĞ¶Ï
     if (GPIO_Pin == SH1A_Pin)
     {
-        // ä¸­æ–­åºåˆ—å¼€å§‹ï¼Œè¯»å–SH1Aå¼•è„šç”µå¹³
+        // ÖĞ¶ÏĞòÁĞ¿ªÊ¼£¬¶ÁÈ¡SH1AÒı½ÅµçÆ½
         if (nIntSeqs[0] == 0 && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_RESET)
         {
             nFlags[0] = 0;
-            // æ£€æµ‹Bç›¸å¼•è„šç”µå¹³ï¼Œç”¨äºç¡®å®šæ—‹è½¬æ–¹å‘
+            // ¼ì²âBÏàÒı½ÅµçÆ½£¬ÓÃÓÚÈ·¶¨Ğı×ª·½Ïò
             if (HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_SET)
             {
                 nFlags[0] = 1;
             }
             nIntSeqs[0] = 1;
         }
-        // ä¸­æ–­åºåˆ—ä¸­ï¼Œæ£€æµ‹Aç›¸å¼•è„šç”µå¹³å˜åŒ–ï¼Œè®¡ç®—æ—‹è½¬é‡
+        // ÖĞ¶ÏĞòÁĞÖĞ£¬¼ì²âAÏàÒı½ÅµçÆ½±ä»¯£¬¼ÆËãĞı×ªÁ¿
         if (nIntSeqs[0] && HAL_GPIO_ReadPin(SH1A_GPIO_Port, SH1A_Pin) == GPIO_PIN_SET)
         {
-            // æ ¹æ®Bç›¸å¼•è„šç”µå¹³å’Œæ ‡å¿—ä½åˆ¤æ–­æ—‹è½¬æ–¹å‘ï¼Œæ›´æ–°æ—‹è½¬é‡
+            // ¸ù¾İBÏàÒı½ÅµçÆ½ºÍ±êÖ¾Î»ÅĞ¶ÏĞı×ª·½Ïò£¬¸üĞÂĞı×ªÁ¿
             if (HAL_GPIO_ReadPin(SH1B_GPIO_Port, SH1B_Pin) == GPIO_PIN_RESET && nFlags[0] == 1)
             {
                 ++nLRot;
@@ -776,7 +779,7 @@ void HAL_GPIO_EXTI_Callback_adv(uint16_t GPIO_Pin)
             nIntSeqs[0] = 0;
         }
     }
-    // å¤„ç†å³æ—‹è½¬ç¼–ç å™¨Aç›¸å¼•è„šè§¦å‘çš„ä¸­æ–­ï¼Œé€»è¾‘åŒå·¦æ—‹è½¬ç¼–ç å™¨
+    // ´¦ÀíÓÒĞı×ª±àÂëÆ÷AÏàÒı½Å´¥·¢µÄÖĞ¶Ï£¬Âß¼­Í¬×óĞı×ª±àÂëÆ÷
     else if (GPIO_Pin == SH2A_Pin)
     {
         if (nIntSeqs[1] == 0 && HAL_GPIO_ReadPin(SH2A_GPIO_Port, SH2A_Pin) == GPIO_PIN_RESET)
@@ -1208,13 +1211,13 @@ void ShowTime(void)
 	OLED_XYChar(ALT_X + 2, ALT_Y, ':');
 	OLED_XYUIntLenZP(ALT_X + 3, ALT_Y, nMinutes % 60, 2);  // Minute
 }
-// è¾…åŠ©å‡½æ•°ï¼šè·å–å­—ç¬¦ä¸²çš„æœ€å5ä½ï¼Œå¹¶ç”¨ç©ºæ ¼è¡¥é½
+// ¸¨Öúº¯Êı£º»ñÈ¡×Ö·û´®µÄ×îºó5Î»£¬²¢ÓÃ¿Õ¸ñ²¹Æë
 void get_last_5_chars(const char *input, char *output)
 {
     int len = strlen(input);
     int start_index = (len > 5) ? (len - 5) : 0;
 
-    // å¤åˆ¶æœ€å5ä¸ªå­—ç¬¦
+    // ¸´ÖÆ×îºó5¸ö×Ö·û
     for (int i = 0; i < 5; i++)
     {
         if (start_index + i < len)
@@ -1223,18 +1226,18 @@ void get_last_5_chars(const char *input, char *output)
         }
         else
         {
-            output[i] = ' ';  // ç”¨ç©ºæ ¼è¡¥é½
+            output[i] = ' ';  // ÓÃ¿Õ¸ñ²¹Æë
         }
     }
-    output[5] = '\0';  // ç¡®ä¿å­—ç¬¦ä¸²ä»¥ null ç»“å°¾
+    output[5] = '\0';  // È·±£×Ö·û´®ÒÔ null ½áÎ²
 }
 void ShowEMI(void) {
 	OLED_XYStr(ALT_X, ALT_Y, "*EMI*");
 }	
 void ShowIR(void) {
 	//OLED_XYStr(ALT_X, ALT_Y, "IR ");
-	char display[6]="";  // ç”¨äºå­˜å‚¨æœ€å5ä¸ªå­—ç¬¦å’Œç©ºæ ¼
-	// è·å– input çš„æœ€å5ä½ï¼Œå¹¶ç”¨ç©ºæ ¼è¡¥é½
+	char display[6]="";  // ÓÃÓÚ´æ´¢×îºó5¸ö×Ö·ûºÍ¿Õ¸ñ
+	// »ñÈ¡ input µÄ×îºó5Î»£¬²¢ÓÃ¿Õ¸ñ²¹Æë
   get_last_5_chars(input, display);
 	OLED_XYStr(ALT_X, ALT_Y, display);
 }
@@ -1307,7 +1310,7 @@ void Menu_Squelch(uint8_t nIdx)
 {
     int16_t i16 = nSquelch[nIdx];
     uint8_t nKey, lp;
-    bool bShowColon = true;  // æ–°å¢å˜é‡ï¼Œç”¨äºè·Ÿè¸ªå†’å·æ˜¯å¦æ˜¾ç¤º
+    bool bShowColon = true;  // ĞÂÔö±äÁ¿£¬ÓÃÓÚ¸ú×ÙÃ°ºÅÊÇ·ñÏÔÊ¾
 
     // 0123456789012345
     OLED_XYStr(0, 2, "SQUELCH1:       ");
@@ -1330,9 +1333,9 @@ void Menu_Squelch(uint8_t nIdx)
             return;
         }
 
-        if (!(lp % 16)) {  // æ¯éš”16æ¬¡å¾ªç¯åˆ‡æ¢å†’å·æ˜¾ç¤ºçŠ¶æ€
-            bShowColon = !bShowColon;  // åˆ‡æ¢å†’å·æ˜¾ç¤ºçŠ¶æ€
-            OLED_XYChar(8, 2, bShowColon ? ':' : ' ');  // æ˜¾ç¤ºæˆ–éšè—å†’å·
+        if (!(lp % 16)) {  // Ã¿¸ô16´ÎÑ­»·ÇĞ»»Ã°ºÅÏÔÊ¾×´Ì¬
+            bShowColon = !bShowColon;  // ÇĞ»»Ã°ºÅÏÔÊ¾×´Ì¬
+            OLED_XYChar(8, 2, bShowColon ? ':' : ' ');  // ÏÔÊ¾»òÒş²ØÃ°ºÅ
         }
 
         HAL_Delay(64);
@@ -1419,7 +1422,7 @@ void Menu_Stereo(void)
 {
     int8_t i8;
     uint8_t nKey, lp;
-    bool bShowColon = true;  // æ–°å¢å˜é‡ï¼Œç”¨äºè·Ÿè¸ªå†’å·æ˜¯å¦æ˜¾ç¤º
+    bool bShowColon = true;  // ĞÂÔö±äÁ¿£¬ÓÃÓÚ¸ú×ÙÃ°ºÅÊÇ·ñÏÔÊ¾
 
     // 0123456789012345
     OLED_XYStr(0, 2, "FM STEREO:     ");
@@ -1444,9 +1447,9 @@ void Menu_Stereo(void)
             return;
         }
 
-        if (!(lp % 16)) {  // æ¯éš”16æ¬¡å¾ªç¯åˆ‡æ¢å†’å·æ˜¾ç¤ºçŠ¶æ€
-            bShowColon = !bShowColon;  // åˆ‡æ¢å†’å·æ˜¾ç¤ºçŠ¶æ€
-            OLED_XYChar(9, 2, bShowColon ? ':' : ' ');  // æ˜¾ç¤ºæˆ–éšè—å†’å·
+        if (!(lp % 16)) {  // Ã¿¸ô16´ÎÑ­»·ÇĞ»»Ã°ºÅÏÔÊ¾×´Ì¬
+            bShowColon = !bShowColon;  // ÇĞ»»Ã°ºÅÏÔÊ¾×´Ì¬
+            OLED_XYChar(9, 2, bShowColon ? ':' : ' ');  // ÏÔÊ¾»òÒş²ØÃ°ºÅ
         }
 
         HAL_Delay(64);
@@ -1827,13 +1830,13 @@ void Menu_Stat(void)
 }  // void Menu_Stat(void)
 
 
-#include <stdbool.h>  // å¼•å…¥ stdbool.h å¤´æ–‡ä»¶ä»¥ä½¿ç”¨ bool ç±»å‹
+#include <stdbool.h>  // ÒıÈë stdbool.h Í·ÎÄ¼şÒÔÊ¹ÓÃ bool ÀàĞÍ
 
 void Menu_Tone(void)
 {
     uint8_t nKey, lp;
     int8_t i8, nItem, nVal;
-    bool bShowColon = true;  // æ–°å¢å˜é‡ï¼Œç”¨äºè·Ÿè¸ªå†’å·æ˜¯å¦æ˜¾ç¤º
+    bool bShowColon = true;  // ĞÂÔö±äÁ¿£¬ÓÃÓÚ¸ú×ÙÃ°ºÅÊÇ·ñÏÔÊ¾
 
     // 01234567890123450123456789012345
     OLED_FullStr("BASS:    MID    TREBLE");
@@ -1847,7 +1850,7 @@ void Menu_Tone(void)
     {
         if ((nKey = GetKey()) != false)
         {
-						// å¦‚æœé•¿æŒ‰å·¦ç¼–ç å™¨æˆ–è€…å³ç¼–ç å™¨ï¼Œè¿”å›
+						// Èç¹û³¤°´×ó±àÂëÆ÷»òÕßÓÒ±àÂëÆ÷£¬·µ»Ø
 						if(nKey && ( ((uint8_t)nKey) == (KEY_LROT | KEY_LONGPRESS) || ((uint8_t)nKey) == (KEY_RROT | KEY_LONGPRESS))) {
 							//bExitMenu = 1;
 							OLED_Clear1();
@@ -1916,19 +1919,19 @@ void Menu_Tone(void)
             AddSyncBits(NEEDSYNC_TONE);
         }
 
-        if (!(lp % 16)) {  // æ¯éš”16æ¬¡å¾ªç¯åˆ‡æ¢å†’å·æ˜¾ç¤ºçŠ¶æ€
-            bShowColon = !bShowColon;  // åˆ‡æ¢å†’å·æ˜¾ç¤ºçŠ¶æ€
+        if (!(lp % 16)) {  // Ã¿¸ô16´ÎÑ­»·ÇĞ»»Ã°ºÅÏÔÊ¾×´Ì¬
+            bShowColon = !bShowColon;  // ÇĞ»»Ã°ºÅÏÔÊ¾×´Ì¬
             if (nItem == 0)
             {
-                OLED_XYChar(4, 1, bShowColon ? ':' : ' ');  // æ˜¾ç¤ºæˆ–éšè—å†’å·
+                OLED_XYChar(4, 1, bShowColon ? ':' : ' ');  // ÏÔÊ¾»òÒş²ØÃ°ºÅ
             }
             else if (nItem == 1)
             {
-                OLED_XYChar(12, 1, bShowColon ? ':' : ' ');  // æ˜¾ç¤ºæˆ–éšè—å†’å·
+                OLED_XYChar(12, 1, bShowColon ? ':' : ' ');  // ÏÔÊ¾»òÒş²ØÃ°ºÅ
             }
             else
             {
-                OLED_XYChar(6, 2, bShowColon ? ':' : ' ');  // æ˜¾ç¤ºæˆ–éšè—å†’å·
+                OLED_XYChar(6, 2, bShowColon ? ':' : ' ');  // ÏÔÊ¾»òÒş²ØÃ°ºÅ
             }
         }
 
@@ -1945,7 +1948,7 @@ void Menu_BalFader(void)
 {
     uint8_t nKey,lp;
     int8_t i8, nItem, nVal;
-    bool bShowColon = true;  // æ–°å¢å˜é‡ï¼Œç”¨äºè·Ÿè¸ªå†’å·æ˜¯å¦æ˜¾ç¤º
+    bool bShowColon = true;  // ĞÂÔö±äÁ¿£¬ÓÃÓÚ¸ú×ÙÃ°ºÅÊÇ·ñÏÔÊ¾
 
     // 01234567890123450123456789012345
     OLED_FullStr("BALANCE:        FADER");
@@ -1958,7 +1961,7 @@ void Menu_BalFader(void)
     {
         if ((nKey = GetKey()) != false)
         {
-						// å¦‚æœé•¿æŒ‰å·¦ç¼–ç å™¨æˆ–è€…å³ç¼–ç å™¨ï¼Œè¿”å›
+						// Èç¹û³¤°´×ó±àÂëÆ÷»òÕßÓÒ±àÂëÆ÷£¬·µ»Ø
 						if(nKey && ( ((uint8_t)nKey) == (KEY_LROT | KEY_LONGPRESS) || ((uint8_t)nKey) == (KEY_RROT | KEY_LONGPRESS))) {
 							//bExitMenu = 1;
 							OLED_Clear1();
@@ -2013,15 +2016,15 @@ void Menu_BalFader(void)
             AddSyncBits(NEEDSYNC_BALFADER);
         }
 
-        if (!(lp % 16)) {  // æ¯éš”16æ¬¡å¾ªç¯åˆ‡æ¢å†’å·æ˜¾ç¤ºçŠ¶æ€
-            bShowColon = !bShowColon;  // åˆ‡æ¢å†’å·æ˜¾ç¤ºçŠ¶æ€
+        if (!(lp % 16)) {  // Ã¿¸ô16´ÎÑ­»·ÇĞ»»Ã°ºÅÏÔÊ¾×´Ì¬
+            bShowColon = !bShowColon;  // ÇĞ»»Ã°ºÅÏÔÊ¾×´Ì¬
             if (nItem == 0)
             {
-                OLED_XYChar(7, 1, bShowColon ? ':' : ' ');  // æ˜¾ç¤ºæˆ–éšè—å†’å·
+                OLED_XYChar(7, 1, bShowColon ? ':' : ' ');  // ÏÔÊ¾»òÒş²ØÃ°ºÅ
             }
             else
             {
-                OLED_XYChar(5, 2, bShowColon ? ':' : ' ');  // æ˜¾ç¤ºæˆ–éšè—å†’å·
+                OLED_XYChar(5, 2, bShowColon ? ':' : ' ');  // ÏÔÊ¾»òÒş²ØÃ°ºÅ
             }
         }
 
@@ -2544,35 +2547,35 @@ bool IsMenuVisible(uint8_t nMenuID)
 	}
 	return true;
 }
-// å‡½æ•°å®šä¹‰
-// å¤„ç†å­èœå•çš„å‡½æ•°
-// å‚æ•° pSubMenu: æŒ‡å‘å­èœå•ç»“æ„çš„æŒ‡é’ˆ
+// º¯Êı¶¨Òå
+// ´¦Àí×Ó²Ëµ¥µÄº¯Êı
+// ²ÎÊı pSubMenu: Ö¸Ïò×Ó²Ëµ¥½á¹¹µÄÖ¸Õë
 void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 {
-    // å®šä¹‰å˜é‡
+    // ¶¨Òå±äÁ¿
     int8_t i8;
     uint8_t u8_data, lp, nHit, mHit;
-    int8_t nFirst = 0; // åˆå§‹åŒ–ç¬¬ä¸€ä¸ªæ˜¾ç¤ºé¡¹çš„ç´¢å¼•
-		int8_t nLastFirst = -1; // ä¸Šä¸€ä¸ªnFirst
-    int8_t nCursor = -1; // åˆå§‹åŒ–å…‰æ ‡ä½ç½®çš„ç´¢å¼•
-		int8_t nLastCursor = -2; //ä¸Šä¸€ä¸ªnCursor
-    uint8_t textlen = 0; // åˆå§‹åŒ–æ–‡æœ¬é•¿åº¦å˜é‡
+    int8_t nFirst = 0; // ³õÊ¼»¯µÚÒ»¸öÏÔÊ¾ÏîµÄË÷Òı
+		int8_t nLastFirst = -1; // ÉÏÒ»¸önFirst
+    int8_t nCursor = -1; // ³õÊ¼»¯¹â±êÎ»ÖÃµÄË÷Òı
+		int8_t nLastCursor = -2; //ÉÏÒ»¸önCursor
+    uint8_t textlen = 0; // ³õÊ¼»¯ÎÄ±¾³¤¶È±äÁ¿
 
-    // å¾ªç¯æ‰¾åˆ°ç¬¬ä¸€ä¸ªå¯è§çš„èœå•é¡¹
+    // Ñ­»·ÕÒµ½µÚÒ»¸ö¿É¼ûµÄ²Ëµ¥Ïî
     while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID))
         nFirst++;
 
-    // æ— é™å¾ªç¯ï¼Œå¤„ç†èœå•æ˜¾ç¤ºå’Œé€‰æ‹©
+    // ÎŞÏŞÑ­»·£¬´¦Àí²Ëµ¥ÏÔÊ¾ºÍÑ¡Ôñ
     for (;;)
     {
 				if(nCursor == -1) {
 					
 				
-					// æ ¹æ®èœå•IDé€‰æ‹©ç‰¹å®šçš„æŒ‡ç¤ºå­—ç¬¦
+					// ¸ù¾İ²Ëµ¥IDÑ¡ÔñÌØ¶¨µÄÖ¸Ê¾×Ö·û
 					FM_ANT_SEL mHit;
 					switch (pSubMenu->nMID)
 					{
-							// å¤„ç†å„ç§èœå•IDï¼Œè®¾ç½®å¯¹åº”çš„æŒ‡ç¤ºå­—ç¬¦
+							// ´¦Àí¸÷ÖÖ²Ëµ¥ID£¬ÉèÖÃ¶ÔÓ¦µÄÖ¸Ê¾×Ö·û
 							case MID_LSIG:
 									nHit = nLowerSig;
 									break;
@@ -2617,18 +2620,18 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 									nHit = nBand;
 									break;
 							case MID_FILT:
-									// æ ¹æ®RFæ¨¡å¼é€‰æ‹©é€‚å½“çš„æ»¤æ³¢å™¨æŒ‡ç¤ºå­—ç¬¦
+									// ¸ù¾İRFÄ£Ê½Ñ¡ÔñÊÊµ±µÄÂË²¨Æ÷Ö¸Ê¾×Ö·û
 									if (nRFMode == RFMODE_FM)
 											nHit = nFMFilter;
 									else
 											nHit = nAMFilter;
 									break;
 							default:
-									nHit = MID_NONE; // æ²¡æœ‰é€‰æ‹©ä»»ä½•é¡¹
+									nHit = MID_NONE; // Ã»ÓĞÑ¡ÔñÈÎºÎÏî
 									break;
 					}
 
-					// å¦‚æœæœ‰æœ‰æ•ˆçš„æŒ‡ç¤ºå­—ç¬¦ï¼Œæ˜¾ç¤ºåœ¨OLEDä¸Š
+					// Èç¹ûÓĞÓĞĞ§µÄÖ¸Ê¾×Ö·û£¬ÏÔÊ¾ÔÚOLEDÉÏ
 					if (nHit != MID_NONE)
 					{
 							mHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
@@ -2651,10 +2654,10 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 						}
 				}
 				
-        // åˆ¤æ–­èœå•IDï¼Œä»¥å†³å®šå¦‚ä½•æ˜¾ç¤º
+        // ÅĞ¶Ï²Ëµ¥ID£¬ÒÔ¾ö¶¨ÈçºÎÏÔÊ¾
         if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
         {
-            // è·å–å½“å‰æ˜¾ç¤ºé¡¹çš„æ–‡æœ¬é•¿åº¦ï¼Œå¹¶æ˜¾ç¤ºæ–‡æœ¬
+            // »ñÈ¡µ±Ç°ÏÔÊ¾ÏîµÄÎÄ±¾³¤¶È£¬²¢ÏÔÊ¾ÎÄ±¾
 						if(nLastFirst != nFirst) {
 							nLastFirst = nFirst;
 							textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
@@ -2664,14 +2667,14 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
         }
         else
         {
-            // å¾ªç¯æ˜¾ç¤ºæœ€å¤šä¸‰ä¸ªèœå•é¡¹
+            // Ñ­»·ÏÔÊ¾×î¶àÈı¸ö²Ëµ¥Ïî
 						if(nLastCursor != nCursor) {
 							nLastCursor = nCursor;
 							//OLED_Clear2();
 							OLED_Clear3();
 							if(nFirst != nLastFirst ) { //drop menu item once
-								// æ¸…é™¤OLEDå±å¹•
-								if(nLastFirst != -1) { //é‡æ–°ç»˜åˆ¶é€‰æ‹©çš„é¡¹ç›®çš„*ç¬¦å·
+								// Çå³ıOLEDÆÁÄ»
+								if(nLastFirst != -1) { //ÖØĞÂ»æÖÆÑ¡ÔñµÄÏîÄ¿µÄ*·ûºÅ
 									OLED_Clear1();
 									mHit = (nHit - nFirst + pSubMenu->nItemCount) % pSubMenu->nItemCount;
 									if (mHit <= 2){
@@ -2683,7 +2686,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 								
 								for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
 								{
-										// æ˜¾ç¤ºèœå•é¡¹æ–‡æœ¬
+										// ÏÔÊ¾²Ëµ¥ÏîÎÄ±¾
 										OLED_XYStrLen(1 + i8 * 5, 2, (pSubMenu->pMItem + ((nFirst + i8) % pSubMenu->nItemCount))->pszMTxt, 4, 1);
 										
 								}
@@ -2691,7 +2694,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 							for (i8 = 0; i8 < ((pSubMenu->nItemCount < 3) ? pSubMenu->nItemCount : 3); i8++)
 							{
 									
-									// å¦‚æœæ˜¯å…‰æ ‡æ‰€åœ¨ä½ç½®ï¼Œæ˜¾ç¤ºç‰¹æ®Šæ ‡è®°
+									// Èç¹ûÊÇ¹â±êËùÔÚÎ»ÖÃ£¬ÏÔÊ¾ÌØÊâ±ê¼Ç
 									if (i8 == (nCursor - nFirst))
 									{
 											
@@ -2702,13 +2705,13 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 						}
         }
 
-        // å¤„ç†æŒ‰é”®å’Œæ—‹è½¬ç¼–ç å™¨çš„è¾“å…¥
+        // ´¦Àí°´¼üºÍĞı×ª±àÂëÆ÷µÄÊäÈë
         for (lp = 0; ; lp++)
         {
-            // å¤„ç†æŒ‰é”®è¾“å…¥
+            // ´¦Àí°´¼üÊäÈë
             if ((i8 = GetKey()) != false)
             {
-								// å¦‚æœé•¿æŒ‰å·¦ç¼–ç å™¨æˆ–è€…å³ç¼–ç å™¨ï¼Œè¿”å›
+								// Èç¹û³¤°´×ó±àÂëÆ÷»òÕßÓÒ±àÂëÆ÷£¬·µ»Ø
 								if(i8 && ( ((uint8_t)i8) == (KEY_LROT | KEY_LONGPRESS) || ((uint8_t)i8) == (KEY_RROT | KEY_LONGPRESS))) {
 									//bExitMenu = 1;
 									OLED_Clear1();
@@ -2718,7 +2721,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 									
                   return;
 								}									
-                // å¦‚æœæŒ‰ä¸‹çš„æ˜¯å·¦æ—‹æˆ–å³æ—‹æŒ‰é’®ï¼Œé€‰æ‹©å½“å‰é¡¹
+                // Èç¹û°´ÏÂµÄÊÇ×óĞı»òÓÒĞı°´Å¥£¬Ñ¡Ôñµ±Ç°Ïî
                 if (i8 & (KEY_LROT | KEY_RROT))
                 {
 										OLED_Clear1();
@@ -2726,7 +2729,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 										nLastFirst = -1;
 										nLastCursor = -2;
 									
-                    // æ ¹æ®èœå•IDè·å–é€‰æ‹©çš„æ•°æ®
+                    // ¸ù¾İ²Ëµ¥ID»ñÈ¡Ñ¡ÔñµÄÊı¾İ
                     if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)
                     {
                         u8_data = (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID;
@@ -2736,14 +2739,14 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
                         u8_data = (pSubMenu->pMItem + nCursor)->nMID;
                     }
 
-                    // å¦‚æœé€‰æ‹©çš„æ˜¯è¿”å›é¡¹ï¼Œé€€å‡ºå‡½æ•°
+                    // Èç¹ûÑ¡ÔñµÄÊÇ·µ»ØÏî£¬ÍË³öº¯Êı
                     if (u8_data == MID_RET)
                         return;
 
-                    // å¤„ç†é€‰æ‹©çš„èœå•é¡¹
+                    // ´¦ÀíÑ¡ÔñµÄ²Ëµ¥Ïî
                     ProcMenuItem(u8_data);
 
-                    // æ ¹æ®æƒ…å†µå†³å®šæ˜¯å¦è‡ªåŠ¨è¿”å›å­èœå•æˆ–ç»§ç»­å¤„ç†
+                    // ¸ù¾İÇé¿ö¾ö¶¨ÊÇ·ñ×Ô¶¯·µ»Ø×Ó²Ëµ¥»ò¼ÌĞø´¦Àí
                     if ((pSubMenu->nMID >= MID_MIN_AUTORET) || bExitMenu)
                         return;
                     else
@@ -2751,20 +2754,20 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
                 }
                 else
                 {
-                    // å…¶ä»–æŒ‰é”®å¤„ç†ï¼šè®¾ç½®é€€å‡ºæ ‡å¿—å¹¶è¿”å›
+                    // ÆäËû°´¼ü´¦Àí£ºÉèÖÃÍË³ö±êÖ¾²¢·µ»Ø
                     bExitMenu = 1;
                     return;
                 }
             }
 						
-            // å¤„ç†æ—‹è½¬ç¼–ç å™¨çš„è¾“å…¥ï¼Œè°ƒæ•´nFirst
+            // ´¦ÀíĞı×ª±àÂëÆ÷µÄÊäÈë£¬µ÷ÕûnFirst
             if ((i8 = (GetLRot() + GetRRot())) != false)
             {
                 
-                // æ ¹æ®èœå•IDè°ƒæ•´ç¬¬ä¸€ä¸ªæ˜¾ç¤ºé¡¹çš„ç´¢å¼•
-                if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)//ä¸€è¡Œä¸€ä¸ªèœå•é¡¹
+                // ¸ù¾İ²Ëµ¥IDµ÷ÕûµÚÒ»¸öÏÔÊ¾ÏîµÄË÷Òı
+                if (pSubMenu->nMID < MID_MIN_AUTORET && pSubMenu->nMID > MID_OPTION)//Ò»ĞĞÒ»¸ö²Ëµ¥Ïî
                 {
-									if((nFirst + i8) >=0 && (nFirst + i8) < (pSubMenu->nItemCount) ) { //å‰åè¾¹ç•Œæ£€æµ‹
+									if((nFirst + i8) >=0 && (nFirst + i8) < (pSubMenu->nItemCount) ) { //Ç°ºó±ß½ç¼ì²â
                     nFirst = (nFirst + i8 + pSubMenu->nItemCount) % pSubMenu->nItemCount;
                     if (i8 > 0)
                         while (!IsMenuVisible((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID)) {
@@ -2778,10 +2781,10 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 										
 									}
                 }
-                else //ä¸€è¡Œå¤šä¸ªèœå•é¡¹
+                else //Ò»ĞĞ¶à¸ö²Ëµ¥Ïî
                 {
 										//OLED_Clear3();
-                    // è°ƒæ•´å…‰æ ‡ä½ç½®
+                    // µ÷Õû¹â±êÎ»ÖÃ
                     nCursor += i8;
                     if (nCursor < 0)
                     {
@@ -2809,7 +2812,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
                 break;
             }
 
-            // å»¶æ—¶å¹¶åˆ·æ–°OLEDå±å¹•
+            // ÑÓÊ±²¢Ë¢ĞÂOLEDÆÁÄ»
             //if (!(lp % 16))
             //    GetStatus();
             HAL_Delay(64);
