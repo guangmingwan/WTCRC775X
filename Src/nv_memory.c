@@ -65,7 +65,7 @@ const uint8_t NVM_INIT[] =
 
 void NVMInitStation(void)
 {
-	printf("NVMInitStations: %4X",eeprom_read_word(NVMADDR_SIGSTATION));
+	printf("初始化电台\n");
 	OLED_XYStr(0, 1, "Init Station ...");
 	eeprom_erase_full_chip();
 	NV_write_word(NVMADDR_SIGSTATION, NVMSIGSTATION);
@@ -74,7 +74,7 @@ void NVMInitStation(void)
 
 void NVMInitSetting(void)
 {
-	printf("NVMInitSettings: %4X",eeprom_read_word(NVMADDR_SIG));
+	printf("初始化设置\n");
 	OLED_XYStr(0, 1, "Init Setting ...");
 	NVMUnpkWrData(NVM_INIT);  // Initialize NV memory
 	OLED_Refresh();

@@ -662,38 +662,39 @@ void CheckVolume(void)
 			bMuted = false;
 		AddSyncBits(NEEDSYNC_VOL);
 		CheckUpdateAlt(ALT_VOL);  // Show volume for a period
+		VoiceSayVolume();
 	}
 }
-// ÊòæÁ§∫Â≠óÁ¨¶‰∏≤Êï∞ÁªÑ‰∏≠ÁöÑÂÜÖÂÆπÔºåÊØèË°åÊúÄÂ§öÊòæÁ§∫16‰∏™Â≠óÁ¨¶
+// œ‘ æ◊÷∑˚¥Æ ˝◊È÷–µƒƒ⁄»›£¨√ø––◊Ó∂‡œ‘ æ16∏ˆ◊÷∑˚
 void displayTips(void) {
-    static int currentIndex = 0; // ÂΩìÂâçÊòæÁ§∫ÁöÑÂ≠óÁ¨¶‰∏≤Á¥¢Âºï
-    static int currentOffset = 0; // ÂΩìÂâçÊòæÁ§∫ÁöÑÂÅèÁßªÈáè
-    static uint32_t lastUpdateTick = 0; // ‰∏äÊ¨°Êõ¥Êñ∞ÁöÑÊó∂Èó¥Êà≥
-    static int displayTimer = 0; // ÊòæÁ§∫ËÆ°Êó∂Âô®
+    static int currentIndex = 0; // µ±«∞œ‘ æµƒ◊÷∑˚¥ÆÀ˜“˝
+    static int currentOffset = 0; // µ±«∞œ‘ æµƒ∆´“∆¡ø
+    static uint32_t lastUpdateTick = 0; // …œ¥Œ∏¸–¬µƒ ±º‰¥¡
+    static int displayTimer = 0; // œ‘ æº∆ ±∆˜
 
     const char *currentString = buttomTips[currentIndex];
     int length = strlen(currentString);
 
-    // Ëé∑ÂèñÂΩìÂâçÊó∂Èó¥
+    // ªÒ»°µ±«∞ ±º‰
     uint32_t currentTick = HAL_GetTick();
 
-    // Ê£ÄÊü•ÊòØÂê¶ÈúÄË¶ÅÊõ¥Êñ∞ÊòæÁ§∫
-    if (currentTick - lastUpdateTick >= 1000*4 ) { // ÊØèÁßíÊªöÂä®3‰∏™Â≠óÁ¨¶
+    // ºÏ≤È «∑Ò–Ë“™∏¸–¬œ‘ æ
+    if (currentTick - lastUpdateTick >= 1000*4 ) { // √ø√Îπˆ∂Ø3∏ˆ◊÷∑˚
         lastUpdateTick = currentTick;
 
-        // Â¶ÇÊûúÂΩìÂâçÂ≠óÁ¨¶‰∏≤ÈïøÂ∫¶Ë∂ÖËøá16‰∏™Â≠óÁ¨¶ÔºåÂàô‰ΩøÁî®Ë∑ëÈ©¨ÁÅØÊ®°Âºè
+        // »Áπ˚µ±«∞◊÷∑˚¥Æ≥§∂»≥¨π˝16∏ˆ◊÷∑˚£¨‘Ú π”√≈‹¬Ìµ∆ƒ£ Ω
         if (length > 16) {
-            // ËÆ°ÁÆóË¶ÅÊòæÁ§∫ÁöÑÂ≠êÂ≠óÁ¨¶‰∏≤
+            // º∆À„“™œ‘ æµƒ◊”◊÷∑˚¥Æ
             const char *subStr = &currentString[currentOffset];
             int subLength = length - currentOffset;
 
-            // Â¶ÇÊûúÂ≠êÂ≠óÁ¨¶‰∏≤ÈïøÂ∫¶Ë∂ÖËøá16‰∏™Â≠óÁ¨¶ÔºåÂè™ÊòæÁ§∫Ââç16‰∏™Â≠óÁ¨¶
+            // »Áπ˚◊”◊÷∑˚¥Æ≥§∂»≥¨π˝16∏ˆ◊÷∑˚£¨÷ªœ‘ æ«∞16∏ˆ◊÷∑˚
             if (subLength > 16) {
-                subStr = &currentString[currentOffset]; // ÈáçÊñ∞ËÆ°ÁÆóÂ≠êÂ≠óÁ¨¶‰∏≤ÁöÑËµ∑Âßã‰ΩçÁΩÆ
-                subLength = 16; // ÈôêÂà∂Â≠êÂ≠óÁ¨¶‰∏≤ÈïøÂ∫¶‰∏∫16
+                subStr = &currentString[currentOffset]; // ÷ÿ–¬º∆À„◊”◊÷∑˚¥Æµƒ∆ ºŒª÷√
+                subLength = 16; // œﬁ÷∆◊”◊÷∑˚¥Æ≥§∂»Œ™16
             }
 
-            // Âú® OLED ‰∏äÊòæÁ§∫Â≠êÂ≠óÁ¨¶‰∏≤
+            // ‘⁄ OLED …œœ‘ æ◊”◊÷∑˚¥Æ
 						//OLED_XYStr(15, 3, " ");
 						//OLED_Clear3();
 						if(strlen(subStr)>0 && strlen(subStr)<16) {
@@ -701,34 +702,34 @@ void displayTips(void) {
 						}
             OLED_XYStr(0, 3, subStr);
 										
-            // Êõ¥Êñ∞ÂÅèÁßªÈáèÔºåÂáÜÂ§á‰∏ã‰∏ÄÊ¨°ÊòæÁ§∫
+            // ∏¸–¬∆´“∆¡ø£¨◊º±∏œ¬“ª¥Œœ‘ æ
             currentOffset=currentOffset+16;
             if (currentOffset > (length-1)) {
-                currentOffset = 0; // ÈáçÁΩÆÂÅèÁßªÈáèÔºå‰ªéÂ§¥ÂºÄÂßãÊòæÁ§∫
-                displayTimer = 1000; // ÂºÄÂßãËÆ°Êó∂Âô®ÔºåÁ≠âÂæÖ0.5ÁßíÂêéÊòæÁ§∫‰∏ã‰∏Ä‰∏™Â≠óÁ¨¶‰∏≤
+                currentOffset = 0; // ÷ÿ÷√∆´“∆¡ø£¨¥”Õ∑ø™ ºœ‘ æ
+                displayTimer = 1000; // ø™ ºº∆ ±∆˜£¨µ»¥˝0.5√Î∫Ûœ‘ æœ¬“ª∏ˆ◊÷∑˚¥Æ
             }
         } else {
-            // Â¶ÇÊûúÂΩìÂâçÂ≠óÁ¨¶‰∏≤ÈïøÂ∫¶‰∏çË∂ÖËøá16‰∏™Â≠óÁ¨¶ÔºåÁõ¥Êé•ÊòæÁ§∫
+            // »Áπ˚µ±«∞◊÷∑˚¥Æ≥§∂»≤ª≥¨π˝16∏ˆ◊÷∑˚£¨÷±Ω”œ‘ æ
 						OLED_Clear3();
             OLED_XYStr(0, 3, currentString);
-            currentOffset = 0; // ÈáçÁΩÆÂÅèÁßªÈáè
-            displayTimer = 1000; // ÂºÄÂßãËÆ°Êó∂Âô®ÔºåÁ≠âÂæÖ0.5ÁßíÂêéÊòæÁ§∫‰∏ã‰∏Ä‰∏™Â≠óÁ¨¶‰∏≤
+            currentOffset = 0; // ÷ÿ÷√∆´“∆¡ø
+            displayTimer = 1000; // ø™ ºº∆ ±∆˜£¨µ»¥˝0.5√Î∫Ûœ‘ æœ¬“ª∏ˆ◊÷∑˚¥Æ
         }
     }
 
-    // Ê£ÄÊü•ÊòØÂê¶ÈúÄË¶ÅÂàáÊç¢Âà∞‰∏ã‰∏Ä‰∏™Â≠óÁ¨¶‰∏≤
+    // ºÏ≤È «∑Ò–Ë“™«–ªªµΩœ¬“ª∏ˆ◊÷∑˚¥Æ
     if (displayTimer > 0) {
         displayTimer -= (currentTick - lastUpdateTick);
         lastUpdateTick = currentTick;
 
         if (displayTimer <= 0) {
-            currentIndex++; // ÂàáÊç¢Âà∞‰∏ã‰∏Ä‰∏™Â≠óÁ¨¶‰∏≤
+            currentIndex++; // «–ªªµΩœ¬“ª∏ˆ◊÷∑˚¥Æ
 						currentOffset = 0;
             if (currentIndex >= (int)(sizeof(buttomTips) / sizeof(buttomTips[0]))) {
 								
-                currentIndex = 0; // Âæ™ÁéØÂà∞Êï∞ÁªÑÊú´Â∞æÂêéÂõûÂà∞ÂºÄÂßã
+                currentIndex = 0; // —≠ª∑µΩ ˝◊Èƒ©Œ≤∫ÛªÿµΩø™ º
             }
-            displayTimer = 0; // ÈáçÁΩÆËÆ°Êó∂Âô®
+            displayTimer = 0; // ÷ÿ÷√º∆ ±∆˜
 						//OLED_Clear3();
         }
     }
@@ -1099,6 +1100,8 @@ void ProcBand(uint8_t nBd)
 	SetRFCtrlReg();  // Set RF mode related regs
 
 	AddSyncBits(NEEDSYNC_BAND);
+	VoiceSayBand();
+	VoiceSayFrequency();
 }
 
 
@@ -1109,6 +1112,7 @@ void ProcStepFilter(uint8_t nKey)
 	case KEY_STEP:
 		nStepIdx = (nStepIdx + 1) % NUM_STEPS;
 		AddSyncBits(NEEDSYNC_STEPIDX);
+		VoiceSayStep();
 		break;
 
 	case KEY_STEP | KEY_LONGPRESS:   // Default step
@@ -1117,11 +1121,13 @@ void ProcStepFilter(uint8_t nKey)
 		else
 			nStepIdx = NUM_STEPS - 1;
 		AddSyncBits(NEEDSYNC_STEPIDX);
+		VoiceSayStep();
 		break;
 
 	case KEY_FILTER:
 		NextFilter();
 		SetFilter(true);
+		VoiceSayFilter();
 		break;
 
 	case KEY_FILTER | KEY_LONGPRESS:  // Default filter
@@ -1140,6 +1146,7 @@ void ProcStepFilter(uint8_t nKey)
 				nAMFilter = DEF_AM_FILTER2;
 		}
 		SetFilter(true);
+		VoiceSayFilter();
 		break;
 	}
 }  // void ProcStepFilter(uint8_t nKey)
@@ -1195,6 +1202,7 @@ int8_t Seek(int8_t nDir)
 {
 	int8_t i;
 	uint8_t nKey;
+	VoiceSay(nDir > 0 ? "œÚ…œÀ—À˜" : "œÚœ¬À—À˜");
 
 	if (nMode != MODE_AUX)
 		SetVolume(0);  // Mute
@@ -1242,6 +1250,8 @@ int8_t Seek(int8_t nDir)
 			{  // Find one signal
 				SetFilter(false);
 				SetVolume(nVolume);  // Unmute
+				VoiceSay("’“µΩµÁÃ®");
+				VoiceSayFrequency();
 				return 0;
 			}
 		}
@@ -1436,6 +1446,7 @@ void toggleMute() {
 			else
 				SetVolume(0);  // Mute
 			bMuted = !bMuted;
+			VoiceSay(bMuted ? "æ≤“Ù" : "»°œ˚æ≤“Ù");
 }
 void TunerLoop(void)
 {
@@ -1580,6 +1591,7 @@ void TunerLoop(void)
 				nBandFreq[nBand] += i8 * nBandStep[nBand][nStepIdx];
 				AdjFreq(true);
 				TuneFreqDisp();
+				VoiceSayFrequency();
 				break;
 
 			case TYPE_SEEK:
@@ -1591,6 +1603,8 @@ void TunerLoop(void)
 					SeekCh(-1);
 				else
 					SeekCh(1);
+				VoiceSayChannel();
+				VoiceSayFrequency();
 				break;
 			}
 		}
@@ -1610,12 +1624,13 @@ void TunerLoop(void)
 			if(bEMI == 1) {
 				CheckUpdateAlt(ALT_EMI);
 			}
+			VoiceSay(bEMI ? "øπ∏…»≈ø™∆Ù" : "øπ∏…»≈πÿ±’");
 			break;
 			
 		case KEY_LROT:
 			clear_screen();
+			VoiceSayMenuItem(MID_OPTION);
 			Menu(MID_OPTION);
-		printf("<Z>3");
 			break;
 
 		case KEY_LROT | KEY_LONGPRESS:  // Toggle mute/unmute
@@ -1625,11 +1640,12 @@ void TunerLoop(void)
 
 		case KEY_RROT:
 			clear_screen();
+			VoiceSayMenuItem(MID_FREQUENCY);
 			Menu(MID_FREQUENCY);
-		printf("<Z>3");
 			break;
 
 		case KEY_RROT | KEY_LONGPRESS:
+			VoiceSay("±£¥Ê…æ≥˝∆µµ¿");
 			AddDelCh();
 			LCDUpdate();
 			break;
@@ -1639,6 +1655,7 @@ void TunerLoop(void)
 			if (nTuneType == TYPE_CH)
 				SeekCh(0);
 			AddSyncBits(NEEDSYNC_TUNE);
+			VoiceSayTuneType();
 			break;
 
 		case KEY_TUNE | KEY_LONGPRESS:
@@ -1650,6 +1667,7 @@ void TunerLoop(void)
 				SeekCh(0);
 			}
 			AddSyncBits(NEEDSYNC_TUNE);
+			VoiceSayTuneType();
 			break;
 
 		case KEY_BAND:

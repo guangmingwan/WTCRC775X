@@ -6,6 +6,7 @@
 #include "soft_i2c.h"
 #include "nv_memory.h"
 #include <math.h>
+#include <stdio.h>
 #ifdef LCD25696
 #include "lcd25696.h"
 #else
@@ -22,6 +23,9 @@ volatile int8_t nFlags[] ={0, 0};
 const char *pszTuneTypes[] = { "FS", "SK", "CH", "SC", "AN", "SS" };
 const char *pszBands[] = { "LW", "MW", "SW", "FL", "FM" };  // Band name to display
 
+static const char *VoiceBandText[] = { "长波", "中波", "短波", "校园波段", "调频" };
+static const char *VoiceTuneText[] = { "频率调谐", "搜索调谐", "频道调谐", "扫描调谐", "守候调谐", "搜索保存" };
+
 extern uint8_t bDisp_USN;
 void switchAnt();
 extern uint8_t IR_Flag;
@@ -31,9 +35,163 @@ extern void toggleMute();
 extern bool bMuted;
 uint8_t irKey = 0;
 
+extern struct M_ITEM M_FMFilter[];
+extern struct M_ITEM M_AMFilter[];
+
 uint8_t bExitMenu;
 FM_ANT_SEL nSNRAnt = FM_ANT1;
 FM_ANT_SEL mainFMAT = FM_ANT1;
+
+void VoiceSay(const char *text)
+{
+	printf("%s\n", text);
+	fflush(stdout);
+}
+
+void VoiceSayValue(const char *text, int32_t value)
+{
+	printf("%s%d\n", text, value);
+	fflush(stdout);
+}
+
+void VoiceSayFrequency(void)
+{
+	if (nBand >= BAND_FL)
+	{
+		printf("频率%d点%03d\n", (int)(nBandFreq[nBand] / 1000), (int)(nBandFreq[nBand] % 1000));
+	}
+	else
+	{
+		printf("频率%dK\n", (int)nBandFreq[nBand]);
+	}
+	fflush(stdout);
+}
+
+void VoiceSayVolume(void)
+{
+	if (bMuted)
+		VoiceSay("静音");
+	else
+		VoiceSayValue("音量", nVolume);
+}
+
+void VoiceSayBand(void)
+{
+	VoiceSay(VoiceBandText[nBand]);
+}
+
+void VoiceSayTuneType(void)
+{
+	VoiceSay(VoiceTuneText[nTuneType]);
+}
+
+void VoiceSayStep(void)
+{
+	VoiceSayValue("步进", nBandStep[nBand][nStepIdx]);
+}
+
+void VoiceSayFilter(void)
+{
+	if (nRFMode == RFMODE_FM)
+		printf("滤波器%s\n", M_FMFilter[nFMFilter].pszMTxt);
+	else
+		printf("滤波器%s\n", M_AMFilter[nAMFilter].pszMTxt);
+	fflush(stdout);
+}
+
+void VoiceSayChannel(void)
+{
+	VoiceSayValue("频道", nBandCh[nBand]);
+}
+
+void VoiceSayMenuItem(uint8_t nMenuID)
+{
+	switch (nMenuID)
+	{
+	case MID_OPTION: VoiceSay("主菜单"); break;
+	case MID_FREQUENCY: VoiceSay("调台菜单"); break;
+	case MID_RADI: VoiceSay("收音设置"); break;
+	case MID_AUDI: VoiceSay("音频设置"); break;
+	case MID_APPL: VoiceSay("应用设置"); break;
+	case MID_SCSV: VoiceSay("搜索保存频道"); break;
+	case MID_SQUELCH1: VoiceSay("静音门限"); break;
+	case MID_SQUELCH2: VoiceSay("搜索门限"); break;
+	case MID_LSIG: VoiceSay("低信号门限"); break;
+	case MID_FIRM: VoiceSay("固件选择"); break;
+	case MID_FMST: VoiceSay("立体声"); break;
+	case MID_FMAT: VoiceSay("天线选择"); break;
+	case MID_FMDUAL: VoiceSay("双天线"); break;
+	case MID_FMSI: VoiceSay("立体声改善"); break;
+	case MID_FMCE: VoiceSay("信道均衡"); break;
+	case MID_FMMP: VoiceSay("多径改善"); break;
+	case MID_FMNS: VoiceSay("点击噪声抑制"); break;
+	case MID_INCA: VoiceSay("噪声消除"); break;
+	case MID_FMBW: VoiceSay("动态带宽"); break;
+	case MID_DEEM: VoiceSay("去加重"); break;
+	case MID_AGC: VoiceSay("自动增益门限"); break;
+	case MID_NB: VoiceSay("噪声消隐"); break;
+	case MID_TONE: VoiceSay("音调控制"); break;
+	case MID_BAL: VoiceSay("平衡和前后"); break;
+	case MID_BKLT: VoiceSay("背光"); break;
+	case MID_BKKEEP: VoiceSay("背光保持"); break;
+	case MID_BKADJ: VoiceSay("背光亮度"); break;
+	case MID_TSCN: VoiceSay("扫描停留时间"); break;
+	case MID_TANY: VoiceSay("守候保持时间"); break;
+	case MID_TIME: VoiceSay("时间设置"); break;
+	case MID_MODE: VoiceSay("工作模式"); break;
+	case MID_MODERF: VoiceSay("射频模式"); break;
+	case MID_MODEAUX: VoiceSay("辅助输入"); break;
+	case MID_STAT: VoiceSay("信号质量"); break;
+	case MID_TUNE: VoiceSay("调谐方式"); break;
+	case MID_FREQ: VoiceSay("频率调谐"); break;
+	case MID_SEEK: VoiceSay("搜索调谐"); break;
+	case MID_CH: VoiceSay("频道调谐"); break;
+	case MID_SCAN: VoiceSay("扫描调谐"); break;
+	case MID_ANY: VoiceSay("守候调谐"); break;
+	case MID_BAND: VoiceSay("波段选择"); break;
+	case MID_LW: VoiceSay("长波"); break;
+	case MID_MW: VoiceSay("中波"); break;
+	case MID_SW: VoiceSay("短波"); break;
+	case MID_FL: VoiceSay("校园波段"); break;
+	case MID_FM: VoiceSay("调频"); break;
+	case MID_FILT: VoiceSay("滤波器选择"); break;
+	case MID_SINE: VoiceSay("正弦波"); break;
+	case MID_HELP: VoiceSay("帮助"); break;
+	case MID_RET: VoiceSay("返回"); break;
+	case MID_EXIT: VoiceSay("退出"); break;
+	case MID_LSIGNORM: VoiceSay("低信号正常"); break;
+	case MID_LSIGLOW: VoiceSay("低信号降低"); break;
+	case MID_FIRM1: VoiceSay("固件EMBE"); break;
+	case MID_FIRM2: VoiceSay("固件R七点一"); break;
+	case MID_FIRM3: VoiceSay("固件R八点零"); break;
+	case MID_FMAT1: VoiceSay("天线一"); break;
+	case MID_FMAT2: VoiceSay("天线二"); break;
+	case MID_FMDUALOFF: VoiceSay("双天线关闭"); break;
+	case MID_FMDUALON: VoiceSay("双天线开启"); break;
+	case MID_FMSIOFF:
+	case MID_FMCEOFF:
+	case MID_FMMPOFF:
+	case MID_FMNSOFF:
+	case MID_INCAOFF:
+	case MID_DEEM0: VoiceSay("关闭"); break;
+	case MID_FMSION:
+	case MID_FMCEON:
+	case MID_FMMPON:
+	case MID_FMNSON:
+	case MID_INCAON: VoiceSay("开启"); break;
+	case MID_DEEM50: VoiceSay("五十US"); break;
+	case MID_DEEM75: VoiceSay("七十五US"); break;
+	default:
+		if ((nMenuID >= MID_FTFM00) && (nMenuID <= MID_FTFM16))
+			printf("滤波器%s\n", M_FMFilter[nMenuID - MID_FTFM00].pszMTxt);
+		else if ((nMenuID >= MID_FTAM00) && (nMenuID <= MID_FTAM15))
+			printf("滤波器%s\n", M_AMFilter[nMenuID - MID_FTAM00].pszMTxt);
+		else
+			printf("操作\n");
+		fflush(stdout);
+		break;
+	}
+}
 // SineGen volume
 const uint8_t SINE_GEN_VOL[] =
 {
@@ -481,7 +639,7 @@ void switchFMChannel(float channel)
 
 	int fmChannel = channel * 1000;
 	
-	//printf("??????FM???? %.1f\n", channel);
+	//切换FM频道
 	fflush(stdout);
 	nBand = BAND_FM;
 	nBandFreq[nBand] = fmChannel;
@@ -536,15 +694,15 @@ void handleTimeout(void)
         {
             switchAMChannel(channel, BAND_SW);
         }
-        else
-        {
-            printf("input unknown%s\n", input);
-        }
-    }
-    else
-    {
-        printf("input unknown%s\n", input);
-    }
+		else
+		{
+			VoiceSay("输入错误");
+		}
+	}
+	else
+	{
+		VoiceSay("输入错误");
+	}
 
     // Clear input
     memset(input, 0, sizeof(input));
@@ -563,10 +721,10 @@ void safe_strcat(char *src, const char *channel)
         strncat(input, channel, max_size - input_len);
         inputIndex += channel_len;
     }
-    else
-    {
-        printf("Buffer overflow prevented: input is too long.\n");
-    }
+	else
+	{
+		VoiceSay("输入过长");
+	}
 }
 // Process remote input
 void processRemoteInput(uint32_t irCode)
@@ -590,18 +748,22 @@ void processRemoteInput(uint32_t irCode)
     {
         // Save to character array
         safe_strcat(input, channel);
-        if (strcmp(channel, "*") == 0)
-        {
-            printf("<Z>0");
-        }
-        else if (strcmp(channel, ".") == 0)
-        {
-            printf(".");
-        }
-        else
-        {
-            printf("%s\n", channel);
-        }
+		if (strcmp(channel, "*") == 0)
+		{
+			VoiceSay("星号");
+		}
+		else if (strcmp(channel, ".") == 0)
+		{
+			VoiceSay("小数点");
+		}
+		else if (strcmp(channel, "#") == 0)
+		{
+			VoiceSay("确认");
+		}
+		else
+		{
+			printf("输入%s\n", channel);
+		}
         fflush(stdout);
 
         // Reset timeout counter
@@ -626,10 +788,10 @@ void processRemoteInput(uint32_t irCode)
                     handleTimeout();
                 }
             }
-            else
-            {
-                printf("input unknown%s\n", input);
-            }
+			else
+			{
+				VoiceSay("输入错误");
+			}
             // Clear input
             memset(input, 0, sizeof(input));
             inputIndex = 0;
@@ -639,10 +801,10 @@ void processRemoteInput(uint32_t irCode)
             inputIndex++;
         }
     }
-    else
-    {
-        printf("unknown ir code\n");
-    }
+	else
+	{
+		VoiceSay("未知遥控");
+	}
 }
 
 // Timer callback function to check for timeout
@@ -657,7 +819,7 @@ void IR_Check()
 {
 	if (IR_Flag == 1)
 	{
-		// printf("%08x\r\n",IRCode);
+		//处理红外编码
 		OLED_Display_On();
 		bLCDOff = false;
 		nBacklightTimer = HAL_GetTick();
@@ -684,8 +846,6 @@ void IR_Check()
 			AddSyncBits(NEEDSYNC_VOL);
 			CheckUpdateAlt(ALT_VOL); // Show volume for a period
 			*/
-			printf("音量%d\n", nVolume);
-			fflush(stdout);
 			break;
 		//case 0x00FF02FD: // volume +
 		case 0x00FFA857:
@@ -694,8 +854,6 @@ void IR_Check()
 			AddSyncBits(NEEDSYNC_VOL);
 			CheckUpdateAlt(ALT_VOL); // Show volume for a period
 			*/
-			printf("音量%d\n", nVolume);
-			fflush(stdout);
 			break;
 		case 0x00FFa25d: // ch-
 			irKey = KEY_LROT;
@@ -1309,6 +1467,7 @@ void CheckUpdateAlt(int8_t nShow)  // Check and update ALT area
 void Menu_Squelch(uint8_t nIdx)
 {
     int16_t i16 = nSquelch[nIdx];
+    int8_t rot;
     uint8_t nKey, lp;
     bool bShowColon = true;  // 新增变量，用于跟踪冒号是否显示
 
@@ -1319,9 +1478,12 @@ void Menu_Squelch(uint8_t nIdx)
 
     for (lp = 0; ; lp++)
     {
-        i16 += GetLRot() + GetRRot();
+        rot = GetLRot() + GetRRot();
+        i16 += rot;
         i16 = constrain(i16, -99, 99);
         OLED_XYIntLen(10, 2, i16, 3);
+        if (rot)
+            VoiceSayValue(nIdx ? "搜索门限" : "静音门限", i16);
 
         if ((nKey = GetKey()) != false)
         {
@@ -1363,6 +1525,7 @@ void Menu_FMDynamicBW(void)
 			nFMDynamicBW = constrain(i8, 0, 3);
 			OLED_XYIntLen(15, 2, nFMDynamicBW, 1);
 			SetRFCtrlReg();
+			VoiceSayValue("动态带宽", nFMDynamicBW);
 		}
 
 		if ((nKey = GetKey()) != false)
@@ -1399,6 +1562,7 @@ void Menu_AGC(void)
 			nAGC = constrain(i8, 0, 3);
 			OLED_XYIntLen(15, 2, nAGC, 1);
 			SetRFCtrlReg();
+			VoiceSayValue("自动增益门限", nAGC);
 		}
 
 		if ((nKey = GetKey()) != false)
@@ -1436,6 +1600,7 @@ void Menu_Stereo(void)
             nStereo = constrain(i8, 0, 9);
             OLED_XYIntLen(15, 2, nStereo, 1);
             SetRFCtrlReg();
+            VoiceSayValue("立体声", nStereo);
         }
 
         if ((nKey = GetKey()) != false)
@@ -1475,6 +1640,7 @@ void Menu_NoiseBlanker(void)
 			nNBSens = constrain(i8, 0, 3);
 			OLED_XYIntLen(15, 2, nNBSens, 1);
 			SetRFCtrlReg();
+			VoiceSayValue("噪声消隐", nNBSens);
 		}
 
 		if ((nKey = GetKey()) != false)
@@ -1497,6 +1663,7 @@ void Menu_NoiseBlanker(void)
 void Menu_BacklightAdj(void)
 {
 	int16_t i16 = nBacklightAdj;
+	int8_t rot;
 	uint8_t nKey, lp;
 
 	// 0123456789012345
@@ -1504,9 +1671,12 @@ void Menu_BacklightAdj(void)
 
 	for (lp = 0; ; lp++)
 	{
-		i16 = (i16 + GetLRot() + GetRRot() + 256) % 256;
+		rot = GetLRot() + GetRRot();
+		i16 = (i16 + rot + 256) % 256;
 		OLED_XYIntLen(12, 2, i16, 3);
 		OLED_SetBackLight(i16);
+		if (rot)
+			VoiceSayValue("背光亮度", i16);
 		if ((nKey = GetKey()) != false)
 		{
 			nBacklightAdj = (uint8_t)i16;
@@ -1528,6 +1698,7 @@ void Menu_BacklightAdj(void)
 void Menu_BacklightKeep(void)
 {
 	int16_t i16 = nBacklightKeep;
+	int8_t rot;
 	uint8_t nKey, lp;
 
 	// 0123456789012345
@@ -1535,8 +1706,11 @@ void Menu_BacklightKeep(void)
 
 	for (lp = 0; ; lp++)
 	{
-		i16 = (i16 + GetLRot() + GetRRot() + 256) % 256;
+		rot = GetLRot() + GetRRot();
+		i16 = (i16 + rot + 256) % 256;
 		OLED_XYIntLen(13, 2, i16, 3);
+		if (rot)
+			VoiceSayValue("背光保持", i16);
 
 		if ((nKey = GetKey()) != false)
 		{
@@ -1559,6 +1733,7 @@ void Menu_BacklightKeep(void)
 void Menu_ScanStayTime(void)
 {
 	int16_t i16 = nScanStayTime;
+	int8_t rot;
 	uint8_t nKey, lp;
 
 	// 0123456789012345
@@ -1566,9 +1741,12 @@ void Menu_ScanStayTime(void)
 
 	for (lp = 0; ; lp++)
 	{
-		i16 += GetLRot() + GetRRot();
+		rot = GetLRot() + GetRRot();
+		i16 += rot;
 		i16 = constrain(i16, 0, 255);
 		OLED_XYIntLen(12, 2, i16, 3);
+		if (rot)
+			VoiceSayValue("扫描停留时间", i16);
 
 		if ((nKey = GetKey()) != false)
 		{
@@ -1591,6 +1769,7 @@ void Menu_ScanStayTime(void)
 void Menu_AnyHoldTime(void)
 {
 	int16_t i16 = nAnyHoldTime;
+	int8_t rot;
 	uint8_t nKey, lp;
 
 	// 0123456789012345
@@ -1598,9 +1777,12 @@ void Menu_AnyHoldTime(void)
 
 	for (lp = 0; ; lp++)
 	{
-		i16 += GetLRot() + GetRRot();
+		rot = GetLRot() + GetRRot();
+		i16 += rot;
 		i16 = constrain(i16, 0, 255);
 		OLED_XYIntLen(11, 2, i16, 3);
+		if (rot)
+			VoiceSayValue("守候保持时间", i16);
 
 		if ((nKey = GetKey()) != false)
 		{
@@ -1917,6 +2099,12 @@ void Menu_Tone(void)
 
             SetTone();
             AddSyncBits(NEEDSYNC_TONE);
+            if (nItem == 0)
+                VoiceSayValue("低音", nBass);
+            else if (nItem == 1)
+                VoiceSayValue("中音", nMiddle);
+            else
+                VoiceSayValue("高音", nTreble);
         }
 
         if (!(lp % 16)) {  // 每隔16次循环切换冒号显示状态
@@ -2014,6 +2202,10 @@ void Menu_BalFader(void)
 
             SetBalFader();
             AddSyncBits(NEEDSYNC_BALFADER);
+            if (nItem == 0)
+                VoiceSayValue("平衡", nBalance);
+            else
+                VoiceSayValue("前后", nFader);
         }
 
         if (!(lp % 16)) {  // 每隔16次循环切换冒号显示状态
@@ -2070,10 +2262,13 @@ void Menu_SCSV(void)
 	OLED_XYStr(0, 1, ("L is Yes,R is NO"));
 	OLED_XYStr(0, 2, ("Overwrite?   "));  // Confirm overwrite currrent band ch data
 	OLED_Refresh();
+	VoiceSay("确认搜索保存频道");
 	if (!YesNo(true)){
 		OLED_Clear1();
+		VoiceSay("取消");
 		return;
 	}
+	VoiceSay("开始搜索保存");
 
 	nTuneType = TYPE_SCSV;
 	if (nMode != MODE_AUX)
@@ -2110,6 +2305,8 @@ void Menu_SCSV(void)
 			{  // Find one signal
 				WriteChFreq(true);
 				LCDUpdate();
+				VoiceSay("保存频道");
+				VoiceSayFrequency();
 				if (++nBandCh[nBand] >= nBandChs[nBand])  // NV memory full for current band
 					bReturn = true;
 				break;
@@ -2136,6 +2333,7 @@ void Menu_SCSV(void)
 	if (nMode != MODE_AUX)
 		SetVolume(nVolume);  // Unmute
 	bExitMenu = 1;
+	VoiceSay("搜索保存完成");
 }  // void Menu_SCSV(void)
 
 
@@ -2156,6 +2354,7 @@ void AddDelCh(void)
 		{
 			nBandCh[nBand] = (nBandCh[nBand] + i8 + nBandChs[nBand]) % nBandChs[nBand];
 			bReDISP = true;
+			VoiceSayChannel();
 		}
 
 		if ((i8 = GetRRot()) != false)
@@ -2163,6 +2362,7 @@ void AddDelCh(void)
 			nBandFreq[nBand] += i8 * nBandStep[nBand][nStepIdx];
 			AdjFreq(true);
 			TuneFreqDisp();
+			VoiceSayFrequency();
 		}
 
 		if (bReDISP)
@@ -2187,6 +2387,7 @@ void AddDelCh(void)
 				{  // Confirmed
 					WriteChFreq(true);  // Add current frequency to this ch
 					u32 = nBandFreq[nBand];
+					VoiceSay("保存频道");
 				}
 				bReDISP = true;
 				break;
@@ -2198,6 +2399,7 @@ void AddDelCh(void)
 					{  // Confirmed
 						WriteChFreq(false);  // Delete this ch
 						u32 = 0;
+						VoiceSay("删除频道");
 					}
 					bReDISP = true;
 				}
@@ -2205,10 +2407,12 @@ void AddDelCh(void)
 
 			case KEY_STEP:
 				nStepIdx = (nStepIdx + 1) % NUM_STEPS;
+				VoiceSayStep();
 				break;
 
 			case KEY_STEP | KEY_LONGPRESS:   // Default step
 				nStepIdx = 0;
+				VoiceSayStep();
 				break;
 
 			default:
@@ -2376,6 +2580,7 @@ void Menu_Sine(void)
 	SetVolume(0);
 	nVol[0] = nVol[1] = nVolumeOld = nVolume;
 	SetSineFreq(nFreq[0]);
+	VoiceSay("正弦波");
 	dsp_write_data(SINE_GEN_VOL);  // Set SineGen volume
 	dsp_write1(0x20, 0x1F);        // Primary input: SineGen
 						// 01234567890123450123456789012345
@@ -2402,6 +2607,7 @@ void Menu_Sine(void)
 			if (bContinuous || bPressed)
 				SetVolume(nVol[nSine]);
 			bUpdateDisp = 1;
+			VoiceSayValue("音量", nVol[nSine]);
 		}
 
 		if ((i8 = GetRRot()) != false)
@@ -2410,6 +2616,7 @@ void Menu_Sine(void)
 			nFreq[nSine] = constrain(nFreq[nSine], 10, 22000);
 			SetSineFreq(nFreq[nSine]);
 			bUpdateDisp = 1;
+			VoiceSayValue("频率", nFreq[nSine]);
 		}
 
 		if ((nKey = PeekKey()) != false)
@@ -2423,6 +2630,7 @@ void Menu_Sine(void)
 					SetSineFreq(nFreq[nSine]);
 					SetVolume(nVol[nSine]);
 					bUpdateDisp = 1;
+					VoiceSay(nSine ? "右声道" : "左声道");
 				}
 				else if (!bPressed)
 					SetVolume(nVol[nSine]);
@@ -2439,20 +2647,24 @@ void Menu_Sine(void)
 					nStep /= 10;
 					if (!nStep)
 						nStep = 1000;
+					VoiceSayValue("步进", nStep);
 					break;
 
 				case KEY_TUNE | KEY_LONGPRESS:
 					nStep = 100;
+					VoiceSayValue("步进", nStep);
 					break;
 
 				case KEY_STEP:
 					nStep *= 10;
 					if (nStep > 1000)
 						nStep = 1;
+					VoiceSayValue("步进", nStep);
 					break;
 
 				case KEY_STEP | KEY_LONGPRESS:
 					nStep = 300;
+					VoiceSayValue("步进", nStep);
 					break;
 
 				case KEY_BAND:
@@ -2462,6 +2674,7 @@ void Menu_Sine(void)
 						SetVolume(nVol[nSine]);
 					else
 						SetVolume(0);
+					VoiceSay(bContinuous ? "连续开启" : "连续关闭");
 					break;
 
 				case KEY_FILTER:
@@ -2498,6 +2711,7 @@ void Menu_Sine(void)
 		dsp_write1(0x20, 0x00);  // Primary input: radio
 	nVolume = nVolumeOld;
 	SetVolume(nVolume);
+	VoiceSay("退出正弦波");
 }  // void Menu_Sine(void)
 
 
@@ -2663,6 +2877,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 							textlen = strlen((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt);
 							OLED_Clear2();
 							OLED_XYStrLen(8 - textlen / 2, 2, (pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->pszMTxt, textlen, 1);
+							VoiceSayMenuItem((pSubMenu->pMItem + (nFirst % pSubMenu->nItemCount))->nMID);
 						}
         }
         else
@@ -2701,6 +2916,7 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 											OLED_XYStrLen(1 + i8 * 5, 3, "_/\\_", 4, 1);
 									}
 							}
+							VoiceSayMenuItem((pSubMenu->pMItem + nCursor)->nMID);
 							
 						}
         }
@@ -2743,8 +2959,9 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
                     if (u8_data == MID_RET)
                         return;
 
-                    // 处理选择的菜单项
-                    ProcMenuItem(u8_data);
+						// 处理选择的菜单项
+						VoiceSayMenuItem(u8_data);
+						ProcMenuItem(u8_data);
 
                     // 根据情况决定是否自动返回子菜单或继续处理
                     if ((pSubMenu->nMID >= MID_MIN_AUTORET) || bExitMenu)
@@ -2838,6 +3055,7 @@ void ProcMenuItem(uint8_t nMenuID)
 	{
 		nFMFilter = nMenuID - MID_FTFM00;
 		SetFilter(1);  // Set FIR filter for FM
+		VoiceSayFilter();
 		return;
 	}
 
@@ -2845,6 +3063,7 @@ void ProcMenuItem(uint8_t nMenuID)
 	{
 		nAMFilter = nMenuID - MID_FTAM00;
 		SetFilter(1);  // Set FIR filter for AM
+		VoiceSayFilter();
 		return;
 	}
 
@@ -2852,6 +3071,7 @@ void ProcMenuItem(uint8_t nMenuID)
 	{
 		ProcBand(BAND_LW + (nMenuID - MID_LW));  // Set band
 		bExitMenu = 1;
+		VoiceSayBand();
 		return;
 	}
 
@@ -2859,6 +3079,7 @@ void ProcMenuItem(uint8_t nMenuID)
 	{
 		nTuneType = TYPE_FREQ + (nMenuID - MID_FREQ);  // Set tune type
 		AddSyncBits(NEEDSYNC_TUNE);
+		VoiceSayTuneType();
 		return;
 	}
 
@@ -2866,6 +3087,7 @@ void ProcMenuItem(uint8_t nMenuID)
 	{
 		nLowerSig = nMenuID - MID_LSIGNORM;  // Normal/reduced signal quality for seek/scan/any, 0=normal, 1=lower
 		AddSyncBits(NEEDSYNC_MISC1);
+		VoiceSay(nLowerSig ? "低信号降低" : "低信号正常");
 		return;
 	}
 
@@ -2883,6 +3105,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		SetBalFader();          // Set balance & fader
 		SetVolume(nVolume);     // Unmute
 		AddSyncBits(NEEDSYNC_MISC3);
+		VoiceSayMenuItem(nMenuID);
 		return;
 	}
 
@@ -2918,6 +3141,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		//nFMAT = nMenuID - MID_FMAT1;  // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC2);
+		VoiceSayMenuItem(nMenuID);
 		return;
 	}
 
@@ -2938,6 +3162,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		}
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC2);
+		VoiceSayMenuItem(nMenuID);
 		return;
 	}
 	else if ((nMenuID >= MID_FMSIOFF) && (nMenuID <= MID_FMSION))
@@ -2945,6 +3170,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		nFMSI = nMenuID - MID_FMSIOFF;  // FM stereo improvement, 0=off, 1=on
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC2);
+		VoiceSayMenuItem(nMenuID);
 		return;
 	}
 
@@ -2953,6 +3179,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		nFMCEQ = nMenuID - MID_FMCEOFF;  // FM channel equalizer, 0=off, 1=on
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC2);
+		VoiceSayMenuItem(nMenuID);
 		return;
 	}
 
@@ -2961,6 +3188,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		nFMEMS = nMenuID - MID_FMMPOFF;  // FM enhanced multipath suppression, 0=off, 1=on
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC2);
+		VoiceSayMenuItem(nMenuID);
 		return;
 	}
 
@@ -2969,6 +3197,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		nFMCNS = nMenuID - MID_FMNSOFF;  // FM click noise suppression, 0=off, 1=on
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC2);
+		VoiceSayMenuItem(nMenuID);
 		return;
 	}
 
@@ -2977,6 +3206,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		nINCA = nMenuID - MID_INCAOFF;  // FM AM improvec noise canceller, 0=off, 1=on
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC3);
+		VoiceSayMenuItem(nMenuID);
 		return;
 	}
 
@@ -2985,6 +3215,7 @@ void ProcMenuItem(uint8_t nMenuID)
 		nDeemphasis = DEEMPHOFF + (nMenuID - MID_DEEM0);  // FM de-emphasis, 0=off, 1=50us, 2=75us
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC1);
+		VoiceSayMenuItem(nMenuID);
 		return;
 	}
 	

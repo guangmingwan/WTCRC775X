@@ -240,6 +240,16 @@ void TestRotKey(void);
 
 void LCDUpdate(void);
 void GetStatus(UI_STAGE stage);
+void VoiceSay(const char *text);
+void VoiceSayValue(const char *text, int32_t value);
+void VoiceSayFrequency(void);
+void VoiceSayVolume(void);
+void VoiceSayBand(void);
+void VoiceSayTuneType(void);
+void VoiceSayStep(void);
+void VoiceSayFilter(void);
+void VoiceSayChannel(void);
+void VoiceSayMenuItem(uint8_t nMenuID);
 void ShowMisc(void);
 void ShowTime(void);
 void ShowVol(void);

@@ -139,8 +139,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	//wait tts booted
 	HAL_Delay(3000);
-	
-  printf("欢迎使用7751收音机");
+  printf("电波跨越山海 予你百万光明\n");//ad for boot
   fflush(stdout);
 		
 	OLED_Init();
@@ -176,6 +175,8 @@ int main(void)
 	HAL_Delay(500);
 	OLED_Refresh();
 	TunerInit();
+	printf("收音机就绪\n");
+	fflush(stdout);
 	
 	//TuneFreq(101700);//fm 101.7
 	//TuneFreq(88000);//fm 88.0
@@ -268,8 +269,7 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* User can add his own implementation to report the file name and line number */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
