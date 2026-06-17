@@ -46,20 +46,20 @@
 #define OLED_RES_Clr()  HAL_GPIO_WritePin(OLED_RES_GPIO_Port,OLED_RES_Pin, GPIO_PIN_RESET)
 #define OLED_RES_Set()  HAL_GPIO_WritePin(OLED_RES_GPIO_Port,OLED_RES_Pin, GPIO_PIN_SET)
 
-//****************æ•°æ®/å‘½ä»¤***************
+//****************Êı¾İ/ÃüÁî***************
 
 #define OLED_DC_Clr()  HAL_GPIO_WritePin(OLED_DC_GPIO_Port,OLED_DC_Pin, GPIO_PIN_RESET)
 #define OLED_DC_Set()  HAL_GPIO_WritePin(OLED_DC_GPIO_Port,OLED_DC_Pin, GPIO_PIN_RESET)
 
-//****************ç‰‡é€‰*********************
+//****************Æ¬Ñ¡*********************
 
 #define OLED_CS_Clr()  HAL_GPIO_WritePin(OLED_CS_GPIO_Port,OLED_CS_Pin, GPIO_PIN_RESET)
 #define OLED_CS_Set()  HAL_GPIO_WritePin(OLED_CS_GPIO_Port,OLED_CS_Pin, GPIO_PIN_SET)
 
 
-#define LCD_CMD  0	//å†™å‘½ä»¤
-#define LCD_DATA 1	//å†™æ•°æ®
-//OLEDæ§åˆ¶ç”¨å‡½æ•°
+#define LCD_CMD  0	//Ğ´ÃüÁî
+#define LCD_DATA 1	//Ğ´Êı¾İ
+//OLED¿ØÖÆÓÃº¯Êı
 void clear_screen();
 void LCD_WR_Byte(u8 dat,u8 cmd);	    
 void LCD_Display_On(void);
