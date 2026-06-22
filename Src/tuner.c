@@ -1696,6 +1696,7 @@ void TunerLoop(void)
 			nTuneType = TYPE_FREQ;
 		LCDUpdate();
 		AddSyncBits(NEEDSYNC_TUNE);
+		VoiceSayTuneType();
 	}
 
 	if (nTuneType == TYPE_ANY)
@@ -1704,5 +1705,6 @@ void TunerLoop(void)
 		nTuneType = TYPE_FREQ;
 		LCDUpdate();
 		AddSyncBits(NEEDSYNC_TUNE);
+		VoiceSayTuneType();
 	}
 }  // void TunerLoop(void)

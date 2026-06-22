@@ -93,9 +93,9 @@ void VoiceSayStep(void)
 void VoiceSayFilter(void)
 {
 	if (nRFMode == RFMODE_FM)
-		printf("ÂË²¨Æ÷%s\n", M_FMFilter[nFMFilter].pszMTxt);
+		printf("ÆµÆ×´ø¿í%s\n", M_FMFilter[nFMFilter].pszMTxt);
 	else
-		printf("ÂË²¨Æ÷%s\n", M_AMFilter[nAMFilter].pszMTxt);
+		printf("ÆµÆ×´ø¿í%s\n", M_AMFilter[nAMFilter].pszMTxt);
 	fflush(stdout);
 }
 
@@ -136,11 +136,11 @@ void VoiceSayMenuItem(uint8_t nMenuID)
 	case MID_BKKEEP: VoiceSay("±³¹â±£³Ö"); break;
 	case MID_BKADJ: VoiceSay("±³¹âÁÁ¶È"); break;
 	case MID_TSCN: VoiceSay("É¨ÃèÍ£ÁôÊ±¼ä"); break;
-	case MID_TANY: VoiceSay("ÊØºò±£³ÖÊ±¼ä"); break;
+	case MID_TANY: VoiceSay("ÊØºòÍ£ÁôÊ±¼ä"); break;
 	case MID_TIME: VoiceSay("Ê±¼äÉèÖÃ"); break;
 	case MID_MODE: VoiceSay("¹¤×÷Ä£Ê½"); break;
 	case MID_MODERF: VoiceSay("ÉäÆµÄ£Ê½"); break;
-	case MID_MODEAUX: VoiceSay("¸¨ÖúÊäÈë"); break;
+	case MID_MODEAUX: VoiceSay("»ìÏìÊäÈë"); break;
 	case MID_STAT: VoiceSay("ÐÅºÅÖÊÁ¿"); break;
 	case MID_TUNE: VoiceSay("µ÷Ð³·½Ê½"); break;
 	case MID_FREQ: VoiceSay("ÆµÂÊµ÷Ð³"); break;
@@ -183,9 +183,9 @@ void VoiceSayMenuItem(uint8_t nMenuID)
 	case MID_DEEM75: VoiceSay("ÆßÊ®ÎåUS"); break;
 	default:
 		if ((nMenuID >= MID_FTFM00) && (nMenuID <= MID_FTFM16))
-			printf("ÂË²¨Æ÷%s\n", M_FMFilter[nMenuID - MID_FTFM00].pszMTxt);
+			printf("ÆµÆ×´ø¿í%s\n", M_FMFilter[nMenuID - MID_FTFM00].pszMTxt);
 		else if ((nMenuID >= MID_FTAM00) && (nMenuID <= MID_FTAM15))
-			printf("ÂË²¨Æ÷%s\n", M_AMFilter[nMenuID - MID_FTAM00].pszMTxt);
+			printf("ÆµÆ×´ø¿í%s\n", M_AMFilter[nMenuID - MID_FTAM00].pszMTxt);
 		else
 			printf("²Ù×÷\n");
 		fflush(stdout);
@@ -696,12 +696,12 @@ void handleTimeout(void)
         }
 		else
 		{
-			VoiceSay("ÊäÈë´íÎó");
+			//VoiceSay("ÊäÈë´íÎó");
 		}
 	}
 	else
 	{
-		VoiceSay("ÊäÈë´íÎó");
+		//VoiceSay("ÊäÈë´íÎó");
 	}
 
     // Clear input
@@ -790,7 +790,7 @@ void processRemoteInput(uint32_t irCode)
             }
 			else
 			{
-				VoiceSay("ÊäÈë´íÎó");
+				//VoiceSay("ÊäÈë´íÎó");
 			}
             // Clear input
             memset(input, 0, sizeof(input));
@@ -1159,7 +1159,7 @@ void LCDUpdate(void)
 	else
 	{  // None ch/ss type
 			// Update step: 1K/5K/9K/10K/25K/45K/50K/90K/100/500
-		if (nBandStep[nBand][nStepIdx] < 100)
+		if ((nBand < BAND_FL) && (nBandStep[nBand][nStepIdx] < 100))
 			i8 = 1;
 		else
 			i8 = 0;
@@ -2595,7 +2595,9 @@ void Menu_Sine(void)
 			OLED_XYChar(5, 1, '1' + nSine);
 			OLED_XYIntLen(7, 1, nFreq[nSine], 5);
 			OLED_XYStr(13, 1, (bContinuous) ? ("---") : (".-."));
+			OLED_XYChar(4, 2, '    ');
 			OLED_XYIntLen(4, 2, nStep, 4);
+			
 			OLED_XYIntLen(14, 2, nVol[nSine], 2);
 			bUpdateDisp = 0;
 		}

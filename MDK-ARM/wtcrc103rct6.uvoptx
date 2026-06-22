@@ -152,25 +152,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>1603</LineNumber>
+          <LineNumber>687</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134266260</Address>
+          <Address>134272882</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Src\tuner.c</Filename>
+          <Filename>..\Src\ui.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\wtcrc103rct6\../Src/tuner.c\1603</Expression>
+          <Expression>\\wtcrc103rct6\../Src/ui.c\687</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>851</LineNumber>
+          <LineNumber>3080</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134253652</Address>
+          <Address>134254802</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -179,39 +179,23 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Src\ui.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\wtcrc103rct6\../Src/ui.c\851</Expression>
+          <Expression>\\wtcrc103rct6\../Src/ui.c\3080</Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>853</LineNumber>
+          <LineNumber>1697</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134253684</Address>
+          <Address>134267582</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Src\ui.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\wtcrc103rct6\../Src/ui.c\853</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>1606</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
           <Filename>..\Src\tuner.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\wtcrc103rct6\../Src/tuner.c\1697</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

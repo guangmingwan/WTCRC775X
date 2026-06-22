@@ -6,7 +6,7 @@
 - Real runtime entrypoints are `Src/main.c` for MCU init and loop, `Src/tuner.c` for radio state/tuning/volume, `Src/ui.c` for keys, menus, IR remote, and voice feedback.
 
 ## Encoding
-- Treat project C/H sources as GBK unless a file is explicitly known otherwise. Before editing Chinese text, verify with `iconv -f gbk -t utf-8 <file> > /dev/null`.
+- All project `.c` and `.h` files are GBK encoded. Treat project C/H sources as GBK unless a file is explicitly known otherwise. Before editing Chinese text, verify with `iconv -f gbk -t utf-8 <file> > /dev/null`.
 - Do not patch GBK Chinese text directly through UTF-8 tools. Convert a temporary copy GBK -> UTF-8, edit that, then convert back UTF-8 -> GBK.
 - If a source file fails GBK conversion, stop before modifying that file and report it; mixed encoding has occurred in this repo before.
 
