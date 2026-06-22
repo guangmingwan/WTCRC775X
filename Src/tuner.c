@@ -101,6 +101,9 @@ int32_t nSecondsOffset = 3600L * 24 * 15;  // Seconds of real time offset, prese
 
 uint8_t nScanStayTime;  // Seconds to stay at current frequency
 uint8_t nAnyHoldTime;   // Seconds to hold current frequency after lost signal
+uint8_t nTTSEffect;     // TTS built-in effect, 0-7
+uint8_t nTTSVolume;     // TTS volume, 1-4
+uint8_t nTTSSpeed;      // TTS speed, 1-3
 
 uint32_t nAutoSyncBits;
 uint16_t nAutoSyncChs;
@@ -651,7 +654,7 @@ void CheckVolume(void)
 {
 	int8_t i8;
 
-	if ((i8 = GetLRot()) != false)
+	if ((i8 = GetLRot() + GetRRot()) != false)
 	{
 		if ((i8 < 0) && (-i8 > nVolume))
 			nVolume = 0;

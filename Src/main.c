@@ -138,9 +138,7 @@ int main(void)
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 	//wait tts booted
-	HAL_Delay(3000);
-  printf("电波跨越山海 予你百万光明\n");//ad for boot
-  fflush(stdout);
+	
 		
 	OLED_Init();
   clear_screen();//clear oled
@@ -175,9 +173,15 @@ int main(void)
 	HAL_Delay(500);
 	OLED_Refresh();
 	TunerInit();
-	printf("收音机就绪\n");
+	HAL_Delay(3000);
+ 
+	printf("收音机就绪");
 	fflush(stdout);
+	ApplyTTSSettings();
+	HAL_Delay(3000);
 	
+	 printf("电波跨越山海 予你百万光明");//ad for boot
+  fflush(stdout);
 	//TuneFreq(101700);//fm 101.7
 	//TuneFreq(88000);//fm 88.0
 		

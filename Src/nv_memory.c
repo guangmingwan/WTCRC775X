@@ -16,6 +16,9 @@ extern uint8_t nBacklightAdj;   // LCD backlight value, 0-255
 extern uint8_t nBacklightKeep;  // LCD backlight auto keep seconds, 0-255, 0 for always on
 extern uint8_t nScanStayTime;   // Seconds to stay at current frequency
 extern uint8_t nAnyHoldTime;    // Seconds to hold current frequency after lost signal
+extern uint8_t nTTSEffect;      // TTS built-in effect, 0-7
+extern uint8_t nTTSVolume;      // TTS volume, 1-4
+extern uint8_t nTTSSpeed;       // TTS speed, 1-3
 
 extern uint8_t nStereo;         // FM stereo, 0=off, 5=default, 9=strongest
 extern uint8_t nFMAT;           // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
@@ -60,12 +63,13 @@ const uint8_t NVM_INIT[] =
 	6, 0xE2, 30, 5, 3, 255, 0,  // Squ1, Squ2, TScan, TAny, BkAdj, BkKeep,
 	5, 0x49, 0xF2, 5, 0, 0,  // Misc1, Misc2, Misc3, Misc4, Misc5
 	5, 0, 0, 0, 0, 0,  // Bass, Middle, Treble, Balance, Fader
+	3, 0, 4, 2,  // TTS effect, volume, speed
 	0  // End
 };
 
 void NVMInitStation(void)
 {
-	printf("³õÊ¼»¯µçÌ¨\n");
+	printf("ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ì¨\n");
 	OLED_XYStr(0, 1, "Init Station ...");
 	eeprom_erase_full_chip();
 	NV_write_word(NVMADDR_SIGSTATION, NVMSIGSTATION);
@@ -74,7 +78,7 @@ void NVMInitStation(void)
 
 void NVMInitSetting(void)
 {
-	printf("³õÊ¼»¯ÉèÖÃ\n");
+	printf("ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n");
 	OLED_XYStr(0, 1, "Init Setting ...");
 	NVMUnpkWrData(NVM_INIT);  // Initialize NV memory
 	OLED_Refresh();
@@ -192,6 +196,16 @@ void NVMGetArgs(void)
 	nAnyHoldTime = NV_read_byte(NVMADDR_ANYHOLD);
 	nBacklightAdj = NV_read_byte(NVMADDR_BKADJ);
 	nBacklightKeep = NV_read_byte(NVMADDR_BKKEEP);
+	nTTSEffect = NV_read_byte(NVMADDR_TTSEFFECT);
+	if (nTTSEffect > 7)
+		nTTSEffect = 0;
+	nTTSVolume = NV_read_byte(NVMADDR_TTSVOL);
+	if ((nTTSVolume < 1) || (nTTSVolume > 4))
+		nTTSVolume = 4;
+	nTTSSpeed = NV_read_byte(NVMADDR_TTSSPEED);
+	if ((nTTSSpeed < 1) || (nTTSSpeed > 3))
+		nTTSSpeed = 2;
+	
 
 	for (i = 0; i < NUM_BANDS; i++)
 	{

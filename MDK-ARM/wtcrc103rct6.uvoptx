@@ -152,25 +152,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>687</LineNumber>
+          <LineNumber>175</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134272882</Address>
+          <Address>134274716</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Src\ui.c</Filename>
+          <Filename>../Src/main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\wtcrc103rct6\../Src/ui.c\687</Expression>
+          <Expression>\\wtcrc103rct6\../Src/main.c\175</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>3080</LineNumber>
+          <LineNumber>3089</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134254802</Address>
+          <Address>134258938</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -179,14 +179,46 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Src\ui.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\wtcrc103rct6\../Src/ui.c\3080</Expression>
+          <Expression>\\wtcrc103rct6\../Src/ui.c\3089</Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>1697</LineNumber>
+          <LineNumber>694</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134267582</Address>
+          <Address>134275370</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Src\ui.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\wtcrc103rct6\../Src/ui.c\694</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>208</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134252270</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Src\nv_memory.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\wtcrc103rct6\../Src/nv_memory.c\208</Expression>
+        </Bp>
+        <Bp>
+          <Number>4</Number>
+          <Type>0</Type>
+          <LineNumber>1415</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134266564</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -195,7 +227,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Src\tuner.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\wtcrc103rct6\../Src/tuner.c\1697</Expression>
+          <Expression>\\wtcrc103rct6\../Src/tuner.c\1415</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

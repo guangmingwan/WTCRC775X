@@ -54,6 +54,34 @@ void VoiceSayValue(const char *text, int32_t value)
 	fflush(stdout);
 }
 
+void SendTTSVolume(void)
+{
+	printf("<V>%d", nTTSVolume);
+	fflush(stdout);
+}
+
+void SendTTSSpeed(void)
+{
+	printf("<S>%d", nTTSSpeed);
+	fflush(stdout);
+}
+void SendTTEffect(void)
+{
+	printf("<Z>%d", nTTSEffect);
+	fflush(stdout);
+}
+
+void ApplyTTSSettings(void)
+{
+	
+	SendTTSVolume();
+	HAL_Delay(3000);
+	SendTTSSpeed();
+	HAL_Delay(3000);
+	//SendTTEffect();
+	//HAL_Delay(2000);
+}
+
 void VoiceSayFrequency(void)
 {
 	if (nBand >= BAND_FL)
@@ -137,6 +165,9 @@ void VoiceSayMenuItem(uint8_t nMenuID)
 	case MID_BKADJ: VoiceSay("背光亮度"); break;
 	case MID_TSCN: VoiceSay("扫描停留时间"); break;
 	case MID_TANY: VoiceSay("守候停留时间"); break;
+	case MID_TTSEFFECT: VoiceSay("TTS音效"); break;
+	case MID_TTSVOLUME: VoiceSay("TTS音量"); break;
+	case MID_TTSSPEED: VoiceSay("TTS语速"); break;
 	case MID_TIME: VoiceSay("时间设置"); break;
 	case MID_MODE: VoiceSay("工作模式"); break;
 	case MID_MODERF: VoiceSay("射频模式"); break;
@@ -240,6 +271,9 @@ const char MT_BAL[] = "Balance & Fader";   // Balance & fader
 const char MT_BKLT[] = "BackLight";
 const char MT_TSCN[] = "Time Scan";
 const char MT_TANY[] = "Time Any";
+const char MT_TTSEFFECT[] = "TTS Effect";
+const char MT_TTSVOLUME[] = "TTS Volume";
+const char MT_TTSSPEED[] = "TTS Speed";
 const char MT_TIME[] = "Time Set";
 
 
@@ -277,6 +311,9 @@ struct M_ITEM M_Appli[] =
 	{MID_BKLT, MT_BKLT},
 	{MID_TSCN, MT_TSCN},
 	{MID_TANY, MT_TANY},
+	{MID_TTSEFFECT, MT_TTSEFFECT},
+	{MID_TTSVOLUME, MT_TTSVOLUME},
+	{MID_TTSSPEED, MT_TTSSPEED},
 	{MID_TIME, MT_TIME},
 	{MID_RET,  MT_RETURN}
 };
@@ -1802,6 +1839,123 @@ void Menu_AnyHoldTime(void)
 }  // void Menu_AnyHoldTime(void)
 
 
+void Menu_TTSEffect(void)
+{
+	int16_t i16 = nTTSEffect;
+	int8_t rot;
+	uint8_t nKey, lp;
+
+	OLED_XYStr(0, 2, ("TTS EFFECT:     "));
+
+	for (lp = 0; ; lp++)
+	{
+		rot = GetLRot() + GetRRot();
+		i16 += rot;
+		i16 = constrain(i16, 0, 7);
+		OLED_XYIntLen(15, 2, i16, 1);
+		if (rot)
+		{
+			printf("<Z>%d", i16);
+			fflush(stdout);
+			VoiceSayValue("TTS音效", i16);
+		}
+
+		if ((nKey = GetKey()) != false)
+		{
+			nTTSEffect = (uint8_t)i16;
+			OLED_Clear2();
+			if (!(nKey & (KEY_LROT | KEY_RROT)))
+				bExitMenu = true;
+			NV_write_byte(NVMADDR_TTSEFFECT, nTTSEffect);
+			return;
+		}
+
+		HAL_Delay(64);
+		OLED_Refresh();
+	}
+}  // void Menu_TTSEffect(void)
+
+
+void Menu_TTSVolume(void)
+{
+	int16_t i16 = nTTSVolume;
+	int8_t rot;
+	uint8_t nKey, lp;
+
+	OLED_XYStr(0, 2, ("TTS VOLUME:     "));
+	VoiceSayValue("TTS音量", i16);
+
+	for (lp = 0; ; lp++)
+	{
+		rot = GetLRot() + GetRRot();
+		i16 += rot;
+		i16 = constrain(i16, 1, 4);
+		OLED_XYIntLen(15, 2, i16, 1);
+		if (rot)
+		{
+			nTTSVolume = (uint8_t)i16;
+			SendTTSVolume();
+			HAL_Delay(80);
+			VoiceSayValue("TTS音量", i16);
+		}
+
+		if ((nKey = GetKey()) != false)
+		{
+			nTTSVolume = (uint8_t)i16;
+			OLED_Clear2();
+			if (!(nKey & (KEY_LROT | KEY_RROT)))
+				bExitMenu = true;
+			NV_write_byte(NVMADDR_TTSVOL, nTTSVolume);
+			return;
+		}
+
+		HAL_Delay(64);
+		OLED_Refresh();
+	}
+}  // void Menu_TTSVolume(void)
+
+
+void Menu_TTSSpeed(void)
+{
+	int16_t i16 = nTTSSpeed;
+	int8_t rot;
+	uint8_t nKey, lp;
+
+	OLED_XYStr(0, 2, ("TTS SPEED:      "));
+	VoiceSayValue("TTS语速", i16);
+
+	for (lp = 0; ; lp++)
+	{
+		rot = GetLRot() + GetRRot();
+		i16 += rot;
+		i16 = constrain(i16, 1, 3);
+		OLED_XYIntLen(15, 2, i16, 1);
+		if (rot)
+		{
+			nTTSSpeed = (uint8_t)i16;
+			//SendTTSSpeed();
+			
+			VoiceSayValue("TTS语速", i16);
+		}
+
+		if ((nKey = GetKey()) != false)
+		{
+			nTTSSpeed = (uint8_t)i16;
+			OLED_Clear2();
+			if (!(nKey & (KEY_LROT | KEY_RROT)))
+				bExitMenu = true;
+			NV_write_byte(NVMADDR_TTSSPEED, nTTSSpeed);
+			SendTTSSpeed();
+			HAL_Delay(80);
+			return;
+		}
+
+		HAL_Delay(64);
+		OLED_Refresh();
+	}
+}  // void Menu_TTSSpeed(void)
+
+
 void Menu_Time(void)
 {
 	int32_t nSeconds;
@@ -3275,6 +3429,18 @@ void ProcMenuItem(uint8_t nMenuID)
 
 	case MID_TANY:
 		Menu_AnyHoldTime();
+		break;
+
+	case MID_TTSEFFECT:
+		Menu_TTSEffect();
+		break;
+
+	case MID_TTSVOLUME:
+		Menu_TTSVolume();
+		break;
+
+	case MID_TTSSPEED:
+		Menu_TTSSpeed();
 		break;
 
 	case MID_TIME:

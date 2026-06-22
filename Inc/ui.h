@@ -132,11 +132,13 @@
 #define MID_TSCN        0x4c
 #define MID_TANY        0x4d
 #define MID_TIME        0x4e
+#define MID_TTSEFFECT   0x4f
 
 #define MID_MODERF      0x50
 #define MID_MODEAUX     0x51
 
 #define MID_STAT        0x52
+#define MID_TTSVOLUME   0x53
 #define MID_SINE        0x54
 
 #define MID_FREQ        0x55
@@ -145,6 +147,7 @@
 #define MID_SCAN        0x58
 #define MID_ANY         0x59
 #define MID_SCSV        0x5a
+#define MID_TTSSPEED    0x5b
 
 #define MID_LW          0x60
 #define MID_MW          0x61
@@ -250,6 +253,9 @@ void VoiceSayStep(void);
 void VoiceSayFilter(void);
 void VoiceSayChannel(void);
 void VoiceSayMenuItem(uint8_t nMenuID);
+void SendTTSVolume(void);
+void SendTTSSpeed(void);
+void ApplyTTSSettings(void);
 void ShowMisc(void);
 void ShowTime(void);
 void ShowVol(void);
@@ -264,6 +270,9 @@ void Menu_BacklightAdj(void);
 void Menu_BacklightKeep(void);
 void Menu_ScanStayTime(void);
 void Menu_AnyHoldTime(void);
+void Menu_TTSEffect(void);
+void Menu_TTSVolume(void);
+void Menu_TTSSpeed(void);
 void Menu_Time(void);
 void sprhex2(char *str, uint8_t v);
 void Menu_Stat(void);
@@ -339,5 +348,8 @@ extern int32_t nSecondsOffset;    // Seconds of real time offset, preset to 15 d
 
 extern uint8_t nScanStayTime;     // Seconds to stay at current frequency
 extern uint8_t nAnyHoldTime;      // Seconds to hold current frequency after lost signal
+extern uint8_t nTTSEffect;        // TTS built-in effect, 0-7
+extern uint8_t nTTSVolume;        // TTS volume, 1-4
+extern uint8_t nTTSSpeed;         // TTS speed, 1-3
 
 #endif

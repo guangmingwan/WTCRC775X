@@ -53,6 +53,9 @@
 #define NVMADDR_TREBLE      40
 #define NVMADDR_BALANCE     41
 #define NVMADDR_FADER       42
+#define NVMADDR_TTSEFFECT   43
+#define NVMADDR_TTSVOL      44
+#define NVMADDR_TTSSPEED    45
 
 #define NVMADDR_LW          100
 #define NVMADDR_MW          140
