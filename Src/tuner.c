@@ -654,7 +654,7 @@ void CheckVolume(void)
 {
 	int8_t i8;
 
-	if ((i8 = GetLRot() + GetRRot()) != false)
+	if ((i8 = GetLRot()) != false)
 	{
 		if ((i8 < 0) && (-i8 > nVolume))
 			nVolume = 0;
