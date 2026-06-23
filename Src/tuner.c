@@ -1486,7 +1486,7 @@ void TunerLoop(void)
 		if(!bLCDOff && !bAntiEMI) {
 			CheckUpdateAlt(ALT_AUTO);
 		}
-		if (nBacklightKeep && !bLCDOff && !bAntiEMI)
+		if (nBacklightKeep && !bLCDOff)
 		{
 			if ((timer - nBacklightTimer) >= (uint32_t)nBacklightKeep * 1000)
 			{

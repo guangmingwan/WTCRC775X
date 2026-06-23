@@ -1001,10 +1001,17 @@ void IR_Check()
 {
 	if (IR_Flag == 1)
 	{
+		bool bWasLCDOff = bLCDOff;
 		// ¥¶¿Ì∫ÏÕ‚±‡¬Î
 		OLED_Display_On();
 		bLCDOff = false;
 		nBacklightTimer = HAL_GetTick();
+		if (bWasLCDOff)
+		{
+			IR_Flag = 0;
+			checkTimeout();
+			return;
+		}
 		switch (IRCode)
 		{
 		case 0x00FF629D:

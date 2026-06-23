@@ -61,10 +61,10 @@ const uint8_t NVM_INIT[] =
 	0x80 + 5,      0,   // Band ch No.
 	0x80 + 10,  0xff,   // Band frequency
 	8, 4, 10, 0, 0, 0, 0, 0, 0,  // Band, Vol, Mode, RFMode, TuneType, StepIdx, FMFilter, AMFilter
-	6, 0xE2, 30, 5, 3, 255, 0,  // Squ1, Squ2, TScan, TAny, BkAdj, BkKeep,
+	6, 0xE2, 30, 5, 3, 255, 15,  // Squ1, Squ2, TScan, TAny, BkAdj, BkKeep,
 	5, 0x49, 0xF2, 5, 1, 0,  // Misc1, Misc2, Misc3, AntiEMI, Misc5
 	5, 0, 0, 0, 0, 0,  // Bass, Middle, Treble, Balance, Fader
-	3, 0, 4, 2,  // TTS effect, volume, speed
+	3, 0, 4, 1,  // TTS effect, volume, speed
 	0  // End
 };
 
