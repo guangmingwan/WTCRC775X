@@ -89,7 +89,8 @@
 #define MID_TUNE        0x11
 #define MID_BAND        0x12
 #define MID_FILT        0x13
-#define MID_MAX_SUB     0x13  // Max ID number with sub menus
+#define MID_EMI         0x14
+#define MID_MAX_SUB     0x14  // Max ID number with sub menus
 
 
 // Menu IDs of leaves
@@ -148,6 +149,8 @@
 #define MID_ANY         0x59
 #define MID_SCSV        0x5a
 #define MID_TTSSPEED    0x5b
+#define MID_EMIOFF      0x5c
+#define MID_EMION       0x5d
 
 #define MID_LW          0x60
 #define MID_MW          0x61
@@ -342,7 +345,9 @@ extern int8_t nSquelch[2];  // Signal squelch value in dBuv, -99~99
 extern uint8_t nBacklightAdj;     // LCD backlight value, 0-255
 extern uint8_t nBacklightKeep;    // LCD backlight auto keep seconds, 0-255, 0 for always on
 extern bool bLCDOff;              // true for LCD is off
-extern uint8_t bEMI;
+extern uint8_t bAntiEMI;
+void SetAntiEMI(uint8_t enabled);
+void ToggleAntiEMI(void);
 extern uint32_t nBacklightTimer;  // LCD backlight auto keep timer in ms
 extern int32_t nSecondsOffset;    // Seconds of real time offset, preset to 15 days
 

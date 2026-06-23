@@ -19,6 +19,7 @@ extern uint8_t nAnyHoldTime;    // Seconds to hold current frequency after lost 
 extern uint8_t nTTSEffect;      // TTS built-in effect, 0-7
 extern uint8_t nTTSVolume;      // TTS volume, 1-4
 extern uint8_t nTTSSpeed;       // TTS speed, 1-3
+extern uint8_t bAntiEMI;
 
 extern uint8_t nStereo;         // FM stereo, 0=off, 5=default, 9=strongest
 extern uint8_t nFMAT;           // FM antenna selection, 0=ANT1, 1=ANT2, 2=phase diversity
@@ -61,7 +62,7 @@ const uint8_t NVM_INIT[] =
 	0x80 + 10,  0xff,   // Band frequency
 	8, 4, 10, 0, 0, 0, 0, 0, 0,  // Band, Vol, Mode, RFMode, TuneType, StepIdx, FMFilter, AMFilter
 	6, 0xE2, 30, 5, 3, 255, 0,  // Squ1, Squ2, TScan, TAny, BkAdj, BkKeep,
-	5, 0x49, 0xF2, 5, 0, 0,  // Misc1, Misc2, Misc3, Misc4, Misc5
+	5, 0x49, 0xF2, 5, 1, 0,  // Misc1, Misc2, Misc3, AntiEMI, Misc5
 	5, 0, 0, 0, 0, 0,  // Bass, Middle, Treble, Balance, Fader
 	3, 0, 4, 2,  // TTS effect, volume, speed
 	0  // End
@@ -205,6 +206,7 @@ void NVMGetArgs(void)
 	nTTSSpeed = NV_read_byte(NVMADDR_TTSSPEED);
 	if ((nTTSSpeed < 1) || (nTTSSpeed > 3))
 		nTTSSpeed = 2;
+	bAntiEMI = NV_read_byte(NVMADDR_MISC4) & 1;
 	
 
 	for (i = 0; i < NUM_BANDS; i++)

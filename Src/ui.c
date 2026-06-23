@@ -47,7 +47,6 @@ void VoiceSay(const char *text)
 	printf("%s\n", text);
 	fflush(stdout);
 }
-
 void VoiceSayValue(const char *text, int32_t value)
 {
 	printf("%s%d\n", text, value);
@@ -244,6 +243,15 @@ void VoiceSayMenuItem(uint8_t nMenuID)
 	case MID_TIME:
 		VoiceSay("时间设置");
 		break;
+	case MID_EMI:
+		VoiceSay("抑制屏幕电磁干扰");
+		break;
+	case MID_EMIOFF:
+		VoiceSay("关闭");
+		break;
+	case MID_EMION:
+		VoiceSay("开启");
+		break;
 	case MID_MODE:
 		VoiceSay("工作模式");
 		break;
@@ -416,6 +424,7 @@ const char MT_TTSEFFECT[] = "TTS Effect";
 const char MT_TTSVOLUME[] = "TTS Volume";
 const char MT_TTSSPEED[] = "TTS Speed";
 const char MT_TIME[] = "Time Set";
+const char MT_EMI[] = "Anti EMI";
 
 struct M_ITEM M_Radio[] =
 	{
@@ -453,6 +462,7 @@ struct M_ITEM M_Appli[] =
 		{MID_TTSVOLUME, MT_TTSVOLUME},
 		{MID_TTSSPEED, MT_TTSSPEED},
 		{MID_TIME, MT_TIME},
+		{MID_EMI, MT_EMI},
 		{MID_RET, MT_RETURN}};
 
 // Menu Option->LSIG
@@ -504,6 +514,13 @@ struct M_ITEM M_FMSI[] =
 	{
 		{MID_FMSIOFF, MT_FMSIOFF},
 		{MID_FMSION, MT_FMSION},
+		{MID_RET, MT_RET}};
+
+// Menu Option->EMI
+struct M_ITEM M_EMI[] =
+	{
+		{MID_EMIOFF, MT_FMSIOFF},
+		{MID_EMION, MT_FMSION},
 		{MID_RET, MT_RET}};
 
 // Menu Option->FMCE
@@ -732,7 +749,8 @@ struct M_SUBMENU SM_List[] =
 		{MID_MODE, M_Mode, sizeof(M_Mode) / sizeof(struct M_ITEM)},				   // Menu Frequency->MODE
 		{MID_TUNE, M_Tune, sizeof(M_Tune) / sizeof(struct M_ITEM)},				   // Menu Frequency->TUNE
 		{MID_BAND, M_Band, sizeof(M_Band) / sizeof(struct M_ITEM)},				   // Menu Frequency->BAND
-		{MID_FILT, M_FMFilter, sizeof(M_FMFilter) / sizeof(struct M_ITEM)}		   // Menu Frequency->FILT, toggle AM/FM by nRFMode
+		{MID_FILT, M_FMFilter, sizeof(M_FMFilter) / sizeof(struct M_ITEM)},		   // Menu Frequency->FILT, toggle AM/FM by nRFMode
+		{MID_EMI, M_EMI, sizeof(M_EMI) / sizeof(struct M_ITEM)}					   // Menu Option->EMI
 };
 // Define IR code map to channel
 uint32_t irCodeMap[] = {
@@ -811,6 +829,23 @@ void switchAMChannel(int channel, uint8_t band_type)
 	LCDUpdate();
 	// currentAMChannel = channel;
 }
+
+void SetAntiEMI(uint8_t value)
+{
+	bAntiEMI = value;
+	if (bAntiEMI)
+	{
+		CheckUpdateAlt(ALT_EMI);
+	}
+	AddSyncBits(NEEDSYNC_MISC4);
+	VoiceSay(bAntiEMI ? "让屏幕冻结抑制电磁干扰" : "让屏幕活跃生成电磁干扰");
+}
+
+void ToggleAntiEMI(void)
+{
+	SetAntiEMI(!bAntiEMI);
+}
+
 // Function to handle the timeout and execute the input complete action
 void handleTimeout(void)
 {
@@ -818,12 +853,7 @@ void handleTimeout(void)
 	{
 		if (strcmp(input, "*") == 0)
 		{
-			bEMI = bEMI == 0 ? 1 : 0;
-			if (bEMI == 1)
-			{
-				CheckUpdateAlt(ALT_EMI);
-			}
-			VoiceSay(bEMI ? "电磁干扰开启" : "电磁干扰关闭");
+			ToggleAntiEMI();
 		}
 		else
 		{
@@ -1343,7 +1373,7 @@ void GetStatus(UI_STAGE stage)
 	if (nRFMode == RFMODE_FM && IS_PHASE_DIVERSITY_ENABLED(nFMAT))
 	{
 
-		if (!bLCDOff && bEMI != 2)
+		if (!bLCDOff && !bAntiEMI)
 		{
 
 			FM_ANT_SEL nPrimaryFMAT = nFMAT;
@@ -1411,12 +1441,6 @@ void GetStatus(UI_STAGE stage)
 			else																			 // AM
 				nSNR = -((int8_t)REG_USN);
 
-			if (bEMI == 1)
-			{
-				OLED_XYStrLen(0, 0, ">-", 2, false);
-				OLED_XYStrLen(14, 0, "-<", 2, false);
-				bEMI++;
-			}
 			if (tmpAnt == FM_ANT1)
 			{
 				OLED_XYStrLen(0, 0, ">-", 2, false);
@@ -1431,12 +1455,8 @@ void GetStatus(UI_STAGE stage)
 	}
 	else
 	{
-		if (!bLCDOff && bEMI != 2)
+		if (!bLCDOff && !bAntiEMI)
 		{
-			if (bEMI == 1)
-			{
-				bEMI++;
-			}
 			if (nFMAT == FM_ANT1)
 			{
 				OLED_XYStrLen(0, 0, ">-", 2, false);
@@ -1453,7 +1473,7 @@ void GetStatus(UI_STAGE stage)
 
 	// FM stereo indicator. 'S' for FM stereo, ' ' for FM mono or AM mode,  'M' for FM forced mono
 
-	if (!bLCDOff && bEMI != 2)
+	if (!bLCDOff && !bAntiEMI)
 	{
 		c = ' '; // AM mode or FM mono
 		if (nRFMode == RFMODE_FM)
@@ -3182,6 +3202,9 @@ void ProcSubMenu(struct M_SUBMENU *pSubMenu)
 			case MID_INCA:
 				nHit = nINCA;
 				break;
+			case MID_EMI:
+				nHit = bAntiEMI ? 1 : 0;
+				break;
 			case MID_DEEM:
 				nHit = nDeemphasis;
 				break;
@@ -3586,6 +3609,11 @@ void ProcMenuItem(uint8_t nMenuID)
 		SetRFCtrlReg();
 		AddSyncBits(NEEDSYNC_MISC3);
 		VoiceSayMenuItem(nMenuID);
+		return;
+	}
+	else if ((nMenuID >= MID_EMIOFF) && (nMenuID <= MID_EMION))
+	{
+		SetAntiEMI(nMenuID - MID_EMIOFF);
 		return;
 	}
 

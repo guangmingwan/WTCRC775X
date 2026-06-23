@@ -92,7 +92,7 @@ int8_t nSquelch[2];  // Signal squelch value in dBuv, -99~99
 uint8_t nBacklightAdj;         // LCD backlight value, 0-255
 uint8_t nBacklightKeep;        // LCD backlight auto keep seconds, 0-255, 0 for always on
 bool bLCDOff = false;          // true for LCD is off
-uint8_t bEMI = 0;
+uint8_t bAntiEMI = 0;
 uint32_t nBacklightTimer;      // LCD backlight auto keep timer in ms
 
 uint32_t timer = 0;                        // RSSI, SNR & FM stereo indicator display timer
@@ -1462,7 +1462,7 @@ void TunerLoop(void)
 	if (bHAL_DelayedCheck && HAL_GetTick() >= nHAL_DelayedTimer)
 	{
 		bHAL_DelayedCheck = false;
-		if(!bLCDOff && bEMI !=2) {
+		if(!bLCDOff && !bAntiEMI) {
 			GetStatus(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
 		}
 		OLED_Refresh();
@@ -1470,23 +1470,23 @@ void TunerLoop(void)
 	}
 	else if ((HAL_GetTick() - timer) >= TIMER_INTERVAL)
 	{  // Check every TIMER_INTERVAL ms
-		if(!bLCDOff && bEMI !=2) {
+		if(!bLCDOff && !bAntiEMI) {
 			GetStatus(STAGE_MAIN);  // Update RSSI, SNR & FM stereo indicator
 		}
 		OLED_Refresh();
 		timer = HAL_GetTick();
 
-		if (!bMuted && (nMode != MODE_AUX) && !bLCDOff && bEMI != 2)
+		if (!bMuted && (nMode != MODE_AUX) && !bLCDOff && !bAntiEMI)
 		{
 			if ((nRSSI_Disp < nSquelch[0]))
 				SetVolume(0);
 			else
 				SetVolume(nVolume);
 		}
-		if(!bLCDOff && bEMI !=2) {
+		if(!bLCDOff && !bAntiEMI) {
 			CheckUpdateAlt(ALT_AUTO);
 		}
-		if (nBacklightKeep && !bLCDOff && bEMI != 2)
+		if (nBacklightKeep && !bLCDOff && !bAntiEMI)
 		{
 			if ((timer - nBacklightTimer) >= (uint32_t)nBacklightKeep * 1000)
 			{
@@ -1532,6 +1532,9 @@ void TunerLoop(void)
 
 				if (nAutoSyncBits & NEEDSYNC_MISC3)
 					NV_write_byte(NVMADDR_MISC3, nStereo | (nINCA << 4) | (nFirm << 5));
+
+				if (nAutoSyncBits & NEEDSYNC_MISC4)
+					NV_write_byte(NVMADDR_MISC4, bAntiEMI ? 1 : 0);
 
 				if (nAutoSyncBits & NEEDSYNC_TONE)
 				{
@@ -1581,7 +1584,7 @@ void TunerLoop(void)
 
 	if(!bLCDOff) {
 		CheckVolume();
-		if(bEMI != 2) {
+		if(!bAntiEMI) {
 			displayTips();
 		}
 	
@@ -1623,11 +1626,7 @@ void TunerLoop(void)
 		switch (nKey)
 		{
 		case KEY_LROT | KEY_RROT:
-			bEMI = bEMI == 0 ? 1 : 0;
-			if(bEMI == 1) {
-				CheckUpdateAlt(ALT_EMI);
-			}
-			VoiceSay(bEMI ? "抗干扰开启" : "抗干扰关闭");
+			ToggleAntiEMI();
 			break;
 			
 		case KEY_LROT:
